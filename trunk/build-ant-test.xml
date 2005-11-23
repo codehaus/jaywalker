@@ -1,0 +1,55 @@
+<project name="jaywalker-ant-test" default="all">
+
+    <target name="all"/>
+
+    <path id="path.jaywalker">
+        <pathelement location="build/dist/jaywalker-1.0.8.jar"/>
+        <pathelement location="build/dist/jaywalker-ant-1.0.8.jar"/>
+        <pathelement location="tools/bcel/bcel-5.1.jar"/>
+        <pathelement location="tools/commons-lang/commons-lang-2.0.jar"/>
+    </path>
+
+    <target name="init">
+        <mkdir dir="build/temp"/>
+        <taskdef name="jaywalker" classname="jaywalker.ant.JayWalkerTask" classpathref="path.jaywalker"/>
+    </target>
+
+    <target name="testTaskOutputNotPresent" depends="init">
+        <jaywalker/>
+    </target>
+
+    <target name="testTaskClasslistNotPresent" depends="init">
+        <jaywalker output="build/temp/output.xml"/>
+    </target>
+
+    <target name="testReportAggregateForClassElement" depends="init">
+        <jaywalker output="build/temp/output-class-element.xml">
+            <classlist file="build/classes/jaywalker/classlist/ClasslistElementFactory.class"/>
+        </jaywalker>
+    </target>
+
+    <target name="testReportAggregateForClassesDirectory" depends="init">
+        <jaywalker output="build/temp/output-classes-directory.xml">
+            <classlist dir="build/classes"/>
+        </jaywalker>
+    </target>
+
+    <target name="testReportAggregateForTest1Archive" depends="init">
+        <jaywalker output="build/temp/output-test1-archive.xml">
+            <classlist file="build/dist/jaywalker-test1.jar"/>
+        </jaywalker>
+    </target>
+
+    <target name="testReportAggregateForTest4Archive" depends="init">
+        <jaywalker output="build/temp/output-test4-archive.xml">
+            <classlist file="build/dist/jaywalker-test4.jar"/>
+        </jaywalker>
+    </target>
+
+    <target name="testReportAggregateForBuiltArchives" depends="init">
+        <jaywalker output="build/temp/output-built-archives.xml">
+            <classlist dir="build/dist"/>
+        </jaywalker>
+    </target>
+
+</project>
