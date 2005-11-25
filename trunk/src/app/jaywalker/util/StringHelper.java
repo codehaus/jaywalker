@@ -72,4 +72,17 @@ public class StringHelper {
         return true;
     }
 
+    public String extractCommonPrefix(String string1, String string2) {
+        StringBuffer sb = new StringBuffer();
+        int length = (string1.length() < string2.length()) ? string1.length() : string2.length();
+        for (int i = 0; i < length; i++) {
+            final char ch = string1.charAt(i);
+            if (ch == string2.charAt(i)) {
+                sb.append(ch);
+            } else {
+                return sb.toString();
+            }
+        }
+        return sb.toString();
+    }
 }

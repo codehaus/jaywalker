@@ -188,7 +188,6 @@
                 <exclude name="**/JayWalkerTask*.class"/>
                 <exclude name="**/Report*.class"/>
             </fileset>
-            <zipfileset dir="src/metadata/xslt" prefix="META-INF/xslt"/>
         </jar>
         <jar destfile="build/dist/${ant.project.name}-ant-${project.version}.jar">
             <fileset dir="build/classes">
