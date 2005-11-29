@@ -63,7 +63,7 @@ public class JayWalkerTestCase extends TestCase {
         visitor.addListener(statisticListener);
         visitor.addListener(listener);
         Date start = new Date();
-        visitor.accept(visitor);
+        visitor.accept();
         System.out.println("Time to visit elements : " + (new Date().getTime() - start.getTime()));
         System.out.println(statisticListener);
     }

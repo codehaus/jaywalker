@@ -31,6 +31,11 @@ public class ClasslistElementVisitor {
         this.classlistElements = cl.getClasslistElements();
     }
 
+    public void accept() throws IOException {
+        accept(this);
+        fireLastClasslistElementVisited();
+    }
+
     public void accept(ClasslistElementVisitor v) throws IOException {
         for (int i = 0; i < classlistElements.length; i++) {
             v.visit(classlistElements[i]);
@@ -59,6 +64,17 @@ public class ClasslistElementVisitor {
         if (listener != null) {
             listeners.add(listener);
         }
+    }
+
+    private void fireLastClasslistElementVisited() {
+        for (int i = 0; i < listeners.size(); i++) {
+            ClasslistElementListener listener = (ClasslistElementListener) listeners.get(i);
+            listener.lastClasslistElementVisited();
+        }
+    }
+
+    public void removeAllListeners() {
+        listeners.clear();
     }
 
 }

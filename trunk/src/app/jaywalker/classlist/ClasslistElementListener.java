@@ -17,4 +17,5 @@ package jaywalker.classlist;
 
 public interface ClasslistElementListener {
     public void classlistElementVisited(ClasslistElementEvent event);
+    public void lastClasslistElementVisited();
 }
