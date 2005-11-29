@@ -7,13 +7,13 @@ import java.util.*;
 
 public class DependencyHelper {
     private final URLHelper urlHelper = new URLHelper();
-    private final Set resolvedClassName = new HashSet();
-    private final Map containerDependencyMap = new HashMap();
+    private final Map resolvedUrlByClassNameMap = new HashMap();
+    private final Map resolvedClassNameByUrlMap = new HashMap();
     private final Map unresolvedClassNameByUrlMap = new HashMap();
     private final Map unresolvedUrlByClassNameMap = new HashMap();
 
     public boolean isResolved(String className) {
-        return resolvedClassName.contains(className);
+        return resolvedUrlByClassNameMap.keySet().contains(className);
     }
 
     public void markAsUnresolved(URL url, String className) {
@@ -51,7 +51,7 @@ public class DependencyHelper {
     }
 
     public void markAsResolved(String className) {
-        resolvedClassName.add(className);
+        resolvedUrlByClassNameMap.put(className, null);
         Set urlSet = (Set) unresolvedUrlByClassNameMap.remove(className);
 
         if (urlSet != null) {
@@ -70,30 +70,16 @@ public class DependencyHelper {
     }
 
     public void markAsResolved(URL url, String className) {
-
-        String containerName = urlHelper.toBaseContainer(url);
-        resolvedClassName.add(className);
         Set urlSet = (Set) unresolvedUrlByClassNameMap.remove(className);
+        addToDependencyMap(className, url, resolvedUrlByClassNameMap);
 
         if (urlSet != null) {
             for (Iterator it = urlSet.iterator(); it.hasNext();) {
                 final URL urlDependency = (URL) it.next();
-                String containerDependencyName = urlHelper.toBaseContainer(urlDependency);
-                if (containerName != null && !containerName.equals(containerDependencyName)) {
-                    addContainerDependency(containerName, containerDependencyName);
-                }
+                addToDependencyMap(url, className, resolvedClassNameByUrlMap);
                 removeFromDependencyMap(urlDependency, className, unresolvedClassNameByUrlMap);
             }
         }
-    }
-
-    private void addContainerDependency(String containerName, String containerDependencyName) {
-        Set containerNameSet = (Set) containerDependencyMap.get(containerName);
-        if (containerNameSet == null) {
-            containerNameSet = new HashSet();
-            containerDependencyMap.put(containerName, containerNameSet);
-        }
-        containerNameSet.add(containerDependencyName);
     }
 
     public Map getUnresolvedDependencies() {
@@ -101,7 +87,32 @@ public class DependencyHelper {
     }
 
     public Map getContainerDependencyMap() {
-        return containerDependencyMap;
+        Map map = new HashMap();
+        for (Iterator itUrl = resolvedClassNameByUrlMap.keySet().iterator(); itUrl.hasNext();) {
+            URL url = (URL) itUrl.next();
+            String containerUrlString = urlHelper.toBaseContainer(url);
+            final Set classNameSet = (Set) resolvedClassNameByUrlMap.get(url);
+            for (Iterator itClassName = classNameSet.iterator(); itClassName.hasNext();) {
+                final Set resolvedUrlSet = (Set) resolvedUrlByClassNameMap.get(itClassName.next());
+                addResolvedContainers(containerUrlString, resolvedUrlSet, map);
+            }
+        }
+        return map;
     }
 
+    private void addResolvedContainers(String containerUrlString, Set resolvedUrlSet, Map map) {
+        Set resolvedContainerSet = (Set) map.get(containerUrlString);
+        if (resolvedContainerSet == null) {
+            resolvedContainerSet = new HashSet();
+            map.put(containerUrlString, resolvedContainerSet);
+        }
+        for (Iterator itResolvedUrl = resolvedUrlSet.iterator(); itResolvedUrl.hasNext();) {
+            resolvedContainerSet.add(urlHelper.toBaseContainer((URL) itResolvedUrl.next()));
+        }
+    }
+
+    public void updateResolved(URL url, String dependency) {
+        addToDependencyMap(url, dependency, resolvedClassNameByUrlMap);
+        addToDependencyMap(dependency, url, resolvedUrlByClassNameMap);
+    }
 }

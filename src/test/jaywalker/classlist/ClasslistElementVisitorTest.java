@@ -43,6 +43,9 @@ public class ClasslistElementVisitorTest extends JayWalkerTestCase {
             public void classlistElementVisited(ClasslistElementEvent event) {
                 assertEquals(url, event.getElement().getURL());
             }
+
+            public void lastClasslistElementVisited() {
+            }
         };
         assertVisit(url, listener);
     }
@@ -51,6 +54,9 @@ public class ClasslistElementVisitorTest extends JayWalkerTestCase {
         ClasslistElementListener listener = new ClasslistElementListener() {
             public void classlistElementVisited(ClasslistElementEvent event) {
                 assertLegalUrl(event.getElement().getURL());
+            }
+
+            public void lastClasslistElementVisited() {
             }
         };
         assertVisit(url, listener);

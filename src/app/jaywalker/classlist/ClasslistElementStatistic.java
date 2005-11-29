@@ -32,6 +32,9 @@ public class ClasslistElementStatistic implements ClasslistElementListener {
         }
     }
 
+    public void lastClasslistElementVisited() {
+    }
+
     public String toString() {
         return archiveCnt + " archives, " +
             dirCnt + " directories, " +

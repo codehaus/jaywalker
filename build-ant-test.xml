@@ -1,10 +1,12 @@
 <project name="jaywalker-ant-test" default="all">
 
+    <property file="build.properties"/>
+
     <target name="all"/>
 
     <path id="path.jaywalker">
-        <pathelement location="build/dist/jaywalker-1.0.8.jar"/>
-        <pathelement location="build/dist/jaywalker-ant-1.0.8.jar"/>
+        <pathelement location="build/dist/jaywalker-${project.version}.jar"/>
+        <pathelement location="build/dist/jaywalker-ant-${project.version}.jar"/>
         <pathelement location="tools/bcel/bcel-5.1.jar"/>
         <pathelement location="tools/commons-lang/commons-lang-2.0.jar"/>
     </path>
