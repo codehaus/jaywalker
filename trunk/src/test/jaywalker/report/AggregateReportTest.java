@@ -19,16 +19,18 @@ import jaywalker.classlist.JayWalkerTestCase;
 import jaywalker.testutil.Path;
 
 import java.io.IOException;
-import java.io.File;
 import java.net.URL;
 import java.util.Date;
 
 public class AggregateReportTest extends JayWalkerTestCase {
     public void assertCreateReportFor(URL url) throws IOException {
         Date start = new Date();
-        AggregateModel model = new AggregateModel();
+        Report [] reports = new Report []{
+                new CollisionReport(new CollisionModel()),
+                new DependencyReport(new DependencyModel())};
+        AggregateModel model = new AggregateModel(reports);
         assertVisit(url, model);
-        AggregateReport report = new AggregateReport(model);
+        AggregateReport report = new AggregateReport(reports);
         assertVisit(url, report);
         System.out.println("Report initialization time : " + (new Date().getTime() - start.getTime()));
         start = new Date();
