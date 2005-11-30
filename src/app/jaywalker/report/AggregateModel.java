@@ -15,85 +15,29 @@
  */
 package jaywalker.report;
 
-import jaywalker.classlist.ClassElement;
-import jaywalker.classlist.ClasslistElement;
 import jaywalker.classlist.ClasslistElementEvent;
 import jaywalker.classlist.ClasslistElementListener;
-import jaywalker.util.URLHelper;
-
-import java.net.URL;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 public class AggregateModel implements ClasslistElementListener {
-    private final DependencyHelper dependencyHelper = new DependencyHelper();
-    private final CollisionHelper collisionHelper = new CollisionHelper();
+    private final ClasslistElementListener[] models;
 
-    private Map urlCollisionMap;
-    private Map containerDependencyMap;
-    private SerialVersionUidHelper suidHelper;
-    private Map unresolvedMap;
-
-    public void classlistElementVisited(ClasslistElementEvent event) {
-        ClasslistElement classlistElement = event.getElement();
-        if (classlistElement.getClass() == ClassElement.class) {
-            ClassElement classElement = (ClassElement) classlistElement;
-            String className = classElement.getName();
-            final URL url = classElement.getURL();
-
-            collisionHelper.register(url, className);
-
-            dependencyHelper.markAsResolved(url, className);
-            String [] dependencies = classElement.getDependencies();
-            for (int i = 0; i < dependencies.length; i++) {
-                String dependency = asClassName(dependencies[i]);
-                if (!dependencyHelper.isResolved(dependency)) {
-                    dependencyHelper.markAsUnresolved(url, dependency);
-                } else {
-                    dependencyHelper.updateResolved(url, dependency);
-                }
-            }
+    public AggregateModel ( Report [] reports ) {
+        models = new ClasslistElementListener[reports.length];
+        for ( int i = 0; i < reports.length; i++ ) {
+            models[i] = reports[i].getModel();
         }
     }
 
-    private String asClassName(String dependency) {
-        String value = dependency;
-        int idx;
-        if ((idx = value.lastIndexOf("[")) != -1)
-            value = value.substring(idx + 2);
-        if (value.endsWith(";"))
-            value = value.substring(0, value.length() - 1);
-        return value;
+    public void classlistElementVisited(ClasslistElementEvent event) {
+        for ( int i = 0; i < models.length; i++) {
+            models[i].classlistElementVisited(event);
+        }
     }
 
     public void lastClasslistElementVisited() {
-        dependencyHelper.resolveSystemClasses();
-
-        containerDependencyMap = dependencyHelper.getContainerDependencyMap();
-        unresolvedMap = dependencyHelper.getUnresolvedDependencies();
-        urlCollisionMap = collisionHelper.createUrlCollisionMap();
-        suidHelper = new SerialVersionUidHelper(collisionHelper.createClassNameToUrlsMap());
+        for ( int i = 0; i < models.length; i++) {
+            models[i].lastClasslistElementVisited();
+        }
     }
 
-    public Set lookupContainerDependencies(String urlString) {
-        return (Set) containerDependencyMap.get(urlString);
-    }
-
-    public URL[] lookupCollisionUrls(URL url) {
-        return (URL[]) urlCollisionMap.get(url);
-    }
-
-    public Set lookupUnresolvedElementDependencies(URL url) {
-        return (Set) unresolvedMap.get(url);
-    }
-
-    public boolean isSerialVersionUidsConflicting(URL[] collisionUrls) {
-        return suidHelper.isSerialVersionUidsConflicting(collisionUrls);
-    }
-
-    public long toSerialVersionUID(URL collisionUrl) {
-        return suidHelper.toSerialVersionUID(collisionUrl);
-    }
 }

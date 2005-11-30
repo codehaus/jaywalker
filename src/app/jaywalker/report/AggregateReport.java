@@ -3,20 +3,17 @@ package jaywalker.report;
 import jaywalker.classlist.*;
 
 import java.net.URL;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.Stack;
 
 public class AggregateReport implements ClasslistElementListener {
-    private final ClasslistElementFactory factory = new ClasslistElementFactory();
     private String stringValue;
-    private final AggregateModel model;
 
-    StringBuffer sb = new StringBuffer();
+    StringBuffer sbReport = new StringBuffer();
     Stack stack = new Stack();
+    private final Report[] reports;
 
-    public AggregateReport(AggregateModel model) {
-        this.model = model;
+    public AggregateReport(Report [] reports) {
+        this.reports = reports;
     }
 
     public void classlistElementVisited(ClasslistElementEvent event) {
@@ -25,65 +22,60 @@ public class AggregateReport implements ClasslistElementListener {
         if (isParentOnStackTop(element)) {
             while (isParentOnStackTop(element)) {
                 stack.pop();
-                sb.append(toSpaces(stack.size()));
-                sb.append("</container>\n");
+                sbReport.append(toSpaces(stack.size()));
+                sbReport.append("</container>\n");
             }
         }
 
-        sb.append(toSpaces(stack.size()));
+        sbReport.append(toSpaces(stack.size()));
 
         if (element instanceof ClasslistContainer) {
-            sb.append("<container type=\"").append(element.getType()).append("\"");
-            sb.append(" url=\"").append(element.getURL()).append("\">\n");
-            // container dependencies
-            String urlString = element.getURL().toString();
-            Set containerDependencySet = model.lookupContainerDependencies(urlString);
+            sbReport.append("<container type=\"").append(element.getType()).append("\"");
+            sbReport.append(" url=\"").append(element.getURL()).append("\">\n");
             stack.push(element.getURL());
-            sb.append(createResolvedContainerDependenciesTag(containerDependencySet));
+            for (int i = 0; i < reports.length; i++) {
+                sbReport.append(reports[i].createContainerSection(url, stack));
+            }
         } else if (element instanceof ClassElement) {
-            ClassElement classElement = (ClassElement) factory.create(url);
-            sb.append("<element type=\"class\" url=\"").append(url).append("\" value=\"");
-            sb.append(classElement.getName()).append("\"");
+            ClassElement classElement = (ClassElement) element;
+            sbReport.append("<element type=\"class\" url=\"").append(url).append("\" value=\"");
+            sbReport.append(classElement.getName()).append("\"");
 
-            URL [] collisionUrls = model.lookupCollisionUrls(url);
-            Set unresolvedUrlSet = model.lookupUnresolvedElementDependencies(url);
+            stack.push(url.toString());
+            String [] xmlTags = new String [reports.length];
 
-            if (collisionUrls == null && unresolvedUrlSet == null) {
-                sb.append("/>\n");
+            for (int i = 0; i < reports.length; i++) {
+                xmlTags[i] = reports[i].createElementSection(url, stack);
+            }
+
+            if (isAllBlank(xmlTags)) {
+                stack.pop();
+                sbReport.append("/>\n");
                 return;
             }
 
-            sb.append(">\n");
+            sbReport.append(">\n");
 
-            stack.push(url.toString());
-
-            if (collisionUrls != null) {
-
-                boolean isConflict = model.isSerialVersionUidsConflicting(collisionUrls);
-
-                for (int k = 0; k < collisionUrls.length; k++) {
-                    sb.append(toSpaces(stack.size()));
-                    sb.append("<collision url=\"").append(collisionUrls[k]).append("\"");
-                    if (!isConflict) {
-                        sb.append("/>\n");
-                    } else {
-                        sb.append(">\n");
-                        sb.append(createSerialVersionUidConflictTag(model.toSerialVersionUID(collisionUrls[k])));
-                        sb.append(toSpaces(stack.size()));
-                        sb.append("</collision>\n");
-                    }
-                }
+            for (int i = 0; i < xmlTags.length; i++) {
+                sbReport.append(xmlTags[i]);
             }
 
-            if (unresolvedUrlSet != null) {
-                sb.append(createUnresolvedDependencyTags(unresolvedUrlSet));
-            }
+            stack.pop();
+            sbReport.append(toSpaces(stack.size()));
+            sbReport.append("</element>\n");
 
         } else {
-            sb.append("<element type=\"").append(element.getType()).append("\"");
-            sb.append(" url=\"").append(element.getURL()).append("\"/>\n");
+            sbReport.append("<element type=\"").append(element.getType()).append("\"");
+            sbReport.append(" url=\"").append(element.getURL()).append("\"/>\n");
         }
 
+    }
+
+    private boolean isAllBlank(String[] xmlTags) {
+        for (int i = 0; i < xmlTags.length; i++) {
+            if (xmlTags[i].length() > 0) return false;
+        }
+        return true;
     }
 
     public void lastClasslistElementVisited() {
@@ -91,14 +83,14 @@ public class AggregateReport implements ClasslistElementListener {
         final StringBuffer sb = new StringBuffer(header);
         sb.append("<report");
 
-        if (this.sb.length() == 0) {
+        if (sbReport.length() == 0) {
             sb.append("/>");
             stringValue = sb.toString();
         }
 
         sb.append(">\n");
 
-        sb.append(this.sb);
+        sb.append(sbReport);
 
         while (!stack.isEmpty()) {
             sb.append(createContainerEndTag());
@@ -119,38 +111,6 @@ public class AggregateReport implements ClasslistElementListener {
         stack.pop();
         sb.append(toSpaces(stack.size()));
         sb.append("</container>\n");
-        return sb.toString();
-    }
-
-    private String createSerialVersionUidConflictTag(long serialVersionUid) {
-        StringBuffer sb = new StringBuffer();
-        sb.append(toSpaces(stack.size() + 1));
-        sb.append("<conflict type=\"serialVersionUid\" value=\"");
-        sb.append(serialVersionUid);
-        sb.append("\"/>\n");
-        return sb.toString();
-    }
-
-    private String createResolvedContainerDependenciesTag(Set containerDependencySet) {
-        StringBuffer sb = new StringBuffer();
-        if (containerDependencySet != null) {
-            for (Iterator itContainerDependency = containerDependencySet.iterator(); itContainerDependency.hasNext();) {
-                sb.append(toSpaces(stack.size()));
-                sb.append("<dependency type=\"resolved\" value=\"").append(itContainerDependency.next());
-                sb.append("\"/>\n");
-            }
-        }
-        return sb.toString();
-    }
-
-    private String createUnresolvedDependencyTags(Set unresolvedSet) {
-        StringBuffer sb = new StringBuffer();
-        for (Iterator it2 = unresolvedSet.iterator(); it2.hasNext();) {
-            sb.append(toSpaces(stack.size()));
-            sb.append("<dependency type=\"unresolved\" value=\"");
-            sb.append(it2.next());
-            sb.append("\"/>\n");
-        }
         return sb.toString();
     }
 

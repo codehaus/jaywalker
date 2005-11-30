@@ -5,8 +5,8 @@ import java.util.*;
 
 public class CollisionHelper {
 
-    private Map classNameToUrlsMap = new TreeMap();
-    private Map urlToClassNameMap = new HashMap();
+    private final Map classNameToUrlsMap = new TreeMap();
+    private final Map urlToClassNameMap = new HashMap();
 
     public void register(URL url, String className) {
         List collisionList = (List) classNameToUrlsMap.get(className);

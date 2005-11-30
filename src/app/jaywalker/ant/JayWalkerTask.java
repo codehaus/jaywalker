@@ -1,17 +1,16 @@
 package jaywalker.ant;
 
 import jaywalker.classlist.*;
+import jaywalker.report.*;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.Shell;
-import jaywalker.report.AggregateReport;
-import jaywalker.report.AggregateModel;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 
-import java.io.File;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.util.Date;
 import java.util.Iterator;
@@ -50,14 +49,17 @@ public class JayWalkerTask extends Task {
             ClasslistElementVisitor visitor = new ClasslistElementVisitor(elements);
             final ClasslistElementStatistic statisticListener = new ClasslistElementStatistic();
             visitor.addListener(statisticListener);
-            AggregateModel model = new AggregateModel();
+            Report [] reports = new Report []{
+                    new CollisionReport(new CollisionModel()),
+                    new DependencyReport(new DependencyModel())};
+            AggregateModel model = new AggregateModel(reports);
             visitor.addListener(model);
             Date start = new Date();
             visitor.accept();
             System.out.println("Time to visit elements : " + (new Date().getTime() - start.getTime()));
             System.out.println(statisticListener + " instrumented.");
             visitor.removeAllListeners();
-            AggregateReport report = new AggregateReport(model);
+            AggregateReport report = new AggregateReport(reports);
             visitor.addListener(report);
             visitor.accept();
             BufferedWriter out = new BufferedWriter(new FileWriter(output));
