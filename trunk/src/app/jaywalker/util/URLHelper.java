@@ -15,10 +15,6 @@
  */
 package jaywalker.util;
 
-import jaywalker.util.HashCode;
-import jaywalker.util.ResourceLocator;
-import jaywalker.util.StringHelper;
-
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -27,13 +23,6 @@ import java.net.URL;
 
 public class URLHelper {
     private final static StringHelper stringHelper = new StringHelper();
-
-    private final static File FILE_DOES_NOT_EXIST =
-            new File(
-                    "non-existant file used by jaywalker to avoid having to do a null check - " +
-                            "if you create this on the file system yourself, " +
-                            "you are a very silly, silly person.  " +
-                            "Perhaps I'm equally as silly for doing this.");
 
     /**
      * Returns the URL encoding of the classlist element in the folowing format:
@@ -52,7 +41,7 @@ public class URLHelper {
         // Construct URL with safe naming taken into account
         StringBuffer sb = new StringBuffer();
         sb.append("file://");
-        if ( System.getProperty("os.name").toLowerCase().indexOf("windows") != -1 ) {
+        if (System.getProperty("os.name").toLowerCase().indexOf("windows") != -1) {
             sb.append("/");
         }
         sb.append(getTempDir().getAbsolutePath().replace('\\', '/'));
@@ -111,13 +100,30 @@ public class URLHelper {
     }
 
     public File toEncodedFile(URL url) {
+        URL newUrl = null;
         try {
-            return new File(new URI(toEncodedURL(url).toString()));
+            newUrl = toEncodedURL(url);
+            URI uri = new URI(newUrl.toString());
+            return new File(uri);
         } catch (URISyntaxException e) {
-            return FILE_DOES_NOT_EXIST;
+            throw newIllegalArgumentException("Illegal URI Syntax", e, url, newUrl);
         } catch (MalformedURLException e) {
-            return FILE_DOES_NOT_EXIST;
+            throw newIllegalArgumentException("Malformed URL", e, url, newUrl);
         }
+    }
+
+    private IllegalArgumentException newIllegalArgumentException(String message, Exception e, URL url, URL newUrl ) {
+        return new IllegalArgumentException(message + " : " + e.getMessage() + " " + toInfo(url, newUrl));
+    }
+
+    private String toInfo(URL url, URL newUrl) {
+        StringBuffer sb = new StringBuffer("(");
+        sb.append("url=").append(url);
+        if (newUrl != null) {
+            sb.append(",encodedUrl=").append(newUrl);
+        }
+        sb.append(")");
+        return sb.toString();
     }
 
     public URL[] toURLs(URL url, File[] files) {
