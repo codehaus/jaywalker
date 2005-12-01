@@ -51,7 +51,10 @@ public class URLHelper {
 
         // Construct URL with safe naming taken into account
         StringBuffer sb = new StringBuffer();
-        sb.append("file:///");
+        sb.append("file://");
+        if ( System.getProperty("os.name").toLowerCase().indexOf("windows") != -1 ) {
+            sb.append("/");
+        }
         sb.append(getTempDir().getAbsolutePath().replace('\\', '/'));
         sb.append("/");
         final String archiveDir = str.substring("jar:".length(), idx);
