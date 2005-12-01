@@ -19,12 +19,10 @@ public class AggregateReport implements ClasslistElementListener {
     public void classlistElementVisited(ClasslistElementEvent event) {
         final ClasslistElement element = event.getElement();
         final URL url = element.getURL();
-        if (isParentOnStackTop(element)) {
-            while (isParentOnStackTop(element)) {
-                stack.pop();
-                sbReport.append(toSpaces(stack.size()));
-                sbReport.append("</container>\n");
-            }
+        while (isElementNotOnStackTop(element)) {
+            stack.pop();
+            sbReport.append(toSpaces(stack.size()));
+            sbReport.append("</container>\n");
         }
 
         sbReport.append(toSpaces(stack.size()));
@@ -41,7 +39,7 @@ public class AggregateReport implements ClasslistElementListener {
             sbReport.append("<element type=\"class\" url=\"").append(url).append("\" value=\"");
             sbReport.append(classElement.getName()).append("\"");
 
-            stack.push(url.toString());
+            stack.push(url);
             String [] xmlTags = new String [reports.length];
 
             for (int i = 0; i < reports.length; i++) {
@@ -114,7 +112,7 @@ public class AggregateReport implements ClasslistElementListener {
         return sb.toString();
     }
 
-    private boolean isParentOnStackTop(ClasslistElement element) {
+    private boolean isElementNotOnStackTop(ClasslistElement element) {
         return !stack.isEmpty() && !element.getContainer().getURL().equals(stack.peek());
     }
 
