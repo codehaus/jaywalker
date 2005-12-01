@@ -8,7 +8,6 @@
         <pathelement location="build/dist/jaywalker-${project.version}.jar"/>
         <pathelement location="build/dist/jaywalker-ant-${project.version}.jar"/>
         <pathelement location="tools/bcel/bcel-5.1.jar"/>
-        <pathelement location="tools/commons-lang/commons-lang-2.0.jar"/>
     </path>
 
     <target name="init">
@@ -25,31 +24,31 @@
     </target>
 
     <target name="testReportAggregateForClassElement" depends="init">
-        <jaywalker output="build/temp/output-class-element.xml">
+        <jaywalker output="build/temp/output-class-element.xml" tempDir="build/temp">
             <classlist file="build/classes/jaywalker/classlist/ClasslistElementFactory.class"/>
         </jaywalker>
     </target>
 
     <target name="testReportAggregateForClassesDirectory" depends="init">
-        <jaywalker output="build/temp/output-classes-directory.xml">
+        <jaywalker output="build/temp/output-classes-directory.xml" tempDir="build/temp">
             <classlist dir="build/classes"/>
         </jaywalker>
     </target>
 
     <target name="testReportAggregateForTest1Archive" depends="init">
-        <jaywalker output="build/temp/output-test1-archive.xml">
+        <jaywalker output="build/temp/output-test1-archive.xml" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-test1.jar"/>
         </jaywalker>
     </target>
 
     <target name="testReportAggregateForTest4Archive" depends="init">
-        <jaywalker output="build/temp/output-test4-archive.xml">
+        <jaywalker output="build/temp/output-test4-archive.xml" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-test4.jar"/>
         </jaywalker>
     </target>
 
     <target name="testReportAggregateForBuiltArchives" depends="init">
-        <jaywalker output="build/temp/output-built-archives.xml">
+        <jaywalker output="build/temp/output-built-archives.xml" tempDir="build/temp">
             <classlist dir="build/dist"/>
         </jaywalker>
     </target>
