@@ -149,19 +149,6 @@ public class URLHelper {
         }
     }
 
-//    URL [] urls = new URL [ filenames.length ];
-//    String baseUrlString = url.toString();
-//    baseUrlString = StringHelper.appendIfMissing("/", baseUrlString);
-//    try {
-//        for (int i = 0; i < filenames.length; i++) {
-//            urls[i] = new URL(baseUrlString + filenames[i]);
-//        }
-//        return urls;
-//    } catch (MalformedURLException e) {
-//        return new URL[0];
-//    }
-
-
     public URL appendIfMissing(String suffix, URL target) {
         String urlString = target.toString();
         urlString = stringHelper.appendIfMissing("/", urlString);
