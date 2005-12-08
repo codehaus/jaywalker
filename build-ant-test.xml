@@ -41,6 +41,12 @@
         </jaywalker>
     </target>
 
+    <target name="testReportAggregateForTest2Archive" depends="init">
+        <jaywalker output="build/temp/output-test2-archive.xml" tempDir="build/temp">
+            <classlist file="build/dist/jaywalker-test2.jar"/>
+        </jaywalker>
+    </target>
+
     <target name="testReportAggregateForTest4Archive" depends="init">
         <jaywalker output="build/temp/output-test4-archive.xml" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-test4.jar"/>
@@ -52,5 +58,13 @@
             <classlist dir="build/dist"/>
         </jaywalker>
     </target>
+
+    <target name="testReportAggregateForCycle1AndCycle2Archive" depends="init">
+        <jaywalker output="build/temp/output-cycle-archive.xml" tempDir="build/temp">
+            <classlist file="build/dist/jaywalker-cycle-part1.jar"/>
+            <classlist file="build/dist/jaywalker-cycle-part2.jar"/>
+        </jaywalker>
+    </target>
+
 
 </project>

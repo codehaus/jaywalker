@@ -18,52 +18,32 @@ package jaywalker.report;
 import jaywalker.classlist.ClasslistElementListener;
 
 import java.net.URL;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.Stack;
 
 public class DependencyReport extends AbstractReport {
     private final DependencyModel model;
+    private final ReportTag [] reportTags;
 
-    public DependencyReport(DependencyModel model) {
+    public DependencyReport(final DependencyModel model, ReportTag [] reportTags) {
         this.model = model;
+        this.reportTags = reportTags;
     }
 
     public String createElementSection(URL url, Stack parentUrlStack) {
-        Set unresolvedUrlSet = model.lookupUnresolvedElementDependencies(url);
-        if (unresolvedUrlSet == null) return "";
-        return createUnresolvedDependencyTags(unresolvedUrlSet, parentUrlStack);
+        return createSection(reportTags, url, parentUrlStack);
     }
 
     public String createContainerSection(URL url, Stack parentUrlStack) {
-        String urlString = url.toString();
-        Set containerDependencySet = model.lookupContainerDependencies(urlString);
-        return createResolvedContainerDependenciesTag(containerDependencySet, parentUrlStack);
+        return createSection(reportTags, url, parentUrlStack);
     }
 
-    private String createResolvedContainerDependenciesTag(Set containerDependencySet, Stack parentUrlStack) {
+    private String createSection(ReportTag [] reportTags, URL url, Stack parentUrlStack) {
         StringBuffer sb = new StringBuffer();
-        if (containerDependencySet != null) {
-            for (Iterator itContainerDependency = containerDependencySet.iterator(); itContainerDependency.hasNext();) {
-                sb.append(reportHelper.toSpaces(parentUrlStack.size()));
-                sb.append("<dependency type=\"resolved\" value=\"").append(itContainerDependency.next());
-                sb.append("\"/>\n");
-            }
+        for (int i = 0; i < reportTags.length; i++) {
+            sb.append(reportTags[i].create(url, parentUrlStack));
         }
         return sb.toString();
     }
-
-    private String createUnresolvedDependencyTags(Set unresolvedSet, Stack parentUrlStack) {
-        StringBuffer sb = new StringBuffer();
-        for (Iterator it2 = unresolvedSet.iterator(); it2.hasNext();) {
-            sb.append(reportHelper.toSpaces(parentUrlStack.size()));
-            sb.append("<dependency type=\"unresolved\" value=\"");
-            sb.append(it2.next());
-            sb.append("\"/>\n");
-        }
-        return sb.toString();
-    }
-
 
     public ClasslistElementListener getModel() {
         return model;

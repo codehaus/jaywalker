@@ -12,18 +12,22 @@ import org.apache.tools.ant.types.FileSet;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.Vector;
+import java.util.*;
 
 public class JayWalkerTask extends Task {
-
-    public static class Classlist extends FileSet {
-    }
 
     private File tempDir;
     protected Vector classlists = new Vector();
     private File output;
+    private Set optionSet = new HashSet();
+
+    public JayWalkerTask() {
+        super();
+        optionSet.add(new Option("dependency", "archive,class"));
+        optionSet.add(new Option("collision", "class"));
+        optionSet.add(new Option("conflict", "class"));
+
+    }
 
     protected void validate() {
         if (output == null) {
@@ -49,9 +53,22 @@ public class JayWalkerTask extends Task {
             ClasslistElementVisitor visitor = new ClasslistElementVisitor(elements);
             final ClasslistElementStatistic statisticListener = new ClasslistElementStatistic();
             visitor.addListener(statisticListener);
-            Report [] reports = new Report []{
-                    new CollisionReport(new CollisionModel()),
-                    new DependencyReport(new DependencyModel())};
+
+            Option [] options = (Option[]) optionSet.toArray(new Option[optionSet.size()]);
+
+            final DependencyModel dependencyModel = new DependencyModel();
+            DependencyReportConfiguration dependencyReportConfiguration = new DependencyReportConfiguration(dependencyModel);
+            ReportTag[] dependencyReportTags = dependencyReportConfiguration.toReportTags(options);
+
+            CollisionModel collisionModel = new CollisionModel();
+            CollisionReportConfiguration collisionReportConfiguration = new CollisionReportConfiguration(collisionModel);
+            ReportTag[] collisionReportTags = collisionReportConfiguration.toReportTags(options);
+
+            Report [] reports = new Report[]{
+                    new CollisionReport(collisionModel, collisionReportTags),
+                    new DependencyReport(dependencyModel, dependencyReportTags)
+            };
+
             AggregateModel model = new AggregateModel(reports);
             visitor.addListener(model);
             Date start = new Date();
@@ -78,6 +95,10 @@ public class JayWalkerTask extends Task {
 
     public void addClasslist(Classlist classlist) {
         classlists.add(classlist);
+    }
+
+    public void addOption(Option option) {
+        optionSet.add(option);
     }
 
     private String createClasslist() {

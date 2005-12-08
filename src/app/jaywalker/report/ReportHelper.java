@@ -15,6 +15,9 @@
  */
 package jaywalker.report;
 
+import java.net.URL;
+import java.util.Stack;
+
 public class ReportHelper {
     public String toSpaces(int spaces) {
         StringBuffer sb = new StringBuffer();
@@ -23,4 +26,30 @@ public class ReportHelper {
         }
         return sb.toString();
     }
+
+    public String createDependencyTags(String tagType, String nestedTagName, String nestedTagType, URL [] urls, Object [] values, Stack parentUrlStack) {
+        StringBuffer sb = new StringBuffer();
+        if (urls != null && urls.length > 0) {
+            sb.append(toSpaces(parentUrlStack.size()));
+            sb.append("<dependency type=\"").append(tagType).append("\" value=\"").append(urls.length);
+            sb.append("\">\n");
+            for (int i = 0; i < urls.length; i++) {
+                sb.append(toSpaces(parentUrlStack.size() + 1));
+                sb.append("<");
+                sb.append(nestedTagName);
+                sb.append(createAttribute("type", nestedTagType));
+                sb.append(createAttribute("url", urls[i]));
+                sb.append(createAttribute("value", values[i]));
+                sb.append("/>\n");
+            }
+            sb.append(toSpaces(parentUrlStack.size()));
+            sb.append("</dependency>\n");
+        }
+        return sb.toString();
+    }
+
+    private String createAttribute(String name, Object value) {
+        return " " + name + "=\"" + value + "\"";
+    }
+
 }

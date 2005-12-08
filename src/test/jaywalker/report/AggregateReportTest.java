@@ -25,9 +25,11 @@ import java.util.Date;
 public class AggregateReportTest extends JayWalkerTestCase {
     public void assertCreateReportFor(URL url) throws IOException {
         Date start = new Date();
+
         Report [] reports = new Report []{
-                new CollisionReport(new CollisionModel()),
-                new DependencyReport(new DependencyModel())};
+                createCollisionReport(),
+                createDependencyReport()};
+
         AggregateModel model = new AggregateModel(reports);
         assertVisit(url, model);
         AggregateReport report = new AggregateReport(reports);
@@ -37,6 +39,29 @@ public class AggregateReportTest extends JayWalkerTestCase {
         String reportValue = report.toString();
         System.out.println("Report creation time : " + (new Date().getTime() - start.getTime()));
         System.out.println(reportValue);
+    }
+
+    private DependencyReport createDependencyReport() {
+        DependencyModel dependencyModel = new DependencyModel();
+        ReportTag [] dependencyReportTags = new ReportTag []{
+                new ContainerDependencyReportTag(dependencyModel),
+                new ContainerCyclicDependencyReportTag(dependencyModel),
+                new PackageCyclicDependencyReportTag(dependencyModel),
+                new UnresolvedClassNameDependencyReportTag(dependencyModel),
+                new ElementCyclicDependencyReportTag(dependencyModel),
+        };
+        return new DependencyReport(dependencyModel, dependencyReportTags);
+    }
+
+    private CollisionReport createCollisionReport() {
+        CollisionModel collisionModel = new CollisionModel();
+        NestedReportTag [] nestedReportTags = new NestedReportTag[]{
+                new SerialVersionUidConflictReportTag(collisionModel)
+        };
+        ReportTag[] collisionsReportTags = new ReportTag[]{
+                new CollisionReportTag(collisionModel, nestedReportTags)
+        };
+        return new CollisionReport(collisionModel, collisionsReportTags);
     }
 
     public void testShouldCreateReportForAFile() throws IOException {

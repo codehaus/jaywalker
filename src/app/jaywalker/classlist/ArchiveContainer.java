@@ -57,5 +57,9 @@ public class ArchiveContainer extends ClasslistContainer {
         return "archive";
     }
 
+    public String getName() {
+        return new URLHelper().toFileName(url);
+    }
+
 
 }

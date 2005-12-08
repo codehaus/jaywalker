@@ -15,37 +15,29 @@
  */
 package jaywalker.report;
 
-import jaywalker.classlist.ClasslistElementListener;
-
 import java.net.URL;
 import java.util.Stack;
 
-public class CollisionReport extends AbstractReport {
+public class SerialVersionUidConflictReportTag implements NestedReportTag {
     private final CollisionModel model;
-    private final ReportTag[] reportTags;
+    private final ReportHelper reportHelper = new ReportHelper();
 
-    public CollisionReport(CollisionModel model, ReportTag [] reportTags) {
+    public SerialVersionUidConflictReportTag(CollisionModel model) {
         this.model = model;
-        this.reportTags = reportTags;
     }
 
-    public String createElementSection(URL url, Stack parentUrlStack) {
-        return createSection(reportTags, url, parentUrlStack);
-    }
-
-    public String createContainerSection(URL url, Stack parentUrlStack) {
-        return createSection(reportTags, url, parentUrlStack);
-    }
-
-    private String createSection(ReportTag [] reportTags, URL url, Stack parentUrlStack) {
+    public String create(URL url, Stack parentUrlStack) {
         StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < reportTags.length; i++) {
-            sb.append(reportTags[i].create(url, parentUrlStack));
-        }
+        long serialVersionUid = model.toSerialVersionUID(url);
+        sb.append(reportHelper.toSpaces(parentUrlStack.size() + 1));
+        sb.append("<conflict type=\"serialVersionUid\" value=\"");
+        sb.append(serialVersionUid);
+        sb.append("\"/>\n");
         return sb.toString();
+
     }
 
-    public ClasslistElementListener getModel() {
-        return model;
+    public boolean isNestedElementsConflicting(URL [] urls) {
+        return model.isSerialVersionUidsConflicting(urls);
     }
 }

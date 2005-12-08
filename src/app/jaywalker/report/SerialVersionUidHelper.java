@@ -229,8 +229,8 @@ try {
     }
 
     public long toSerialVersionUID(URL url) {
-        Long value = (Long) urlToSerialVersionUIDMap.get(url);
         if (url == null) throw new IllegalArgumentException("Unexpected URL given");
+        Long value = (Long) urlToSerialVersionUIDMap.get(url);
         return value.longValue();
     }
 
@@ -329,9 +329,9 @@ try {
         MessageDigest messageDigest = MessageDigest.getInstance("SHA");
         byte[] sha = messageDigest.digest(byteArrayOutputStream.toByteArray());
 
-        // 9. The hash value is assembled from the first and second 32-bit values of the SHA-1 message digest.
+        // 9. The hash toString is assembled from the first and second 32-bit values of the SHA-1 message digest.
         //    If the result of the message digest, the five 32-bit words H0 H1 H2 H3 H4, is in an array of five int
-        //      values named sha, the hash value would be computed as follows:
+        //      values named sha, the hash toString would be computed as follows:
         //          long hash =
         //              ((sha[0] >>> 24) & 0xFF) |
         //              ((sha[0] >>> 16) & 0xFF) << 8 |

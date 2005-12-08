@@ -52,6 +52,13 @@ public class ClassElement extends ClasslistElement {
         return getClassFile().getClassName();
     }
 
+    public String getPackageName() {
+        String name = getName();
+        int idx = name.lastIndexOf('.');
+        if ( idx != -1 ) return name.substring(0,idx);
+        return "";
+    }
+
     public String getSuperName() {
         return getClassFile().getSuperClassName();
     }

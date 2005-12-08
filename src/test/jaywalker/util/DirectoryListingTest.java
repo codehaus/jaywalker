@@ -38,7 +38,6 @@ public class DirectoryListingTest extends JayWalkerTestCase {
         ArchiveExpander expander = new ArchiveExpander();
         expander.expand(url);
         URLHelper helper = new URLHelper();
-        final File archiveDir = helper.toArchiveDir(url);
         File fileIdx = helper.toArchiveIdx(url);
         DirectoryListing listing = new DirectoryListing(url, fileIdx);
         URL [] urls = listing.toUrls(url);

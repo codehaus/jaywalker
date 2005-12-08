@@ -112,7 +112,7 @@ public class URLHelper {
         }
     }
 
-    private IllegalArgumentException newIllegalArgumentException(String message, Exception e, URL url, URL newUrl ) {
+    private IllegalArgumentException newIllegalArgumentException(String message, Exception e, URL url, URL newUrl) {
         return new IllegalArgumentException(message + " : " + e.getMessage() + " " + toInfo(url, newUrl));
     }
 
@@ -215,10 +215,30 @@ public class URLHelper {
         String urlString = url.toString();
         int idx;
         if ((idx = urlString.lastIndexOf("!/")) != -1) {
-            return urlString.substring(0, idx);
+            urlString = urlString.substring(0, idx);
+            if ((idx = urlString.lastIndexOf("!/")) != -1) {
+                return urlString;
+            } else {
+                return urlString.substring("jar:".length());
+            }
         } else {
             return urlString.substring(0, urlString.lastIndexOf("/"));
         }
+    }
+
+    public URL toBaseContainerUrl(URL url) {
+        try {
+            return new URL(toBaseContainer(url));
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Error creating url", e);
+        }
+    }
+
+    public String toFileName(URL url) {
+        String urlString = url.toString();
+        int idx = urlString.lastIndexOf('/');
+        if (idx == -1) return "";
+        return url.toString().substring(idx + 1);
     }
 
 }
