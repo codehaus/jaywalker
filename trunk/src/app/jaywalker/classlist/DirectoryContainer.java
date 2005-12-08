@@ -23,6 +23,10 @@ import java.io.IOException;
 import java.net.URL;
 
 public class DirectoryContainer extends ClasslistContainer {
+
+    private static final String DEFAULT_PACKAGE = "<default>";
+    private final String packageName;
+
     public static class Creator implements ClasslistElementCreator {
         public boolean isType(URL url) {
             final File file = new URLHelper().toEncodedFile(url);
@@ -30,13 +34,14 @@ public class DirectoryContainer extends ClasslistContainer {
         }
 
         public ClasslistElement create(URL url) {
-            return new DirectoryContainer(new URLHelper().appendIfMissing("/",url));
+            return new DirectoryContainer(new URLHelper().appendIfMissing("/", url));
         }
     }
 
     public DirectoryContainer(URL url) {
         super(url);
         urls = toUrls(url);
+        packageName = toPackageName(urls);
     }
 
     private URL[] toUrls(URL url) {
@@ -56,5 +61,19 @@ public class DirectoryContainer extends ClasslistContainer {
         return "directory";
     }
 
+    public String getPackageName() {
+        return packageName;
+    }
+
+    private String toPackageName(URL [] urls) {
+        for (int i = 0; i < urls.length; i++) {
+            if (urls[i].toString().endsWith(".class")) {
+                ClasslistElementFactory factory = new ClasslistElementFactory();
+                ClassElement classElement = (ClassElement) factory.create(urls[i]);
+                return classElement.getPackageName();
+            }
+        }
+        return DEFAULT_PACKAGE;
+    }
 
 }

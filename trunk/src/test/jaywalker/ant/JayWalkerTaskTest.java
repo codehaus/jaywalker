@@ -42,6 +42,10 @@ public class JayWalkerTaskTest extends BuildFileTest {
         executeTarget("testReportAggregateForTest1Archive");
     }
 
+    public void testReportAggregateForTest2Archive() {
+        executeTarget("testReportAggregateForTest2Archive");
+    }
+
     public void testReportAggregateForTest4Archive() {
         executeTarget("testReportAggregateForTest4Archive");
     }
@@ -49,5 +53,10 @@ public class JayWalkerTaskTest extends BuildFileTest {
     public void testReportAggregateForBuiltArchives() {
         executeTarget("testReportAggregateForBuiltArchives");
     }
+
+    public void testReportAggregateForCycle1AndCycle2Archive() {
+        executeTarget("testReportAggregateForCycle1AndCycle2Archive");
+    }
+
 
 }

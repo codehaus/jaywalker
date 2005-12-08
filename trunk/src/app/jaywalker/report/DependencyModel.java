@@ -21,13 +21,10 @@ import jaywalker.classlist.ClasslistElementEvent;
 import jaywalker.classlist.ClasslistElementListener;
 
 import java.net.URL;
-import java.util.Map;
-import java.util.Set;
 
 public class DependencyModel implements ClasslistElementListener {
     private final DependencyHelper dependencyHelper = new DependencyHelper();
-    private Map containerDependencyMap;
-    private Map unresolvedMap;
+    private final DependencyCycleHelper dependencyCycleHelper = new DependencyCycleHelper(dependencyHelper);
 
     public void classlistElementVisited(ClasslistElementEvent event) {
         ClasslistElement classlistElement = event.getElement();
@@ -50,9 +47,6 @@ public class DependencyModel implements ClasslistElementListener {
 
     public void lastClasslistElementVisited() {
         dependencyHelper.resolveSystemClasses();
-
-        containerDependencyMap = dependencyHelper.getContainerDependencyMap();
-        unresolvedMap = dependencyHelper.getUnresolvedDependencies();
     }
 
     private String asClassName(String dependency) {
@@ -65,12 +59,25 @@ public class DependencyModel implements ClasslistElementListener {
         return value;
     }
 
-    public Set lookupContainerDependencies(String urlString) {
-        return (Set) containerDependencyMap.get(urlString);
+    public URL [] lookupResolvedContainerDependencies(URL url) {
+        return dependencyHelper.lookupResolvedContainerDependency(url);
     }
 
-    public Set lookupUnresolvedElementDependencies(URL url) {
-        return (Set) unresolvedMap.get(url);
+    public String[] lookupUnresolvedElementDependencies(URL url) {
+        return dependencyHelper.lookupUnresolvedElementDependency(url);
     }
+
+    public URL[] lookupElementCycleDependency(URL url) {
+        return dependencyCycleHelper.lookupElementCycleDependency(url);
+    }
+
+    public URL[] lookupContainerCyclicDependency(URL url) {
+        return dependencyCycleHelper.lookupContainerCycleDependency(url);
+    }
+
+    public URL[] lookupPackageCycleDependency(URL url) {
+        return dependencyCycleHelper.lookupPackageCycleDependency(url);
+    }
+
 
 }
