@@ -17,8 +17,16 @@ package jaywalker.report;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import jaywalker.classlist.ClasslistElement;
 import jaywalker.classlist.ClasslistElementFactory;
@@ -26,6 +34,23 @@ import jaywalker.classlist.ClasslistElementStatistic;
 import jaywalker.classlist.ClasslistElementVisitor;
 
 public class ReportExecutor {
+	final DependencyModel dependencyModel;
+
+	final DependencyReportConfiguration dependencyReportConfiguration;
+
+	final CollisionModel collisionModel;
+
+	final CollisionReportConfiguration collisionReportConfiguration;
+
+	public ReportExecutor() {
+		dependencyModel = new DependencyModel();
+		dependencyReportConfiguration = new DependencyReportConfiguration(
+				dependencyModel);
+		collisionModel = new CollisionModel();
+		collisionReportConfiguration = new CollisionReportConfiguration(
+				collisionModel);
+	}
+
 	public void execute(String classlist, Properties properties, Writer writer)
 			throws IOException {
 		final ClasslistElementFactory factory = new ClasslistElementFactory();
@@ -53,15 +78,9 @@ public class ReportExecutor {
 	}
 
 	private Report[] createReports(Properties properties) {
-		final DependencyModel dependencyModel = new DependencyModel();
-		DependencyReportConfiguration dependencyReportConfiguration = new DependencyReportConfiguration(
-				dependencyModel);
 		ReportTag[] dependencyReportTags = dependencyReportConfiguration
 				.toReportTags(properties);
 
-		CollisionModel collisionModel = new CollisionModel();
-		CollisionReportConfiguration collisionReportConfiguration = new CollisionReportConfiguration(
-				collisionModel);
 		ReportTag[] collisionReportTags = collisionReportConfiguration
 				.toReportTags(properties);
 
@@ -69,6 +88,51 @@ public class ReportExecutor {
 				new CollisionReport(collisionModel, collisionReportTags),
 				new DependencyReport(dependencyModel, dependencyReportTags) };
 		return reports;
+	}
+
+	public String[] getReportDescriptions() {
+		String [] reportTypes = getReportTypes();
+		Map map = toReportTypeMap(reportTypes);
+		Set keySet = map.keySet();
+		List descriptionList = new ArrayList();
+		for (Iterator itKey = keySet.iterator(); itKey.hasNext();) {
+			final Object key = itKey.next();
+			Set valueSet = (Set) map.get(key);
+			StringBuffer sb = new StringBuffer();
+			sb.append(key).append("=");
+			for (Iterator itValue = valueSet.iterator(); itValue.hasNext();) {
+				sb.append(itValue.next());
+				if (itValue.hasNext())
+					sb.append(",");
+			}
+			descriptionList.add(sb.toString());
+		}
+		return (String[]) descriptionList.toArray(new String[descriptionList
+				.size()]);
+	}
+
+	private String [] getReportTypes() {
+		List reportTypeList = new ArrayList();
+		reportTypeList.addAll(Arrays.asList(dependencyReportConfiguration
+				.getReportTypes()));
+		reportTypeList.addAll(Arrays.asList(collisionReportConfiguration
+				.getReportTypes()));
+		return (String[]) reportTypeList.toArray(new String[reportTypeList.size()]);
+	}
+
+	private Map toReportTypeMap(String [] reportTypes) {
+		Map map = new HashMap();
+		for (int i = 0; i < reportTypes.length;i++) {
+			String reportType = reportTypes[i];
+			String[] reporTypeAttributes = reportType.split(",");
+			Set set = (Set) map.get(reporTypeAttributes[0]);
+			if (set == null) {
+				set = new HashSet();
+				map.put(reporTypeAttributes[0], set);
+			}
+			set.add(reporTypeAttributes[1]);
+		}
+		return map;
 	}
 
 }

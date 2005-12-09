@@ -52,5 +52,10 @@ public class ReportTagMap {
 		return (ReportTag[]) reportTagList.toArray(new ReportTag[reportTagList
 				.size()]);
 	}
+	
+	public String [] getKeys() {
+		Set keySet = map.keySet();
+		return (String[]) keySet.toArray(new String[keySet.size()]);
+	}
 
 }

@@ -26,7 +26,7 @@ import jaywalker.util.Shell;
 
 public class JayWalker {
 
-	private ReportExecutor executor = new ReportExecutor();
+	private static ReportExecutor executor = new ReportExecutor();
 
 	protected Properties toProperties(String[] args) {
 		final Properties properties = new Properties();
@@ -63,11 +63,18 @@ public class JayWalker {
 		sb.append("usage   :  java ").append(className).append(" ");
 		sb.append("-classlist=");
 		sb.append("element1").append(File.pathSeparator);
-		sb.append("element2").append(File.pathSeparator).append("...\n");
+		sb.append("element2").append(File.pathSeparator).append(" ...\n");
 		sb.append(toSpaces(argColumn));
 		sb.append("[-reportType=reportAttribute ...]\n");
 		sb.append(toSpaces(argColumn));
 		sb.append("[-tempDir=path]\n");
+		sb.append("options :\n");
+		sb.append("    -reportType=reportAttribute ::=\n");
+		final String[] descriptions = executor.getReportDescriptions();
+		for (int i = 0; i < descriptions.length; i++) {
+			sb.append(toSpaces(argColumn));
+			sb.append("-").append(descriptions[i]).append("\n");
+		}
 		System.out.println(sb.toString());
 	}
 
@@ -114,9 +121,7 @@ public class JayWalker {
 	public static void main(String[] args) {
 		try {
 			JayWalker jayWalker = new JayWalker();
-			String[] newArgs = new String[args.length - 1];
-			System.arraycopy(args, 1, newArgs, 0, newArgs.length);
-			jayWalker.execute(newArgs);
+			jayWalker.execute(args);
 		} catch (Exception e) {
 			fail(e.getMessage());
 		}

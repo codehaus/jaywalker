@@ -186,13 +186,13 @@
                 <exclude name="test1/**"/>
                 <exclude name="test2/**"/>
                 <exclude name="**/JayWalkerTask*.class"/>
-                <exclude name="**/Report*.class"/>
+                <exclude name="**/ant/"/>
             </fileset>
         </jar>
         <jar destfile="build/dist/${ant.project.name}-ant-${project.version}.jar">
             <fileset dir="build/classes">
                 <include name="**/JayWalkerTask*.class"/>
-                <include name="**/Report*.class"/>
+                <include name="**/ant/"/>
             </fileset>
         </jar>
         <zip destfile="${ant.project.name}-${project.version}-bin.zip">

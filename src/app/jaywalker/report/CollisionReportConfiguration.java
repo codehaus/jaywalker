@@ -15,6 +15,9 @@
  */
 package jaywalker.report;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Properties;
 
 public class CollisionReportConfiguration {
@@ -55,5 +58,12 @@ public class CollisionReportConfiguration {
 		}
 		return nestedReportTags;
 	}
+	
+    public String [] getReportTypes() {
+    	final List list = new ArrayList();
+    	list.addAll(Arrays.asList(collisionReportTagMap.getKeys()));
+		list.addAll(Arrays.asList(collisionNestedReportTagMap.getKeys()));
+    	return (String[]) list.toArray(new String[list.size()]);
+    }
 
 }
