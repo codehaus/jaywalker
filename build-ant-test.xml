@@ -63,6 +63,7 @@
         <jaywalker output="build/temp/output-cycle-archive.xml" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-cycle-part1.jar"/>
             <classlist file="build/dist/jaywalker-cycle-part2.jar"/>
+        	<option name="cycle" value="archive,package,class"/>
         </jaywalker>
     </target>
 

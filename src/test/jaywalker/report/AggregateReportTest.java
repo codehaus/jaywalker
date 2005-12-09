@@ -23,74 +23,76 @@ import java.net.URL;
 import java.util.Date;
 
 public class AggregateReportTest extends JayWalkerTestCase {
-    public void assertCreateReportFor(URL url) throws IOException {
-        Date start = new Date();
+	public void assertCreateReportFor(URL url) throws IOException {
+		Date start = new Date();
 
-        Report [] reports = new Report []{
-                createCollisionReport(),
-                createDependencyReport()};
+		Report[] reports = new Report[] { createCollisionReport(),
+				createDependencyReport() };
 
-        AggregateModel model = new AggregateModel(reports);
-        assertVisit(url, model);
-        AggregateReport report = new AggregateReport(reports);
-        assertVisit(url, report);
-        System.out.println("Report initialization time : " + (new Date().getTime() - start.getTime()));
-        start = new Date();
-        String reportValue = report.toString();
-        System.out.println("Report creation time : " + (new Date().getTime() - start.getTime()));
-        System.out.println(reportValue);
-    }
+		AggregateModel model = new AggregateModel(reports);
+		assertVisit(url, model);
+		AggregateReport report = new AggregateReport(reports);
+		assertVisit(url, report);
+		System.out.println("Report initialization time : "
+				+ (new Date().getTime() - start.getTime()));
+		start = new Date();
+		String reportValue = report.toString();
+		System.out.println("Report creation time : "
+				+ (new Date().getTime() - start.getTime()));
+		System.out.println(reportValue);
+	}
 
-    private DependencyReport createDependencyReport() {
-        DependencyModel dependencyModel = new DependencyModel();
-        ReportTag [] dependencyReportTags = new ReportTag []{
-                new ContainerDependencyReportTag(dependencyModel),
-                new ContainerCyclicDependencyReportTag(dependencyModel),
-                new PackageCyclicDependencyReportTag(dependencyModel),
-                new UnresolvedClassNameDependencyReportTag(dependencyModel),
-                new ElementCyclicDependencyReportTag(dependencyModel),
-        };
-        return new DependencyReport(dependencyModel, dependencyReportTags);
-    }
+	private DependencyReport createDependencyReport() {
+		DependencyModel dependencyModel = new DependencyModel();
+		ReportTag[] dependencyReportTags = new ReportTag[] {
+				new ContainerDependencyReportTag(dependencyModel),
+				new ContainerCyclicDependencyReportTag(dependencyModel),
+				new PackageCyclicDependencyReportTag(dependencyModel),
+				new UnresolvedClassNameDependencyReportTag(dependencyModel),
+				new ElementCyclicDependencyReportTag(dependencyModel), };
+		return new DependencyReport(dependencyModel, dependencyReportTags);
+	}
 
-    private CollisionReport createCollisionReport() {
-        CollisionModel collisionModel = new CollisionModel();
-        NestedReportTag [] nestedReportTags = new NestedReportTag[]{
-                new SerialVersionUidConflictReportTag(collisionModel)
-        };
-        ReportTag[] collisionsReportTags = new ReportTag[]{
-                new CollisionReportTag(collisionModel, nestedReportTags)
-        };
-        return new CollisionReport(collisionModel, collisionsReportTags);
-    }
+	private CollisionReport createCollisionReport() {
+		CollisionModel collisionModel = new CollisionModel();
+		NestedReportTag[] nestedReportTags = new NestedReportTag[] { new SerialVersionUidConflictReportTag(
+				collisionModel) };
+		CollisionReportTag collisionReportTag = new CollisionReportTag(
+				collisionModel);
+		collisionReportTag.setNestedReportTags(nestedReportTags);
+		ReportTag[] collisionsReportTags = new ReportTag[] { collisionReportTag };
+		return new CollisionReport(collisionModel, collisionsReportTags);
+	}
 
-    public void testShouldCreateReportForAFile() throws IOException {
-        assertCreateReportFor(Path.FILE_CLASSLIST_ELEMENT_FACTORY_CLASS.toURL());
-    }
+	public void testShouldCreateReportForAFile() throws IOException {
+		assertCreateReportFor(Path.FILE_CLASSLIST_ELEMENT_FACTORY_CLASS.toURL());
+	}
 
-    public void testShouldCreateReportForFilesInADirectory() throws IOException {
-        assertCreateReportFor(Path.DIR_BUILD_APP.toURL());
-    }
+	public void testShouldCreateReportForFilesInADirectory() throws IOException {
+		assertCreateReportFor(Path.DIR_BUILD_APP.toURL());
+	}
 
-    public void testShouldCreateReportForFilesInAnArchive() throws IOException {
-        assertCreateReportFor(Path.FILE_TEST1_JAR.toURL());
-    }
+	public void testShouldCreateReportForFilesInAnArchive() throws IOException {
+		assertCreateReportFor(Path.FILE_TEST1_JAR.toURL());
+	}
 
-    public void testShouldCreateReportForFilesInNestedArchive() throws IOException {
-        assertCreateReportFor(Path.FILE_TEST4_JAR.toURL());
-    }
+	public void testShouldCreateReportForFilesInNestedArchive()
+			throws IOException {
+		assertCreateReportFor(Path.FILE_TEST4_JAR.toURL());
+	}
 
-    public void testShouldCreateReportForFilesInNestedArchive2() throws IOException {
-        assertCreateReportFor(Path.FILE_TEST5_JAR.toURL());
-    }
+	public void testShouldCreateReportForFilesInNestedArchive2()
+			throws IOException {
+		assertCreateReportFor(Path.FILE_TEST5_JAR.toURL());
+	}
 
-    public void testShouldCreateReportForNestedArchivesInADirectory() throws IOException {
-        assertCreateReportFor(Path.DIR_BUILD_JAR.toURL());
-    }
+	public void testShouldCreateReportForNestedArchivesInADirectory()
+			throws IOException {
+		assertCreateReportFor(Path.DIR_BUILD_JAR.toURL());
+	}
 
-//    public void testBiggie() throws IOException {
-//        assertCreateReportFor(new File("C:\\temp\\weblogic").toURL());
-//    }
-
+	// public void testBiggie() throws IOException {
+	// assertCreateReportFor(new File("C:\\temp\\weblogic").toURL());
+	// }
 
 }

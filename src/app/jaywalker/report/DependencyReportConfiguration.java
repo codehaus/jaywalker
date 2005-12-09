@@ -15,24 +15,29 @@
  */
 package jaywalker.report;
 
+import java.util.Properties;
+
 import jaywalker.ant.Option;
 
 public class DependencyReportConfiguration {
-    private final DependencyModel dependencyModel;
-
+    private final ReportTagMap dependencyReportTagMap;
+    
     public DependencyReportConfiguration(DependencyModel dependencyModel) {
-        this.dependencyModel = dependencyModel;
+        this.dependencyReportTagMap = createReportTagMap(dependencyModel);
     }
 
-    public ReportTag [] toReportTags(Option [] options) {
-        ReportTagMap dependencyReportTagMap = new ReportTagMap();
-        dependencyReportTagMap.put("dependency", "archive", new ContainerDependencyReportTag(dependencyModel));
+	private ReportTagMap createReportTagMap(DependencyModel dependencyModel) {
+		ReportTagMap dependencyReportTagMap = new ReportTagMap();
+		dependencyReportTagMap.put("dependency", "archive", new ContainerDependencyReportTag(dependencyModel));
         dependencyReportTagMap.put("dependency", "class", new UnresolvedClassNameDependencyReportTag(dependencyModel));
         dependencyReportTagMap.put("cycle", "archive", new ContainerCyclicDependencyReportTag(dependencyModel));
         dependencyReportTagMap.put("cycle", "package", new PackageCyclicDependencyReportTag(dependencyModel));
         dependencyReportTagMap.put("cycle", "class", new ElementCyclicDependencyReportTag(dependencyModel));
+        return dependencyReportTagMap;
+	}
 
-        return dependencyReportTagMap.optionsToReportTags(options);
+    public ReportTag [] toReportTags(Properties properties) {
+        return dependencyReportTagMap.get(properties);
     }
 
 }

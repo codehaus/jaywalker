@@ -17,35 +17,15 @@ package jaywalker.report;
 
 import jaywalker.classlist.ClasslistElementListener;
 
-import java.net.URL;
-import java.util.Stack;
-
 public class CollisionReport extends AbstractReport {
-    private final CollisionModel model;
-    private final ReportTag[] reportTags;
+	private final CollisionModel model;
 
-    public CollisionReport(CollisionModel model, ReportTag [] reportTags) {
-        this.model = model;
-        this.reportTags = reportTags;
-    }
+	public CollisionReport(CollisionModel model, ReportTag[] reportTags) {
+		super(reportTags);
+		this.model = model;
+	}
 
-    public String createElementSection(URL url, Stack parentUrlStack) {
-        return createSection(reportTags, url, parentUrlStack);
-    }
-
-    public String createContainerSection(URL url, Stack parentUrlStack) {
-        return createSection(reportTags, url, parentUrlStack);
-    }
-
-    private String createSection(ReportTag [] reportTags, URL url, Stack parentUrlStack) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i < reportTags.length; i++) {
-            sb.append(reportTags[i].create(url, parentUrlStack));
-        }
-        return sb.toString();
-    }
-
-    public ClasslistElementListener getModel() {
-        return model;
-    }
+	public ClasslistElementListener getModel() {
+		return model;
+	}
 }

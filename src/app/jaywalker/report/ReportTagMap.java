@@ -15,39 +15,42 @@
  */
 package jaywalker.report;
 
-import jaywalker.ant.Option;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 
 public class ReportTagMap {
-    private Map map = new HashMap();
+	private Map map = new HashMap();
 
-    public ReportTag get(String type, String value) {
-        return (ReportTag) map.get(toKey(type, value));
-    }
+	public ReportTag get(String type, String value) {
+		return (ReportTag) map.get(toKey(type, value));
+	}
 
-    public void put(String type, String value, ReportTag reportTag) {
-        map.put(toKey(type, value), reportTag);
-    }
+	public void put(String type, String value, ReportTag reportTag) {
+		map.put(toKey(type, value), reportTag);
+	}
 
-    public String toKey(String type, String value) {
-        return type + "," + value;
-    }
+	public String toKey(String type, String value) {
+		return type + "," + value;
+	}
 
-    public ReportTag [] optionsToReportTags(Option [] options) {
-        List reportTagList = new ArrayList();
-        for (int i = 0; i < options.length; i++) {
-            String [] values = options[i].splitValue(",");
-            for (int j = 0; j < values.length; j++) {
-                final ReportTag reportTag = get(options[i].getType(), values[j]);
-                if (reportTag != null) reportTagList.add(reportTag);
-            }
-        }
-        return (ReportTag[]) reportTagList.toArray(new ReportTag[reportTagList.size()]);
-    }
-
+	public ReportTag[] get(Properties properties) {
+		List reportTagList = new ArrayList();
+		Set keySet = properties.keySet();
+		String[] keys = (String[]) keySet.toArray(new String[keySet.size()]);
+		for (int i = 0; i < keys.length; i++) {
+			String[] values = properties.getProperty(keys[i]).split(",");
+			for (int j = 0; j < values.length; j++) {
+				final ReportTag reportTag = get(keys[i], values[j]);
+				if (reportTag != null)
+					reportTagList.add(reportTag);
+			}
+		}
+		return (ReportTag[]) reportTagList.toArray(new ReportTag[reportTagList
+				.size()]);
+	}
 
 }

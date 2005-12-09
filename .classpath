@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/app"/>
+	<classpathentry kind="src" path="src/test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="src/metadata"/>
+	<classpathentry kind="lib" path="tools/ant/ant-1.6.3.jar"/>
+	<classpathentry kind="lib" path="tools/ant/ant-apache-bcel.jar"/>
+	<classpathentry kind="lib" path="tools/ant/ant-launcher.jar"/>
+	<classpathentry kind="lib" path="tools/ant/ant-testutil-1.6.3.jar"/>
+	<classpathentry kind="lib" path="tools/bcel/bcel-5.1.jar"/>
+	<classpathentry kind="lib" path="tools/emma/emma-2.0.4217.jar"/>
+	<classpathentry kind="lib" path="tools/emma/emma-ant-2.0.4217.jar"/>
+	<classpathentry kind="lib" path="tools/junit/junit-3.8.1.jar"/>
+	<classpathentry kind="output" path="classes-ide"/>
+</classpath>
