@@ -15,8 +15,23 @@
  */
 package jaywalker.report;
 
+import java.net.URL;
+import java.util.Stack;
+
 public abstract class AbstractReport implements Report {
 
-    protected final static ReportHelper reportHelper = new ReportHelper();
+	private final ReportTag[] reportTags;
+
+	public AbstractReport(ReportTag[] reportTags) {
+		this.reportTags = reportTags;
+	}
+
+	public String createSection(URL url, Stack parentUrlStack) {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < reportTags.length; i++) {
+			sb.append(reportTags[i].create(url, parentUrlStack));
+		}
+		return sb.toString();
+	}
 
 }

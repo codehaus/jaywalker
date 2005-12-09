@@ -17,7 +17,9 @@ package jaywalker.util;
 
 public class ResourceNotFoundException extends RuntimeException {
 
-    public ResourceNotFoundException(String s) {
+	private static final long serialVersionUID = 6468705083617845692L;
+
+	public ResourceNotFoundException(String s) {
         super(s);
     }
 }

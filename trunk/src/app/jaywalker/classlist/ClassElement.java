@@ -15,15 +15,14 @@
  */
 package jaywalker.classlist;
 
-import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.classfile.JavaClass;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 import jaywalker.util.URLHelper;
+
+import org.apache.bcel.classfile.ClassParser;
+import org.apache.bcel.classfile.JavaClass;
 
 public class ClassElement extends ClasslistElement {
     private ClassElementFile file;
@@ -41,11 +40,6 @@ public class ClassElement extends ClasslistElement {
 
     public ClassElement(URL url) {
         super(url);
-    }
-
-    private File getPropertiesFile() {
-        String urlString = url.toString();
-        return new File(urlString.substring(0, urlString.lastIndexOf('.')) + ".properties");
     }
 
     public String getName() {

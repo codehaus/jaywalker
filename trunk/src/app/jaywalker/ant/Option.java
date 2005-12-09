@@ -15,36 +15,68 @@
  */
 package jaywalker.ant;
 
+import java.util.Properties;
+
 public class Option {
-    private String type;
-    private String value;
+	private String name;
 
-    public Option(String type, String value) {
-        this.type = type;
-        this.value = value;
-    }
+	private String value;
 
-    public String getType() {
-        return type;
-    }
+	public Option() {
+	}
 
-    public void setType(String type) {
-        this.type = type;
-    }
+	public Option(String name, String value) {
+		this.name = name;
+		this.value = value;
+	}
 
-    public String getValue() {
-        return value;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setValue(String value) {
-        this.value = value;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public String [] splitValue(String delimiter) {
-        String [] values = value.split(",");
-        for ( int i = 0; i < values.length; i++ ) {
-            values[i] = values[i].trim();
-        }
-        return values;
-    }
+	public String getValue() {
+		return value;
+	}
+
+	public void setValue(String value) {
+		this.value = value;
+	}
+
+	public String[] splitValue(String delimiter) {
+		String[] values = value.split(",");
+		for (int i = 0; i < values.length; i++) {
+			values[i] = values[i].trim();
+		}
+		return values;
+	}
+
+	public int hashCode() {
+		int value = 17;
+		value = 37 * value + ((name != null) ? name.hashCode() : 0);
+		return value;
+	}
+
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		final Option that = (Option) o;
+
+		return name.equals(that.name);
+	}
+
+	public static Properties toProperties(Option[] options) {
+		Properties properties = new Properties();
+		for (int i = 0; i < options.length; i++) {
+			properties.put(options[i].getName(), options[i].getValue());
+		}
+		return properties;
+	}
+
 }

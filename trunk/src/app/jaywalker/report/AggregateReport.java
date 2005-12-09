@@ -6,10 +6,10 @@ import java.net.URL;
 import java.util.Stack;
 
 public class AggregateReport implements ClasslistElementListener {
-    private String stringValue;
-
-    StringBuffer sbReport = new StringBuffer();
-    Stack stack = new Stack();
+	private final ReportHelper reportHelper = new ReportHelper();
+	private String stringValue;
+    private StringBuffer sbReport = new StringBuffer();
+    private Stack stack = new Stack();
     private final Report[] reports;
 
     public AggregateReport(Report [] reports) {
@@ -21,18 +21,18 @@ public class AggregateReport implements ClasslistElementListener {
         final URL url = element.getURL();
         while (isElementNotOnStackTop(element)) {
             stack.pop();
-            sbReport.append(toSpaces(stack.size()));
+            sbReport.append(reportHelper.toSpaces(stack.size()));
             sbReport.append("</container>\n");
         }
 
-        sbReport.append(toSpaces(stack.size()));
+        sbReport.append(reportHelper.toSpaces(stack.size()));
 
         if (element instanceof ClasslistContainer) {
             sbReport.append("<container type=\"").append(element.getType()).append("\"");
             sbReport.append(" url=\"").append(element.getURL()).append("\">\n");
             stack.push(element.getURL());
             for (int i = 0; i < reports.length; i++) {
-                sbReport.append(reports[i].createContainerSection(url, stack));
+                sbReport.append(reports[i].createSection(url, stack));
             }
         } else if (element instanceof ClassElement) {
             ClassElement classElement = (ClassElement) element;
@@ -40,26 +40,24 @@ public class AggregateReport implements ClasslistElementListener {
             sbReport.append(classElement.getName()).append("\"");
 
             stack.push(url);
-            String [] xmlTags = new String [reports.length];
+            StringBuffer sbXmlTags = new StringBuffer();
 
             for (int i = 0; i < reports.length; i++) {
-                xmlTags[i] = reports[i].createElementSection(url, stack);
+                sbXmlTags.append(reports[i].createSection(url, stack));
             }
 
-            if (isAllBlank(xmlTags)) {
+            if (sbXmlTags.length() == 0) {
                 stack.pop();
                 sbReport.append("/>\n");
                 return;
             }
 
             sbReport.append(">\n");
-
-            for (int i = 0; i < xmlTags.length; i++) {
-                sbReport.append(xmlTags[i]);
-            }
+            
+            sbReport.append(sbXmlTags);
 
             stack.pop();
-            sbReport.append(toSpaces(stack.size()));
+            sbReport.append(reportHelper.toSpaces(stack.size()));
             sbReport.append("</element>\n");
 
         } else {
@@ -67,13 +65,6 @@ public class AggregateReport implements ClasslistElementListener {
             sbReport.append(" url=\"").append(element.getURL()).append("\"/>\n");
         }
 
-    }
-
-    private boolean isAllBlank(String[] xmlTags) {
-        for (int i = 0; i < xmlTags.length; i++) {
-            if (xmlTags[i].length() > 0) return false;
-        }
-        return true;
     }
 
     public void lastClasslistElementVisited() {
@@ -107,21 +98,13 @@ public class AggregateReport implements ClasslistElementListener {
     private String createContainerEndTag() {
         StringBuffer sb = new StringBuffer();
         stack.pop();
-        sb.append(toSpaces(stack.size()));
+        sb.append(reportHelper.toSpaces(stack.size()));
         sb.append("</container>\n");
         return sb.toString();
     }
 
     private boolean isElementNotOnStackTop(ClasslistElement element) {
         return !stack.isEmpty() && !element.getContainer().getURL().equals(stack.peek());
-    }
-
-    private String toSpaces(int spaces) {
-        StringBuffer sb = new StringBuffer();
-        for (int i = 0; i <= spaces; i++) {
-            sb.append("  ");
-        }
-        return sb.toString();
     }
 
 }

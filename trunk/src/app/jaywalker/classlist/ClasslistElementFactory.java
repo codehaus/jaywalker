@@ -15,14 +15,12 @@
  */
 package jaywalker.classlist;
 
-import jaywalker.util.ResourceLocator;
-
-import java.net.URL;
-import java.net.MalformedURLException;
-import java.util.StringTokenizer;
-import java.util.List;
-import java.util.ArrayList;
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.StringTokenizer;
 
 public class ClasslistElementFactory {
 
@@ -32,7 +30,6 @@ public class ClasslistElementFactory {
             new ArchiveContainer.Creator(),
             new FileElement.Creator()
     };
-    private final ResourceLocator locator = ResourceLocator.instance();
 
     public ClasslistElement create(URL url) {
         return findAndCreate(url);

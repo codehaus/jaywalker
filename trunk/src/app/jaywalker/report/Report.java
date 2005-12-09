@@ -21,9 +21,6 @@ import java.net.URL;
 import java.util.Stack;
 
 public interface Report {
-    String createContainerSection(URL url, Stack parentUrlStack);
-
-    String createElementSection(URL url, Stack parentUrlStack);
-
+    String createSection(URL url, Stack parentUrlStack);
     ClasslistElementListener getModel();
 }

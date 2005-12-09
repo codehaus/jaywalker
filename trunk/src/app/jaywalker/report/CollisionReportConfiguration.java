@@ -15,32 +15,45 @@
  */
 package jaywalker.report;
 
-import jaywalker.ant.Option;
+import java.util.Properties;
 
 public class CollisionReportConfiguration {
-    private final CollisionModel collisionModel;
+	private final ReportTagMap collisionNestedReportTagMap;
+	private final ReportTagMap collisionReportTagMap;
 
-    public CollisionReportConfiguration(CollisionModel collisionModel) {
-        this.collisionModel = collisionModel;
-    }
+	public CollisionReportConfiguration(CollisionModel collisionModel) {
+		this.collisionReportTagMap = createReportTagMap(collisionModel);
+		this.collisionNestedReportTagMap = createNestedReportTagMap(collisionModel);
+	}
 
-    public ReportTag [] toReportTags(Option [] options) {
-        ReportTagMap collisionNestedReportTagMap = new ReportTagMap();
-        collisionNestedReportTagMap.put("conflict", "class", new SerialVersionUidConflictReportTag(collisionModel));
-        NestedReportTag [] collisionNestedReportTags = toNestedReportTags(collisionNestedReportTagMap.optionsToReportTags(options));
+	private ReportTagMap createNestedReportTagMap(CollisionModel collisionModel) {
+		ReportTagMap collisionNestedReportTagMap = new ReportTagMap();
+		collisionNestedReportTagMap.put("conflict", "class",
+				new SerialVersionUidConflictReportTag(collisionModel));
+		return collisionNestedReportTagMap;
+	}
 
-        ReportTagMap collisionReportTagMap = new ReportTagMap();
-        collisionReportTagMap.put("collision", "class", new CollisionReportTag(collisionModel, collisionNestedReportTags));
+	private ReportTagMap createReportTagMap(CollisionModel collisionModel) {
+		ReportTagMap collisionReportTagMap = new ReportTagMap();
+		collisionReportTagMap.put("collision", "class", new CollisionReportTag(
+				collisionModel));
+		return collisionReportTagMap;
+	}
+	
+	public ReportTag[] toReportTags(Properties properties) {
+		NestedReportTag[] collisionNestedReportTags = toNestedReportTags(collisionNestedReportTagMap
+				.get(properties));
+		CollisionReportTag collisionReportTag = (CollisionReportTag) collisionReportTagMap.get("collision","class");
+		collisionReportTag.setNestedReportTags(collisionNestedReportTags);
+		return collisionReportTagMap.get(properties);
+	}
 
-        return collisionReportTagMap.optionsToReportTags(options);
-    }
-
-    private NestedReportTag[] toNestedReportTags(ReportTag[] reportTags) {
-        NestedReportTag[] nestedReportTags = new NestedReportTag[reportTags.length];
-        for ( int i = 0; i < reportTags.length; i++) {
-            nestedReportTags[i] = (NestedReportTag) reportTags[i];
-        }
-        return nestedReportTags;
-    }
+	private NestedReportTag[] toNestedReportTags(ReportTag[] reportTags) {
+		NestedReportTag[] nestedReportTags = new NestedReportTag[reportTags.length];
+		for (int i = 0; i < reportTags.length; i++) {
+			nestedReportTags[i] = (NestedReportTag) reportTags[i];
+		}
+		return nestedReportTags;
+	}
 
 }
