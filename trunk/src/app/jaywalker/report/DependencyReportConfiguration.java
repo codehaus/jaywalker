@@ -39,5 +39,9 @@ public class DependencyReportConfiguration {
     public ReportTag [] toReportTags(Properties properties) {
         return dependencyReportTagMap.get(properties);
     }
+    
+    public String [] getReportTypes() {
+    	return dependencyReportTagMap.getKeys();
+    }
 
 }
