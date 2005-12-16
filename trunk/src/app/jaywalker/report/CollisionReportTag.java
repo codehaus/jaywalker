@@ -33,8 +33,13 @@ public class CollisionReportTag implements ReportTag {
 		URL[] collisionUrls = model.lookupCollisionUrls(url);
 		if (collisionUrls == null)
 			return "";
-		boolean isConflict = isNestedElementsConflicting(collisionUrls);
+		boolean isConflict = isConflicting(url, collisionUrls);
 		StringBuffer sb = new StringBuffer();
+		if (isConflict) {
+			for (int j = 0; j < nestedReportTags.length; j++) {
+				sb.append(nestedReportTags[j].create(url, parentUrlStack));
+			}
+		}
 		for (int i = 0; i < collisionUrls.length; i++) {
 			sb.append(reportHelper.toSpaces(parentUrlStack.size()));
 			sb.append("<collision url=\"").append(collisionUrls[i])
@@ -53,6 +58,15 @@ public class CollisionReportTag implements ReportTag {
 		}
 		return sb.toString();
 
+	}
+
+	private boolean isConflicting(URL url, URL[] collisionUrls) {
+		boolean isConflict;
+		URL[] urls = new URL[collisionUrls.length + 1];
+		urls[0] = url;
+		System.arraycopy(collisionUrls, 0, urls, 1, collisionUrls.length);
+		isConflict = isNestedElementsConflicting(urls);
+		return isConflict;
 	}
 
 	public void setNestedReportTags(NestedReportTag[] nestedReportTags) {
