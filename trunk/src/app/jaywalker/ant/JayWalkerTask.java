@@ -46,7 +46,7 @@ public class JayWalkerTask extends Task {
 
 	public JayWalkerTask() {
 		super();
-		optionSet.add(new Option("dependency", "archive,class"));
+		optionSet.add(new Option("dependency", "archive,package,class"));
 		optionSet.add(new Option("collision", "class"));
 		optionSet.add(new Option("conflict", "class"));
 	}

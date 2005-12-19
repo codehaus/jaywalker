@@ -29,6 +29,7 @@ public class DependencyReportConfiguration {
 	private ReportTagMap createReportTagMap(DependencyModel dependencyModel) {
 		ReportTagMap dependencyReportTagMap = new ReportTagMap();
 		dependencyReportTagMap.put("dependency", "archive", new ContainerDependencyReportTag(dependencyModel));
+        dependencyReportTagMap.put("dependency", "package", new PackageDependencyReportTag(dependencyModel));
         dependencyReportTagMap.put("dependency", "class", new UnresolvedClassNameDependencyReportTag(dependencyModel));
         dependencyReportTagMap.put("cycle", "archive", new ContainerCyclicDependencyReportTag(dependencyModel));
         dependencyReportTagMap.put("cycle", "package", new PackageCyclicDependencyReportTag(dependencyModel));

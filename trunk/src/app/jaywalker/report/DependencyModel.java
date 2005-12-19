@@ -75,6 +75,10 @@ public class DependencyModel implements ClasslistElementListener {
         return dependencyCycleHelper.lookupContainerCycleDependency(url);
     }
 
+    public String [] lookupResolvedPackageNameDependencies(URL url) {
+        return dependencyHelper.lookupResolvedPackageNameDependencies(url);
+    }
+    
     public URL[] lookupPackageCycleDependency(URL url) {
         return dependencyCycleHelper.lookupPackageCycleDependency(url);
     }

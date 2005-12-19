@@ -7,13 +7,13 @@
         <xsl:apply-templates/>
         <xsl:text disable-output-escaping="yes">}</xsl:text>
     </xsl:template>
-    <xsl:template match="container[@type='archive']">
+    <xsl:template match="container">
         <xsl:if test="count(child::dependency)>0">
-            <xsl:for-each select="child::dependency[@type='resolved']/container[@type='archive']">
+            <xsl:for-each select="child::dependency[@type='resolved']/container[@type='package']">
                 <xsl:text disable-output-escaping="yes">    "</xsl:text>
                 <xsl:value-of select="../../@url"/>
                 <xsl:text disable-output-escaping="yes">" -&gt; "</xsl:text>
-                <xsl:value-of select="@url"/>
+                <xsl:value-of select="@value"/>
                 <xsl:text disable-output-escaping="yes">";&#10;</xsl:text>
             </xsl:for-each>
         </xsl:if>
