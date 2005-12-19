@@ -171,4 +171,9 @@ public class DependencyHelper {
         return (String[]) set.toArray(new String[set.size()]);
     }
 
+    public String [] lookupResolvedPackageNameDependencies(URL url) {
+        final Set set = (Set) resolvedPackageNameByUrlMap.get(url);
+        if (set == null) return new String[0];
+        return (String[]) set.toArray(new String[set.size()]);
+    }
 }
