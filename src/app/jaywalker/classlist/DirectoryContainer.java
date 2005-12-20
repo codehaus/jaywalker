@@ -24,7 +24,6 @@ import java.net.URL;
 
 public class DirectoryContainer extends ClasslistContainer {
 
-    private static final String DEFAULT_PACKAGE = "<default>";
     private final String packageName;
 
     public static class Creator implements ClasslistElementCreator {
@@ -73,7 +72,7 @@ public class DirectoryContainer extends ClasslistContainer {
                 return classElement.getPackageName();
             }
         }
-        return DEFAULT_PACKAGE;
+        return null;
     }
 
 }
