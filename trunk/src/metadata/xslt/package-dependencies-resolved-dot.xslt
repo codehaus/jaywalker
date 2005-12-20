@@ -2,21 +2,28 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="html"/>
     <xsl:strip-space elements="*"/>
-    <xsl:template match="report">
+    <xsl:key name="arc" match="dependency[@type='resolved']/container[@type='package']"
+        use="concat(../../@value,':',@value)"/>
+    <xsl:template match="/">
         <xsl:text disable-output-escaping="yes">digraph G {&#10;</xsl:text>
-        <xsl:apply-templates/>
-        <xsl:text disable-output-escaping="yes">}</xsl:text>
-    </xsl:template>
-    <xsl:template match="container">
-        <xsl:if test="count(child::dependency)>0">
-            <xsl:for-each select="child::dependency[@type='resolved']/container[@type='package']">
+        <xsl:for-each
+            select="//container[generate-id()=generate-id(key('arc',concat(../../@value,':',@value)))]">
+            <xsl:variable name="source">
+                <xsl:choose>
+                    <xsl:when test="not(../../@value)">default</xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="../../@value"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            <xsl:if test="$source != @value">
                 <xsl:text disable-output-escaping="yes">    "</xsl:text>
-                <xsl:value-of select="../../@url"/>
+                <xsl:value-of select="$source"/>
                 <xsl:text disable-output-escaping="yes">" -&gt; "</xsl:text>
                 <xsl:value-of select="@value"/>
                 <xsl:text disable-output-escaping="yes">";&#10;</xsl:text>
-            </xsl:for-each>
-        </xsl:if>
-        <xsl:apply-templates/>
+            </xsl:if>
+        </xsl:for-each>
+        <xsl:text disable-output-escaping="yes">}</xsl:text>
     </xsl:template>
 </xsl:stylesheet>
