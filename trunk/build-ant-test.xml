@@ -20,52 +20,59 @@
     </target>
 
     <target name="testTaskClasslistNotPresent" depends="init">
-        <jaywalker output="build/temp/output.xml"/>
+        <jaywalker outDir="build/temp/output"/>
     </target>
 
-    <target name="testReportAggregateForClassElement" depends="init">
-        <jaywalker output="build/temp/output-class-element.xml" tempDir="build/temp">
+    <target name="testUnifiedReportForClassElement" depends="init">
+        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForClassElement" tempDir="build/temp">
             <classlist file="build/classes/jaywalker/classlist/ClasslistElementFactory.class"/>
         </jaywalker>
     </target>
 
-    <target name="testReportAggregateForClassesDirectory" depends="init">
-        <jaywalker output="build/temp/output-classes-directory.xml" tempDir="build/temp">
+    <target name="testUnifiedReportForClassesDirectory" depends="init">
+        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForClassesDirectory" tempDir="build/temp">
             <classlist dir="build/classes"/>
         </jaywalker>
     </target>
 
-    <target name="testReportAggregateForTest1Archive" depends="init">
-        <jaywalker output="build/temp/output-test1-archive.xml" tempDir="build/temp">
+    <target name="testUnifiedReportForTest1Archive" depends="init">
+        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForTest1Archive" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-test1.jar"/>
         </jaywalker>
     </target>
 
-    <target name="testReportAggregateForTest2Archive" depends="init">
-        <jaywalker output="build/temp/output-test2-archive.xml" tempDir="build/temp">
+    <target name="testUnifiedReportForTest2Archive" depends="init">
+        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForTest2Archive" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-test2.jar"/>
         </jaywalker>
     </target>
 
-    <target name="testReportAggregateForTest4Archive" depends="init">
-        <jaywalker output="build/temp/output-test4-archive.xml" tempDir="build/temp">
+    <target name="testUnifiedReportForTest1Test2Archive" depends="init">
+        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForTest1Test2Archive" tempDir="build/temp">
+            <classlist file="build/dist/jaywalker-test1.jar"/>
+            <classlist file="build/dist/jaywalker-test2.jar"/>
+        </jaywalker>
+    </target>
+    
+
+    <target name="testUnifiedReportForTest4Archive" depends="init">
+        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForTest4Archive" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-test4.jar"/>
         </jaywalker>
     </target>
 
-    <target name="testReportAggregateForBuiltArchives" depends="init">
-        <jaywalker output="build/temp/output-built-archives.xml" tempDir="build/temp">
+    <target name="testUnifiedReportForBuiltArchives" depends="init">
+        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForBuiltArchives" tempDir="build/temp">
             <classlist dir="build/dist"/>
         </jaywalker>
     </target>
 
-    <target name="testReportAggregateForCycle1AndCycle2Archive" depends="init">
-        <jaywalker output="build/temp/output-cycle-archive.xml" tempDir="build/temp">
+    <target name="testUnifiedReportForCycle1AndCycle2Archive" depends="init">
+        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForCycle1AndCycle2Archive" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-cycle-part1.jar"/>
             <classlist file="build/dist/jaywalker-cycle-part2.jar"/>
-        	<option name="cycle" value="archive,package,class"/>
+            <option name="cycle" value="archive,package,class"/>
         </jaywalker>
     </target>
-
 
 </project>

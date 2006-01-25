@@ -1,12 +1,13 @@
 package jaywalker.report;
 
 import jaywalker.classlist.*;
+import jaywalker.xml.TagHelper;
 
 import java.net.URL;
 import java.util.Stack;
 
 public class AggregateReport implements ClasslistElementListener {
-	private final ReportHelper reportHelper = new ReportHelper();
+	private final TagHelper reportHelper = new TagHelper();
 
 	private String stringValue;
 
@@ -47,7 +48,7 @@ public class AggregateReport implements ClasslistElementListener {
 			sbReport.append(">\n");
 			stack.push(element.getURL());
 			for (int i = 0; i < reports.length; i++) {
-				sbReport.append(reports[i].createSection(url, stack));
+				sbReport.append(reports[i].toTagString(url, stack));
 			}
 		} else if (element instanceof ClassElement) {
 			ClassElement classElement = (ClassElement) element;
@@ -59,7 +60,7 @@ public class AggregateReport implements ClasslistElementListener {
 			StringBuffer sbXmlTags = new StringBuffer();
 
 			for (int i = 0; i < reports.length; i++) {
-				sbXmlTags.append(reports[i].createSection(url, stack));
+				sbXmlTags.append(reports[i].toTagString(url, stack));
 			}
 
 			if (sbXmlTags.length() == 0) {

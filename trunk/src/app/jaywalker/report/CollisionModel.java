@@ -40,7 +40,6 @@ public class CollisionModel implements ClasslistElementListener {
     public void lastClasslistElementVisited() {
         urlCollisionMap = collisionHelper.createUrlCollisionMap();
         suidHelper = new SerialVersionUidHelper(collisionHelper.createClassNameToUrlsMap());
-        collisionHelper = null;
     }
 
     public URL [] lookupCollisionUrls(URL url) {

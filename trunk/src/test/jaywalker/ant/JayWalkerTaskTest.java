@@ -30,33 +30,36 @@ public class JayWalkerTaskTest extends BuildFileTest {
         }
     }
 
-    public void testReportAggregateForClassElement() {
-        executeTarget("testReportAggregateForClassElement");
+    public void testUnifiedReportForClassElement() {
+        executeTarget("testUnifiedReportForClassElement");
     }
 
-    public void testReportAggregateForClassesDirectory() {
-        executeTarget("testReportAggregateForClassesDirectory");
+    public void testUnifiedReportForClassesDirectory() {
+        executeTarget("testUnifiedReportForClassesDirectory");
     }
 
-    public void testReportAggregateForTest1Archive() {
-        executeTarget("testReportAggregateForTest1Archive");
+    public void testUnifiedReportForTest1Archive() {
+        executeTarget("testUnifiedReportForTest1Archive");
     }
 
-    public void testReportAggregateForTest2Archive() {
-        executeTarget("testReportAggregateForTest2Archive");
+    public void testUnifiedReportForTest2Archive() {
+        executeTarget("testUnifiedReportForTest2Archive");
+    }
+    
+    public void testUnifiedReportForTest1Test2Archive() {
+        executeTarget("testUnifiedReportForTest1Test2Archive");
     }
 
-    public void testReportAggregateForTest4Archive() {
-        executeTarget("testReportAggregateForTest4Archive");
+    public void testUnifiedReportForTest4Archive() {
+        executeTarget("testUnifiedReportForTest4Archive");
     }
 
-    public void testReportAggregateForBuiltArchives() {
-        executeTarget("testReportAggregateForBuiltArchives");
+    public void testUnifiedReportForBuiltArchives() {
+        executeTarget("testUnifiedReportForBuiltArchives");
     }
 
-    public void testReportAggregateForCycle1AndCycle2Archive() {
-        executeTarget("testReportAggregateForCycle1AndCycle2Archive");
+    public void testUnifiedReportForCycle1AndCycle2Archive() {
+        executeTarget("testUnifiedReportForCycle1AndCycle2Archive");
     }
-
 
 }

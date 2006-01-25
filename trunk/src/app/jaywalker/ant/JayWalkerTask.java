@@ -15,9 +15,7 @@
  */
 package jaywalker.ant;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
@@ -40,9 +38,9 @@ public class JayWalkerTask extends Task {
 
 	protected Vector classlists = new Vector();
 
-	private File output;
-
 	private Set optionSet = new HashSet();
+
+	private File outDir;
 
 	public JayWalkerTask() {
 		super();
@@ -52,7 +50,7 @@ public class JayWalkerTask extends Task {
 	}
 
 	protected void validate() {
-		if (output == null) {
+		if (outDir == null) {
 			throw new BuildException("report output not set");
 		}
 		if (classlists.size() < 1) {
@@ -77,8 +75,8 @@ public class JayWalkerTask extends Task {
 					.toArray(new Option[optionSet.size()]);
 			Properties properties = Option.toProperties(options);
 
-			BufferedWriter out = new BufferedWriter(new FileWriter(output));
-			new ReportExecutor().execute(classlist, properties, out);
+			new ReportExecutor().execute(classlist, properties, outDir);
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BuildException(e);
@@ -113,8 +111,8 @@ public class JayWalkerTask extends Task {
 		return sb.toString();
 	}
 
-	public void setOutput(File output) {
-		this.output = output;
+	public void setOutDir(File outDir) {
+		this.outDir = outDir;
 	}
 
 }

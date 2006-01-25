@@ -27,3 +27,6 @@ Work to be done:
 * NPE Main single jar / file
 
 * Other enhancements described in doc/index.html
+
+* memory accesses
+* algorithm analysis

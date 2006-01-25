@@ -5,7 +5,7 @@
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *  http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -13,11 +13,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jaywalker.report;
+package jaywalker.util;
 
-import java.util.Stack;
-import java.net.URL;
+public class OutputterException extends RuntimeException {
+	public OutputterException() {
+		super();
+	}
 
-public interface ReportTag {
-    public String create(URL url, Stack parentUrlStack);
+	public OutputterException(String msg) {
+		super(msg);
+	}
+
+	public OutputterException(String msg, Throwable t) {
+		super(msg, t);
+	}
+
 }

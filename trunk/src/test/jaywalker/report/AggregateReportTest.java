@@ -15,21 +15,46 @@
  */
 package jaywalker.report;
 
+import jaywalker.classlist.ClasslistElementListener;
 import jaywalker.classlist.JayWalkerTestCase;
 import jaywalker.testutil.Path;
+import jaywalker.util.XsltTransformer;
+import jaywalker.xml.CollisionTag;
+import jaywalker.xml.ContainerCyclicDependencyTag;
+import jaywalker.xml.ContainerDependencyTag;
+import jaywalker.xml.ElementCyclicDependencyTag;
+import jaywalker.xml.NestedTag;
+import jaywalker.xml.PackageCyclicDependencyTag;
+import jaywalker.xml.SerialVersionUidConflictTag;
+import jaywalker.xml.Tag;
+import jaywalker.xml.UnresolvedClassNameDependencyTag;
 
 import java.io.IOException;
 import java.net.URL;
 import java.util.Date;
+import java.util.Properties;
 
 public class AggregateReportTest extends JayWalkerTestCase {
+	
+	private final Configuration[] CONFIGURATIONS = new Configuration[] {
+			new DependencyReportConfiguration(new DependencyModel()),
+			new CollisionReportConfiguration(new CollisionModel()) };
+
+	protected ClasslistElementListener[] getClasslistElementListeners() {
+		ClasslistElementListener[] listeners = new ClasslistElementListener[CONFIGURATIONS.length];
+		for (int i = 0; i < CONFIGURATIONS.length; i++) {
+			listeners[i] = CONFIGURATIONS[i].getClasslistElementListener();
+		}
+		return listeners;
+	}
+	
 	public void assertCreateReportFor(URL url) throws IOException {
 		Date start = new Date();
 
 		Report[] reports = new Report[] { createCollisionReport(),
 				createDependencyReport() };
 
-		AggregateModel model = new AggregateModel(reports);
+		AggregateModel model = new AggregateModel(getClasslistElementListeners());
 		assertVisit(url, model);
 		AggregateReport report = new AggregateReport(reports);
 		assertVisit(url, report);
@@ -42,26 +67,20 @@ public class AggregateReportTest extends JayWalkerTestCase {
 		System.out.println(reportValue);
 	}
 
-	private DependencyReport createDependencyReport() {
-		DependencyModel dependencyModel = new DependencyModel();
-		ReportTag[] dependencyReportTags = new ReportTag[] {
-				new ContainerDependencyReportTag(dependencyModel),
-				new ContainerCyclicDependencyReportTag(dependencyModel),
-				new PackageCyclicDependencyReportTag(dependencyModel),
-				new UnresolvedClassNameDependencyReportTag(dependencyModel),
-				new ElementCyclicDependencyReportTag(dependencyModel), };
-		return new DependencyReport(dependencyModel, dependencyReportTags);
+	private Report createDependencyReport() {
+		Properties properties = new Properties();
+		Tag[] reportTags = CONFIGURATIONS[0].toReportTags(properties);
+		XsltTransformer[] transformers = CONFIGURATIONS[0]
+				.toXsltTransformers(properties);
+		return new Report(reportTags, transformers);
 	}
 
-	private CollisionReport createCollisionReport() {
-		CollisionModel collisionModel = new CollisionModel();
-		NestedReportTag[] nestedReportTags = new NestedReportTag[] { new SerialVersionUidConflictReportTag(
-				collisionModel) };
-		CollisionReportTag collisionReportTag = new CollisionReportTag(
-				collisionModel);
-		collisionReportTag.setNestedReportTags(nestedReportTags);
-		ReportTag[] collisionsReportTags = new ReportTag[] { collisionReportTag };
-		return new CollisionReport(collisionModel, collisionsReportTags);
+	private Report createCollisionReport() {
+		Properties properties = new Properties();
+		Tag[] reportTags = CONFIGURATIONS[1].toReportTags(properties);
+		XsltTransformer[] transformers = CONFIGURATIONS[1]
+				.toXsltTransformers(properties);
+		return new Report(reportTags, transformers);
 	}
 
 	public void testShouldCreateReportForAFile() throws IOException {

@@ -14,7 +14,7 @@
             <xsl:text disable-output-escaping="yes">&#10;&lt;tr&gt;</xsl:text>
             <xsl:text disable-output-escaping="yes">&lt;td rowspan="</xsl:text>
             <xsl:variable name="container-dependencies"
-                select="child::dependency[@type='resolved']/container[@type='archive']"/>
+                select="child::dependency[@type='cycle']/container[@type='archive']"/>
             <xsl:value-of select="count($container-dependencies)"/>
             <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
             <xsl:value-of select="@url"/>
