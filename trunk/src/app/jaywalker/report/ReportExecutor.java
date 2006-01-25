@@ -44,7 +44,7 @@ import jaywalker.xml.Tag;
 
 public class ReportExecutor {
 
-	private final Configuration[] CONFIGURATIONS = new Configuration[] {
+	private final Configuration[] configurations = new Configuration[] {
 		new DependencyReportConfiguration(new DependencyModel()),
 		new CollisionReportConfiguration(new CollisionModel()) };
 	
@@ -53,7 +53,7 @@ public class ReportExecutor {
 	public void execute(String classlist, Properties properties, File outDir)
 			throws IOException {
 		initOutDir(outDir);
-		Report[] reports = valueOf(properties);
+		Report[] reports = toReports(properties);
 		AggregateReport report = execute(classlist, reports);
 
 		outputXml(outDir, report);
@@ -62,20 +62,20 @@ public class ReportExecutor {
 	
 	private String[] getReportTypes() {
 		List reportTypeList = new ArrayList();
-		for (int i = 0; i < CONFIGURATIONS.length; i++) {
-			reportTypeList.addAll(Arrays.asList(CONFIGURATIONS[i]
+		for (int i = 0; i < configurations.length; i++) {
+			reportTypeList.addAll(Arrays.asList(configurations[i]
 					.getReportTypes()));
 		}
 		return (String[]) reportTypeList.toArray(new String[reportTypeList
 				.size()]);
 	}
 
-	private Report[] valueOf(Properties properties) {
+	private Report[] toReports(Properties properties) {
 		List reportList = new LinkedList();
-		for (int i = 0; i < CONFIGURATIONS.length; i++) {
-			Tag[] reportTags = CONFIGURATIONS[i].toReportTags(properties);
+		for (int i = 0; i < configurations.length; i++) {
+			Tag[] reportTags = configurations[i].toReportTags(properties);
 			if (reportTags.length > 0) {
-				XsltTransformer[] transformers = CONFIGURATIONS[i]
+				XsltTransformer[] transformers = configurations[i]
 						.toXsltTransformers(properties);
 				reportList.add(new Report(reportTags, transformers));
 			}
@@ -123,10 +123,10 @@ public class ReportExecutor {
 		return report;
 	}
 
-	public ClasslistElementListener[] getClasslistElementListeners() {
-		ClasslistElementListener[] listeners = new ClasslistElementListener[CONFIGURATIONS.length];
-		for (int i = 0; i < CONFIGURATIONS.length; i++) {
-			listeners[i] = CONFIGURATIONS[i].getClasslistElementListener();
+	private ClasslistElementListener[] getClasslistElementListeners() {
+		ClasslistElementListener[] listeners = new ClasslistElementListener[configurations.length];
+		for (int i = 0; i < configurations.length; i++) {
+			listeners[i] = configurations[i].getClasslistElementListener();
 		}
 		return listeners;
 	}
