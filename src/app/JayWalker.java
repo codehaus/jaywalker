@@ -65,6 +65,8 @@ public class JayWalker {
 		sb.append("element1").append(File.pathSeparator);
 		sb.append("element2").append(File.pathSeparator).append(" ...\n");
 		sb.append(toSpaces(argColumn));
+		sb.append("-outDir=output-directory\n");
+		sb.append(toSpaces(argColumn));
 		sb.append("[-reportType=reportAttribute ...]\n");
 		sb.append(toSpaces(argColumn));
 		sb.append("[-tempDir=path]\n");
@@ -90,14 +92,14 @@ public class JayWalker {
 		Properties properties = toProperties(args);
 		String classlist = removeRequired("classlist", properties);
 		String tempDir = removeOptional("tempDir", properties);
+		File outDir = new File(removeRequired("outDir", properties));
 
 		ResourceLocator.instance().register("tempDir",
 				Shell.toWorkingDir(tempDir));
 		ResourceLocator.instance().register("classlistElementCache",
 				new ClasslistElementCache());
 
-		final PrintWriter writer = new PrintWriter(System.out);
-		executor.execute(classlist, properties, writer);
+		executor.execute(classlist, properties, outDir);
 	}
 
 	private String removeOptional(String key, Properties properties) {

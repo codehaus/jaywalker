@@ -20,11 +20,22 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-public class CollisionReportConfiguration {
+import jaywalker.classlist.ClasslistElementListener;
+import jaywalker.util.XsltTransformer;
+import jaywalker.xml.CollisionTag;
+import jaywalker.xml.NestedTag;
+import jaywalker.xml.SerialVersionUidConflictTag;
+import jaywalker.xml.Tag;
+
+public class CollisionReportConfiguration implements Configuration {
 	private final ReportTagMap collisionNestedReportTagMap;
+
 	private final ReportTagMap collisionReportTagMap;
 
+	private final CollisionModel collisionModel;
+
 	public CollisionReportConfiguration(CollisionModel collisionModel) {
+		this.collisionModel = collisionModel;
 		this.collisionReportTagMap = createReportTagMap(collisionModel);
 		this.collisionNestedReportTagMap = createNestedReportTagMap(collisionModel);
 	}
@@ -32,38 +43,52 @@ public class CollisionReportConfiguration {
 	private ReportTagMap createNestedReportTagMap(CollisionModel collisionModel) {
 		ReportTagMap collisionNestedReportTagMap = new ReportTagMap();
 		collisionNestedReportTagMap.put("conflict", "class",
-				new SerialVersionUidConflictReportTag(collisionModel));
+				new SerialVersionUidConflictTag(collisionModel),
+				new XsltTransformer("class-conflicts-resolved-html.xslt"));
 		return collisionNestedReportTagMap;
 	}
 
 	private ReportTagMap createReportTagMap(CollisionModel collisionModel) {
 		ReportTagMap collisionReportTagMap = new ReportTagMap();
-		collisionReportTagMap.put("collision", "class", new CollisionReportTag(
-				collisionModel));
+		collisionReportTagMap.put("collision", "class", new CollisionTag(
+				collisionModel), new XsltTransformer(
+				"class-collisions-resolved-html.xslt"));
 		return collisionReportTagMap;
 	}
-	
-	public ReportTag[] toReportTags(Properties properties) {
-		NestedReportTag[] collisionNestedReportTags = toNestedReportTags(collisionNestedReportTagMap
-				.get(properties));
-		CollisionReportTag collisionReportTag = (CollisionReportTag) collisionReportTagMap.get("collision","class");
+
+	public Tag[] toReportTags(Properties properties) {
+		NestedTag[] collisionNestedReportTags = toNestedReportTags(collisionNestedReportTagMap
+				.getXmlTags(properties));
+		CollisionTag collisionReportTag = (CollisionTag) collisionReportTagMap
+				.getXmlTag("collision", "class");
 		collisionReportTag.setNestedReportTags(collisionNestedReportTags);
-		return collisionReportTagMap.get(properties);
+		return collisionReportTagMap.getXmlTags(properties);
 	}
 
-	private NestedReportTag[] toNestedReportTags(ReportTag[] reportTags) {
-		NestedReportTag[] nestedReportTags = new NestedReportTag[reportTags.length];
+	private NestedTag[] toNestedReportTags(Tag[] reportTags) {
+		NestedTag[] nestedReportTags = new NestedTag[reportTags.length];
 		for (int i = 0; i < reportTags.length; i++) {
-			nestedReportTags[i] = (NestedReportTag) reportTags[i];
+			nestedReportTags[i] = (NestedTag) reportTags[i];
 		}
 		return nestedReportTags;
 	}
-	
-    public String [] getReportTypes() {
-    	final List list = new ArrayList();
-    	list.addAll(Arrays.asList(collisionReportTagMap.getKeys()));
+
+	public String[] getReportTypes() {
+		final List list = new ArrayList();
+		list.addAll(Arrays.asList(collisionReportTagMap.getKeys()));
 		list.addAll(Arrays.asList(collisionNestedReportTagMap.getKeys()));
-    	return (String[]) list.toArray(new String[list.size()]);
-    }
+		return (String[]) list.toArray(new String[list.size()]);
+	}
+
+	public XsltTransformer[] toXsltTransformers(Properties properties) {
+		final List list = new ArrayList();
+		list.addAll(Arrays.asList(collisionReportTagMap.getHtmlTransformers(properties)));
+		list.addAll(Arrays.asList(collisionNestedReportTagMap.getHtmlTransformers(properties)));
+		return (XsltTransformer[]) list.toArray(new XsltTransformer[list.size()]);
+	}
+
+	public ClasslistElementListener getClasslistElementListener() {
+		return collisionModel;
+	}
 
 }

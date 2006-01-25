@@ -52,7 +52,7 @@ public class ClassElementFile {
                     JavaClass javaClass = new ClassParser(url.openStream(), urlString).parse();
                     className = javaClass.getClassName();
                     superClassName = javaClass.getSuperclassName();
-                    dependencies = javaClass.getInterfaceNames();
+                    interfaces = javaClass.getInterfaceNames();
                     Set set = new HashSet();
                     DependencyVisitor dependencyVisitor = new DependencyVisitor();
                     DescendingVisitor traverser = new DescendingVisitor(javaClass, dependencyVisitor);

@@ -17,32 +17,60 @@ package jaywalker.report;
 
 import java.util.Properties;
 
-import jaywalker.ant.Option;
+import jaywalker.classlist.ClasslistElementListener;
+import jaywalker.util.XsltTransformer;
+import jaywalker.xml.ContainerCyclicDependencyTag;
+import jaywalker.xml.ContainerDependencyTag;
+import jaywalker.xml.ElementCyclicDependencyTag;
+import jaywalker.xml.PackageCyclicDependencyTag;
+import jaywalker.xml.PackageDependencyTag;
+import jaywalker.xml.Tag;
+import jaywalker.xml.UnresolvedClassNameDependencyTag;
 
-public class DependencyReportConfiguration {
-    private final ReportTagMap dependencyReportTagMap;
-    
-    public DependencyReportConfiguration(DependencyModel dependencyModel) {
-        this.dependencyReportTagMap = createReportTagMap(dependencyModel);
-    }
+public class DependencyReportConfiguration implements Configuration {
+	private final ReportTagMap dependencyReportTagMap;
+	private final DependencyModel dependencyModel;
+
+	public DependencyReportConfiguration(DependencyModel dependencyModel) {
+		this.dependencyModel = dependencyModel;
+		this.dependencyReportTagMap = createReportTagMap(dependencyModel);
+	}
 
 	private ReportTagMap createReportTagMap(DependencyModel dependencyModel) {
 		ReportTagMap dependencyReportTagMap = new ReportTagMap();
-		dependencyReportTagMap.put("dependency", "archive", new ContainerDependencyReportTag(dependencyModel));
-        dependencyReportTagMap.put("dependency", "package", new PackageDependencyReportTag(dependencyModel));
-        dependencyReportTagMap.put("dependency", "class", new UnresolvedClassNameDependencyReportTag(dependencyModel));
-        dependencyReportTagMap.put("cycle", "archive", new ContainerCyclicDependencyReportTag(dependencyModel));
-        dependencyReportTagMap.put("cycle", "package", new PackageCyclicDependencyReportTag(dependencyModel));
-        dependencyReportTagMap.put("cycle", "class", new ElementCyclicDependencyReportTag(dependencyModel));
-        return dependencyReportTagMap;
+		dependencyReportTagMap.put("dependency", "archive",
+				new ContainerDependencyTag(dependencyModel),
+				new XsltTransformer("archive-dependencies-resolved-html.xslt"));
+		dependencyReportTagMap.put("dependency", "package",
+				new PackageDependencyTag(dependencyModel), new XsltTransformer(
+						"package-dependencies-resolved-html.xslt"));
+		dependencyReportTagMap.put("dependency", "class",
+				new UnresolvedClassNameDependencyTag(dependencyModel),
+				new XsltTransformer("class-dependencies-unresolved-html.xslt"));
+		dependencyReportTagMap.put("cycle", "archive",
+				new ContainerCyclicDependencyTag(dependencyModel),
+				new XsltTransformer("archive-dependencies-cycle-html.xslt"));
+		dependencyReportTagMap.put("cycle", "package",
+				new PackageCyclicDependencyTag(dependencyModel), null);
+		dependencyReportTagMap.put("cycle", "class",
+				new ElementCyclicDependencyTag(dependencyModel), null);
+		return dependencyReportTagMap;
+	}
+	
+	public Tag[] toReportTags(Properties properties) {
+		return dependencyReportTagMap.getXmlTags(properties);
 	}
 
-    public ReportTag [] toReportTags(Properties properties) {
-        return dependencyReportTagMap.get(properties);
-    }
-    
-    public String [] getReportTypes() {
-    	return dependencyReportTagMap.getKeys();
-    }
+	public String[] getReportTypes() {
+		return dependencyReportTagMap.getKeys();
+	}
+
+	public XsltTransformer[] toXsltTransformers(Properties properties) {
+		return dependencyReportTagMap.getHtmlTransformers(properties);
+	}
+
+	public ClasslistElementListener getClasslistElementListener() {
+		return dependencyModel;
+	}
 
 }

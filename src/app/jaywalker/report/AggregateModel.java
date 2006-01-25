@@ -19,25 +19,22 @@ import jaywalker.classlist.ClasslistElementEvent;
 import jaywalker.classlist.ClasslistElementListener;
 
 public class AggregateModel implements ClasslistElementListener {
-    private final ClasslistElementListener[] models;
+	private final ClasslistElementListener[] models;
 
-    public AggregateModel ( Report [] reports ) {
-        models = new ClasslistElementListener[reports.length];
-        for ( int i = 0; i < reports.length; i++ ) {
-            models[i] = reports[i].getModel();
-        }
-    }
+	public AggregateModel(ClasslistElementListener [] listeners) {
+		models = listeners;
+	}
 
-    public void classlistElementVisited(ClasslistElementEvent event) {
-        for ( int i = 0; i < models.length; i++) {
-            models[i].classlistElementVisited(event);
-        }
-    }
+	public void classlistElementVisited(ClasslistElementEvent event) {
+		for (int i = 0; i < models.length; i++) {
+			models[i].classlistElementVisited(event);
+		}
+	}
 
-    public void lastClasslistElementVisited() {
-        for ( int i = 0; i < models.length; i++) {
-            models[i].lastClasslistElementVisited();
-        }
-    }
+	public void lastClasslistElementVisited() {
+		for (int i = 0; i < models.length; i++) {
+			models[i].lastClasslistElementVisited();
+		}
+	}
 
 }
