@@ -25,7 +25,7 @@ import java.util.Set;
 import jaywalker.util.XsltTransformer;
 import jaywalker.xml.Tag;
 
-public class ReportTagMap {
+public class ReportSetupMap {
 	private Map map = new HashMap();
 
 	private static class Entry {

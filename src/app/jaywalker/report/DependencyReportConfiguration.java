@@ -28,7 +28,7 @@ import jaywalker.xml.Tag;
 import jaywalker.xml.UnresolvedClassNameDependencyTag;
 
 public class DependencyReportConfiguration implements Configuration {
-	private final ReportTagMap dependencyReportTagMap;
+	private final ReportSetupMap dependencyReportTagMap;
 	private final DependencyModel dependencyModel;
 
 	public DependencyReportConfiguration(DependencyModel dependencyModel) {
@@ -36,8 +36,8 @@ public class DependencyReportConfiguration implements Configuration {
 		this.dependencyReportTagMap = createReportTagMap(dependencyModel);
 	}
 
-	private ReportTagMap createReportTagMap(DependencyModel dependencyModel) {
-		ReportTagMap dependencyReportTagMap = new ReportTagMap();
+	private ReportSetupMap createReportTagMap(DependencyModel dependencyModel) {
+		ReportSetupMap dependencyReportTagMap = new ReportSetupMap();
 		dependencyReportTagMap.put("dependency", "archive",
 				new ContainerDependencyTag(dependencyModel),
 				new XsltTransformer("archive-dependencies-resolved-html.xslt"));

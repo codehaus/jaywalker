@@ -28,9 +28,9 @@ import jaywalker.xml.SerialVersionUidConflictTag;
 import jaywalker.xml.Tag;
 
 public class CollisionReportConfiguration implements Configuration {
-	private final ReportTagMap collisionNestedReportTagMap;
+	private final ReportSetupMap collisionNestedReportTagMap;
 
-	private final ReportTagMap collisionReportTagMap;
+	private final ReportSetupMap collisionReportTagMap;
 
 	private final CollisionModel collisionModel;
 
@@ -40,16 +40,16 @@ public class CollisionReportConfiguration implements Configuration {
 		this.collisionNestedReportTagMap = createNestedReportTagMap(collisionModel);
 	}
 
-	private ReportTagMap createNestedReportTagMap(CollisionModel collisionModel) {
-		ReportTagMap collisionNestedReportTagMap = new ReportTagMap();
+	private ReportSetupMap createNestedReportTagMap(CollisionModel collisionModel) {
+		ReportSetupMap collisionNestedReportTagMap = new ReportSetupMap();
 		collisionNestedReportTagMap.put("conflict", "class",
 				new SerialVersionUidConflictTag(collisionModel),
 				new XsltTransformer("class-conflicts-resolved-html.xslt"));
 		return collisionNestedReportTagMap;
 	}
 
-	private ReportTagMap createReportTagMap(CollisionModel collisionModel) {
-		ReportTagMap collisionReportTagMap = new ReportTagMap();
+	private ReportSetupMap createReportTagMap(CollisionModel collisionModel) {
+		ReportSetupMap collisionReportTagMap = new ReportSetupMap();
 		collisionReportTagMap.put("collision", "class", new CollisionTag(
 				collisionModel), new XsltTransformer(
 				"class-collisions-resolved-html.xslt"));
