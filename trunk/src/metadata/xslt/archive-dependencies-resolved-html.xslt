@@ -3,6 +3,7 @@
     <xsl:output method="html"/>
     <xsl:strip-space elements="*"/>
     <xsl:template match="report">
+        <h3>Archive Resolved Dependencies</h3>
         <table>
             <th>Archive</th>
             <th>URL</th>

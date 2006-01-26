@@ -29,6 +29,7 @@ import jaywalker.xml.UnresolvedClassNameDependencyTag;
 
 public class DependencyReportConfiguration implements Configuration {
 	private final ReportSetupMap dependencyReportTagMap;
+
 	private final DependencyModel dependencyModel;
 
 	public DependencyReportConfiguration(DependencyModel dependencyModel) {
@@ -51,12 +52,14 @@ public class DependencyReportConfiguration implements Configuration {
 				new ContainerCyclicDependencyTag(dependencyModel),
 				new XsltTransformer("archive-dependencies-cycle-html.xslt"));
 		dependencyReportTagMap.put("cycle", "package",
-				new PackageCyclicDependencyTag(dependencyModel), null);
+				new PackageCyclicDependencyTag(dependencyModel),
+				new XsltTransformer("package-dependencies-cycle-html.xslt"));
 		dependencyReportTagMap.put("cycle", "class",
-				new ElementCyclicDependencyTag(dependencyModel), null);
+				new ElementCyclicDependencyTag(dependencyModel),
+				new XsltTransformer("class-dependencies-cycle-html.xslt"));
 		return dependencyReportTagMap;
 	}
-	
+
 	public Tag[] toReportTags(Properties properties) {
 		return dependencyReportTagMap.getXmlTags(properties);
 	}
