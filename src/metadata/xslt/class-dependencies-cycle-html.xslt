@@ -3,25 +3,25 @@
     <xsl:output method="html"/>
     <xsl:strip-space elements="*"/>
     <xsl:template match="report">
-        <h3>Archive Cyclic Dependencies</h3>
+        <h3>Class Cyclic Dependencies</h3>
         <table>
             <th>Archive</th>
             <th>URL</th>
             <xsl:apply-templates/>
         </table>
     </xsl:template>
-    <xsl:template match="container[@type='archive']">
+    <xsl:template match="element[@type='class']">
         <xsl:if test="count(child::dependency)>0">
-            <xsl:variable name="container-dependencies"
-                select="child::dependency[@type='cycle']/container[@type='archive']"/>
-            <xsl:if test="count($container-dependencies)>0">
+            <xsl:variable name="element-dependencies"
+                select="child::dependency[@type='cycle']/element[@type='class']"/>
+            <xsl:if test="count($element-dependencies)>0">
                 <xsl:text disable-output-escaping="yes">&#10;&lt;tr&gt;</xsl:text>
                 <xsl:text disable-output-escaping="yes">&lt;td rowspan="</xsl:text>
-                <xsl:value-of select="count($container-dependencies)"/>
+                <xsl:value-of select="count($element-dependencies)"/>
                 <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
                 <xsl:value-of select="@url"/>
                 <xsl:text disable-output-escaping="yes">&lt;/td&gt;</xsl:text>
-                <xsl:for-each select="$container-dependencies">
+                <xsl:for-each select="$element-dependencies">
                     <td>
                         <xsl:value-of select="@url"/>
                     </td>

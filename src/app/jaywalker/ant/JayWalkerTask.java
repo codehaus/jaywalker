@@ -44,9 +44,6 @@ public class JayWalkerTask extends Task {
 
 	public JayWalkerTask() {
 		super();
-		optionSet.add(new Option("dependency", "archive,package,class"));
-		optionSet.add(new Option("collision", "class"));
-		optionSet.add(new Option("conflict", "class"));
 	}
 
 	protected void validate() {
@@ -60,7 +57,8 @@ public class JayWalkerTask extends Task {
 
 	public void execute() {
 		validate();
-
+		initializeDefaults();
+		
 		try {
 			String classlist = createClasslist();
 			getProject().setNewProperty("classlist", classlist);
@@ -82,6 +80,14 @@ public class JayWalkerTask extends Task {
 			throw new BuildException(e);
 		}
 
+	}
+
+	private void initializeDefaults() {
+		if ( optionSet.size() == 0 ) {
+			optionSet.add(new Option("dependency", "archive,package,class"));
+			optionSet.add(new Option("collision", "class"));
+			optionSet.add(new Option("conflict", "class"));
+		}
 	}
 
 	public void setTempDir(File tempDir) {
