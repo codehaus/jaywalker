@@ -2,11 +2,9 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="html"/>
     <xsl:strip-space elements="*"/>
-    <xsl:template match="report">
-        <xsl:apply-templates/>
-    </xsl:template>
     <xsl:key name="distinct-classname" match="element" use="@value"/>
-    <xsl:template match="/">
+    <xsl:template match="report">
+        <h3>Conflicts Dependencies</h3>
         <table>
             <th>Class Name</th>
             <th>URL</th>
