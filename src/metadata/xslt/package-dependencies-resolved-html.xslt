@@ -4,7 +4,8 @@
     <xsl:strip-space elements="*"/>
     <xsl:key name="arc" match="dependency[@type='resolved']/container[@type='package']"
         use="concat(../../@value,':',@value)"/>
-    <xsl:template match="/">
+    <xsl:template match="report">
+        <h3>Package Resolved Dependencies</h3>
         <table>
             <th>Package</th>
             <th>Dependency</th>
