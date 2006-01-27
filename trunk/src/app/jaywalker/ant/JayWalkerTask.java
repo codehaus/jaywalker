@@ -58,7 +58,7 @@ public class JayWalkerTask extends Task {
 	public void execute() {
 		validate();
 		initializeDefaults();
-		
+
 		try {
 			String classlist = createClasslist();
 			getProject().setNewProperty("classlist", classlist);
@@ -83,7 +83,7 @@ public class JayWalkerTask extends Task {
 	}
 
 	private void initializeDefaults() {
-		if ( optionSet.size() == 0 ) {
+		if (optionSet.size() == 0) {
 			optionSet.add(new Option("dependency", "archive,package,class"));
 			optionSet.add(new Option("collision", "class"));
 			optionSet.add(new Option("conflict", "class"));
@@ -98,7 +98,7 @@ public class JayWalkerTask extends Task {
 		classlists.add(classlist);
 	}
 
-	public void addOption(Option option) {
+	public void addConfiguredOption(Option option) {
 		optionSet.add(option);
 	}
 

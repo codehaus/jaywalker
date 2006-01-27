@@ -26,6 +26,10 @@
     <target name="testUnifiedReportForClassElement" depends="init">
         <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForClassElement" tempDir="build/temp">
             <classlist file="build/classes/jaywalker/classlist/ClasslistElementFactory.class"/>
+            <option name="dependency" value="archive,package,class"/>
+            <option name="cycle" value="archive,package,class"/>
+            <option name="collision" value="class"/>
+            <option name="conflict" value="class"/>
         </jaywalker>
     </target>
 
