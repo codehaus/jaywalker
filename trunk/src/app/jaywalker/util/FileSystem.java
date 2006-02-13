@@ -15,42 +15,76 @@
  */
 package jaywalker.util;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.StringWriter;
 
 public class FileSystem {
 
-    public static void validateDir(File dir) throws IOException {
-        if (dir == null) {
-            throw new IOException("Directory should not be null.");
-        }
-        if (!dir.exists()) {
-            throw new FileNotFoundException("Directory does not exist: " + dir);
-        }
-        if (!dir.isDirectory()) {
-            throw new IOException("Is not a directory: " + dir);
-        }
-        if (!dir.canRead()) {
-            throw new IOException("Directory cannot be read: " + dir);
-        }
-    }
+	public static void validateDir(File dir) throws IOException {
+		if (dir == null) {
+			throw new IOException("Directory should not be null.");
+		}
+		if (!dir.exists()) {
+			throw new FileNotFoundException("Directory does not exist: " + dir);
+		}
+		if (!dir.isDirectory()) {
+			throw new IOException("Is not a directory: " + dir);
+		}
+		if (!dir.canRead()) {
+			throw new IOException("Directory cannot be read: " + dir);
+		}
+	}
 
-    public static boolean delete(File path) {
-        if (!path.exists()) {
-            return false;
-        }
-        if (path.isDirectory()) {
-            File[] files = path.listFiles();
-            for (int i = 0; i < files.length; i++) {
-                if (files[i].isDirectory()) {
-                    delete(files[i]);
-                } else {
-                    files[i].delete();
-                }
-            }
-        }
-        return (path.delete());
-    }
+	public static boolean delete(File path) {
+		if (!path.exists()) {
+			return false;
+		}
+		if (path.isDirectory()) {
+			File[] files = path.listFiles();
+			for (int i = 0; i < files.length; i++) {
+				if (files[i].isDirectory()) {
+					delete(files[i]);
+				} else {
+					files[i].delete();
+				}
+			}
+		}
+		return (path.delete());
+	}
+
+	public static String readInputStreamIntoString(InputStream is)
+			throws FileNotFoundException, IOException {
+		StringBuffer sb = new StringBuffer();
+		byte[] bytes = new byte[1024];
+		while (is.available() > 0) {
+			int length = (is.available() < bytes.length) ? is.available()
+					: bytes.length;
+			is.read(bytes, 0, length);
+			sb.append(new String(bytes, 0, length));
+		}
+		is.close();
+		return sb.toString();
+	}
+
+	public static String readFileIntoString(File file)
+			throws FileNotFoundException, IOException {
+		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(
+				file));
+		return readInputStreamIntoString(bis);
+	}
+
+	public static void writeStringIntoFile(File file, String value)
+			throws FileNotFoundException, IOException {
+		FileOutputStream fos = new FileOutputStream(file);
+		fos.write(value.getBytes());
+		fos.flush();
+		fos.close();
+	}
 
 }

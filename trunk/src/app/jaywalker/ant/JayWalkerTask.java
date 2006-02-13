@@ -107,12 +107,18 @@ public class JayWalkerTask extends Task {
 		for (Iterator itFilesets = classlists.iterator(); itFilesets.hasNext();) {
 			FileSet fs = (FileSet) itFilesets.next();
 			DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-			String[] includedFiles = ds.getIncludedFiles();
-			for (int i = 0; i < includedFiles.length; i++) {
-				sb.append(new File(ds.getBasedir(), includedFiles[i])
-						.getAbsolutePath());
-				sb.append(File.pathSeparator);
-			}
+			sb.append(includeElements(ds.getBasedir(), ds.getIncludedDirectories()));
+			sb.append(includeElements(ds.getBasedir(), ds.getIncludedFiles()));
+		}
+		return sb.toString();
+	}
+
+	private String includeElements(File baseDir, String[] includedFiles) {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < includedFiles.length; i++) {
+			sb.append(new File(baseDir, includedFiles[i])
+					.getAbsolutePath());
+			sb.append(File.pathSeparator);
 		}
 		return sb.toString();
 	}

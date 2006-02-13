@@ -18,7 +18,7 @@ package jaywalker.report;
 import jaywalker.classlist.ClasslistElementListener;
 import jaywalker.classlist.JayWalkerTestCase;
 import jaywalker.testutil.Path;
-import jaywalker.util.XsltTransformer;
+import jaywalker.util.Outputter;
 import jaywalker.xml.CollisionTag;
 import jaywalker.xml.ContainerCyclicDependencyTag;
 import jaywalker.xml.ContainerDependencyTag;
@@ -70,7 +70,7 @@ public class AggregateReportTest extends JayWalkerTestCase {
 	private Report createDependencyReport() {
 		Properties properties = new Properties();
 		Tag[] reportTags = CONFIGURATIONS[0].toReportTags(properties);
-		XsltTransformer[] transformers = CONFIGURATIONS[0]
+		Outputter[] transformers = CONFIGURATIONS[0]
 				.toXsltTransformers(properties);
 		return new Report(reportTags, transformers);
 	}
@@ -78,7 +78,7 @@ public class AggregateReportTest extends JayWalkerTestCase {
 	private Report createCollisionReport() {
 		Properties properties = new Properties();
 		Tag[] reportTags = CONFIGURATIONS[1].toReportTags(properties);
-		XsltTransformer[] transformers = CONFIGURATIONS[1]
+		Outputter[] transformers = CONFIGURATIONS[1]
 				.toXsltTransformers(properties);
 		return new Report(reportTags, transformers);
 	}

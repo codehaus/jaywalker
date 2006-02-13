@@ -22,7 +22,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import jaywalker.util.XsltTransformer;
+import jaywalker.util.Outputter;
 import jaywalker.xml.Tag;
 
 public class ReportSetupMap {
@@ -31,15 +31,15 @@ public class ReportSetupMap {
 	private static class Entry {
 		private final Tag xmlTag;
 
-		private final XsltTransformer htmlTransformer;
+		private final Outputter[] htmlTransformers;
 
-		public Entry(Tag xmlTag, XsltTransformer htmlTransformer) {
+		public Entry(Tag xmlTag, Outputter[] htmlTransformer) {
 			this.xmlTag = xmlTag;
-			this.htmlTransformer = htmlTransformer;
+			this.htmlTransformers = htmlTransformer;
 		}
 
-		public XsltTransformer getHtmlTransformer() {
-			return htmlTransformer;
+		public Outputter[] getHtmlTransformers() {
+			return htmlTransformers;
 		}
 
 		public Tag getXmlTag() {
@@ -50,13 +50,9 @@ public class ReportSetupMap {
 	private interface Visitor {
 		public void visit(Entry entry);
 	}
-	
+
 	public Tag getXmlTag(String type, String value) {
 		return lookupEntry(type, value).getXmlTag();
-	}
-
-	public XsltTransformer getHtmlTransformer(String type, String value) {
-		return lookupEntry(type, value).getHtmlTransformer();
 	}
 
 	private Entry lookupEntry(String type, String value) {
@@ -64,8 +60,14 @@ public class ReportSetupMap {
 	}
 
 	public void put(String type, String value, Tag xmlTag,
-			XsltTransformer htmlTag) {
-		map.put(toKey(type, value), new Entry(xmlTag, htmlTag));
+			Outputter htmlTag) {
+		map.put(toKey(type, value), new Entry(xmlTag,
+				new Outputter[] { htmlTag }));
+	}
+
+	public void put(String type, String value, Tag xmlTag,
+			Outputter[] htmlTags) {
+		map.put(toKey(type, value), new Entry(xmlTag, htmlTags));
 	}
 
 	public String toKey(String type, String value) {
@@ -83,16 +85,19 @@ public class ReportSetupMap {
 		return (Tag[]) xmlTagList.toArray(new Tag[xmlTagList.size()]);
 	}
 
-	public XsltTransformer[] getHtmlTransformers(Properties properties) {
+	public Outputter[] getHtmlTransformers(Properties properties) {
 		final List htmlTransformerList = new LinkedList();
 		final Visitor visitor = new Visitor() {
 			public void visit(Entry entry) {
-				htmlTransformerList.add(entry.getHtmlTransformer());
+				Outputter[] transformers = entry.getHtmlTransformers();
+				for (int i = 0; i < transformers.length; i++) {
+					htmlTransformerList.add(transformers[i]);
+				}
 			}
 		};
 		accept(properties, visitor);
-		return (XsltTransformer[]) htmlTransformerList
-				.toArray(new XsltTransformer[htmlTransformerList.size()]);
+		return (Outputter[]) htmlTransformerList
+				.toArray(new Outputter[htmlTransformerList.size()]);
 	}
 
 	private void accept(Properties properties, Visitor visitor) {
