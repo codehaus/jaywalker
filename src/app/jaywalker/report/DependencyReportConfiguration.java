@@ -18,6 +18,9 @@ package jaywalker.report;
 import java.util.Properties;
 
 import jaywalker.classlist.ClasslistElementListener;
+import jaywalker.util.ChainedOutputter;
+import jaywalker.util.DotOutputter;
+import jaywalker.util.Outputter;
 import jaywalker.util.XsltTransformer;
 import jaywalker.xml.ContainerCyclicDependencyTag;
 import jaywalker.xml.ContainerDependencyTag;
@@ -42,15 +45,31 @@ public class DependencyReportConfiguration implements Configuration {
 		dependencyReportTagMap.put("dependency", "archive",
 				new ContainerDependencyTag(dependencyModel),
 				new XsltTransformer("archive-dependencies-resolved-html.xslt"));
+
+		Outputter[] packageDependencyOutputters = new Outputter[] {
+				new XsltTransformer("package-dependencies-resolved-html.xslt"),
+				new ChainedOutputter(new Outputter[] {
+						new XsltTransformer(
+								"package-dependencies-resolved-dot.xslt"),
+						new DotOutputter("package.dependency.dot") }) };
+
 		dependencyReportTagMap.put("dependency", "package",
-				new PackageDependencyTag(dependencyModel), new XsltTransformer(
-						"package-dependencies-resolved-html.xslt"));
+				new PackageDependencyTag(dependencyModel),
+				packageDependencyOutputters);
 		dependencyReportTagMap.put("dependency", "class",
 				new UnresolvedClassNameDependencyTag(dependencyModel),
 				new XsltTransformer("class-dependencies-unresolved-html.xslt"));
+
+		Outputter[] archiveCycleOutputters = new Outputter[] {
+				new XsltTransformer("archive-dependencies-cycle-html.xslt"),
+				new ChainedOutputter(new Outputter[] {
+						new XsltTransformer(
+								"archive-dependencies-cycle-dot.xslt"),
+						new DotOutputter("archive.cycle.dot") }) };
+
 		dependencyReportTagMap.put("cycle", "archive",
 				new ContainerCyclicDependencyTag(dependencyModel),
-				new XsltTransformer("archive-dependencies-cycle-html.xslt"));
+				archiveCycleOutputters);
 		dependencyReportTagMap.put("cycle", "package",
 				new PackageCyclicDependencyTag(dependencyModel),
 				new XsltTransformer("package-dependencies-cycle-html.xslt"));
@@ -68,7 +87,7 @@ public class DependencyReportConfiguration implements Configuration {
 		return dependencyReportTagMap.getKeys();
 	}
 
-	public XsltTransformer[] toXsltTransformers(Properties properties) {
+	public Outputter[] toXsltTransformers(Properties properties) {
 		return dependencyReportTagMap.getHtmlTransformers(properties);
 	}
 

@@ -35,7 +35,7 @@
 
     <target name="testUnifiedReportForClassesDirectory" depends="init">
         <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForClassesDirectory" tempDir="build/temp">
-            <classlist dir="build/classes"/>
+            <classlist file="build/classes"/>
         </jaywalker>
     </target>
 

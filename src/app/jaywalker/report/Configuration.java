@@ -3,7 +3,7 @@ package jaywalker.report;
 import java.util.Properties;
 
 import jaywalker.classlist.ClasslistElementListener;
-import jaywalker.util.XsltTransformer;
+import jaywalker.util.Outputter;
 import jaywalker.xml.Tag;
 
 public interface Configuration {
@@ -11,7 +11,7 @@ public interface Configuration {
 
 	public String[] getReportTypes();
 
-	public XsltTransformer[] toXsltTransformers(Properties properties);
+	public Outputter[] toXsltTransformers(Properties properties);
 
 	public ClasslistElementListener getClasslistElementListener();
 }

@@ -4,7 +4,7 @@
     <xsl:strip-space elements="*"/>
     <xsl:key name="arc" match="dependency[@type='resolved']/container[@type='package']"
         use="concat(../../@value,':',@value)"/>
-    <xsl:template match="/">
+    <xsl:template match="report">
         <xsl:text disable-output-escaping="yes">digraph G {&#10;</xsl:text>
         <xsl:for-each
             select="//container[generate-id()=generate-id(key('arc',concat(../../@value,':',@value)))]">

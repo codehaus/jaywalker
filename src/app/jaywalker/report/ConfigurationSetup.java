@@ -12,7 +12,7 @@ import java.util.Properties;
 import java.util.Set;
 
 import jaywalker.classlist.ClasslistElementListener;
-import jaywalker.util.XsltTransformer;
+import jaywalker.util.Outputter;
 import jaywalker.xml.Tag;
 
 public class ConfigurationSetup {
@@ -36,7 +36,7 @@ public class ConfigurationSetup {
 		for (int i = 0; i < configurations.length; i++) {
 			Tag[] reportTags = configurations[i].toReportTags(properties);
 			if (reportTags.length > 0) {
-				XsltTransformer[] transformers = configurations[i]
+				Outputter[] transformers = configurations[i]
 						.toXsltTransformers(properties);
 				reportList.add(new Report(reportTags, transformers));
 			}

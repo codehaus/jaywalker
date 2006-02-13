@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Properties;
 
 import jaywalker.classlist.ClasslistElementListener;
+import jaywalker.util.Outputter;
 import jaywalker.util.XsltTransformer;
 import jaywalker.xml.CollisionTag;
 import jaywalker.xml.NestedTag;
@@ -80,11 +81,11 @@ public class CollisionReportConfiguration implements Configuration {
 		return (String[]) list.toArray(new String[list.size()]);
 	}
 
-	public XsltTransformer[] toXsltTransformers(Properties properties) {
+	public Outputter[] toXsltTransformers(Properties properties) {
 		final List list = new ArrayList();
 		list.addAll(Arrays.asList(collisionReportTagMap.getHtmlTransformers(properties)));
 		list.addAll(Arrays.asList(collisionNestedReportTagMap.getHtmlTransformers(properties)));
-		return (XsltTransformer[]) list.toArray(new XsltTransformer[list.size()]);
+		return (Outputter[]) list.toArray(new Outputter[list.size()]);
 	}
 
 	public ClasslistElementListener getClasslistElementListener() {

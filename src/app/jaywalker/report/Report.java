@@ -4,16 +4,16 @@ import java.io.ByteArrayOutputStream;
 import java.net.URL;
 import java.util.Stack;
 
-import jaywalker.util.XsltTransformer;
+import jaywalker.util.Outputter;
 import jaywalker.xml.Tag;
 
 public class Report {
 
 	private final Tag[] tags;
 
-	private final XsltTransformer[] transformers;
+	private final Outputter[] transformers;
 
-	public Report(Tag[] tags, XsltTransformer[] transformers) {
+	public Report(Tag[] tags, Outputter[] transformers) {
 		this.tags = tags;
 		this.transformers = transformers;
 	}
