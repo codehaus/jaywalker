@@ -125,7 +125,7 @@
         <mkdir dir="build/doc/junit"/>
         <delete file="build/doc/emma/coverage.emma"/>
 
-        <junit printsummary="yes" fork="true">
+        <junit printsummary="yes" fork="false">
             <classpath>
                 <pathelement location="build/classes-instr"/>
                 <pathelement location="build/classes-test"/>

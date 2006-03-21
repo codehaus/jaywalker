@@ -1,6 +1,5 @@
 package jaywalker.util;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -12,17 +11,19 @@ import java.io.OutputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
 import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 public class XsltTransformer implements Outputter {
 
@@ -40,9 +41,12 @@ public class XsltTransformer implements Outputter {
 
 	private final Transformer transformer;
 
+	private static final DocumentBuilderFactory FACTORY = DocumentBuilderFactory
+			.newInstance();
+
 	public XsltTransformer(String filename) {
 		try {
-			TransformerFactory factory = TransformerFactory.newInstance();
+			TransformerFactory factory = lookupTransformerFactory();
 			Source xsltSource = new StreamSource(toInputStream(filename));
 			Templates templates = factory.newTemplates(xsltSource);
 			transformer = templates.newTransformer();
@@ -50,6 +54,15 @@ public class XsltTransformer implements Outputter {
 			throw new OutputterException(
 					"Exception thrown while creating XML transformer", t);
 		}
+	}
+
+	private TransformerFactory lookupTransformerFactory()
+			throws TransformerFactoryConfigurationError {
+		if (!locator.contains("TransformerFactory")) {
+			locator.register("TransformerFactory", TransformerFactory
+					.newInstance());
+		}
+		return (TransformerFactory) locator.lookup("TransformerFactory");
 	}
 
 	private static InputStream toInputStream(String xsltFile)
@@ -71,8 +84,7 @@ public class XsltTransformer implements Outputter {
 	public void write(OutputStream outputStream) {
 
 		try {
-			String value = FileSystem.readFileIntoString((File) locator
-					.lookup("report.xml"));
+			String value = (String) locator.lookup("report.xml.value");
 			value = transform(value);
 			outputStream.write(value.getBytes());
 		} catch (FileNotFoundException e) {
@@ -105,15 +117,7 @@ public class XsltTransformer implements Outputter {
 
 	public String transform(String value) {
 		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory
-					.newInstance();
-			DocumentBuilder builder = factory.newDocumentBuilder();
-			Document document = builder.parse(new ByteArrayInputStream(value
-					.getBytes()));
-			Element root = (Element) document.getElementsByTagName("report")
-					.item(0);
-
-			DOMSource source = new DOMSource(root);
+			DOMSource source = lookupDOMSource(value);
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			StreamResult result = new StreamResult(baos);
 			transformer.transform(source, result);
@@ -122,6 +126,24 @@ public class XsltTransformer implements Outputter {
 			throw new OutputterException(
 					"Exception thrown while transforming XML", t);
 		}
+	}
+
+	private DOMSource lookupDOMSource(String value)
+			throws ParserConfigurationException, SAXException, IOException {
+		final String key = toDOMSourceKey(value);
+		if (!locator.contains(key)) {
+			DocumentBuilder builder = FACTORY.newDocumentBuilder();
+			Document document = builder.parse(new ByteArrayInputStream(value
+					.getBytes()));
+			Element root = (Element) document.getElementsByTagName("report")
+					.item(0);
+			locator.register(key, new DOMSource(root));
+		}
+		return (DOMSource) locator.lookup(key);
+	}
+
+	private String toDOMSourceKey(String value) {
+		return "DOMSource-" + value.hashCode();
 	}
 
 }

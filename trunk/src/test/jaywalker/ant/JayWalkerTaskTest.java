@@ -54,6 +54,10 @@ public class JayWalkerTaskTest extends BuildFileTest {
         executeTarget("testUnifiedReportForTest4Archive");
     }
 
+    public void testUnifiedReportForEarArchive() {
+        executeTarget("testUnifiedReportForEarArchive");
+    }
+    
     public void testUnifiedReportForBuiltArchives() {
         executeTarget("testUnifiedReportForBuiltArchives");
     }
