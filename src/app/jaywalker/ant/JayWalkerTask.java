@@ -61,6 +61,7 @@ public class JayWalkerTask extends Task {
 
 		try {
 			String classlist = createClasslist();
+			log("classlist:" + classlist);
 			getProject().setNewProperty("classlist", classlist);
 			String tempPath = (tempDir != null) ? tempDir.getAbsolutePath()
 					: "";
@@ -102,13 +103,15 @@ public class JayWalkerTask extends Task {
 		optionSet.add(option);
 	}
 
-	private String createClasslist() {
+	protected String createClasslist() {
 		StringBuffer sb = new StringBuffer();
 		for (Iterator itFilesets = classlists.iterator(); itFilesets.hasNext();) {
 			FileSet fs = (FileSet) itFilesets.next();
 			DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-			sb.append(includeElements(ds.getBasedir(), ds.getIncludedDirectories()));
-			sb.append(includeElements(ds.getBasedir(), ds.getIncludedFiles()));
+			final String[] includedDirs = ds.getIncludedDirectories();
+			final String[] includedFiles = ds.getIncludedFiles();
+			sb.append(includeElements(ds.getBasedir(), includedDirs));
+			sb.append(includeElements(ds.getBasedir(), includedFiles));
 		}
 		return sb.toString();
 	}
@@ -116,8 +119,8 @@ public class JayWalkerTask extends Task {
 	private String includeElements(File baseDir, String[] includedFiles) {
 		StringBuffer sb = new StringBuffer();
 		for (int i = 0; i < includedFiles.length; i++) {
-			sb.append(new File(baseDir, includedFiles[i])
-					.getAbsolutePath());
+			final File file = new File(baseDir, includedFiles[i]);
+			sb.append(file.getAbsolutePath());
 			sb.append(File.pathSeparator);
 		}
 		return sb.toString();

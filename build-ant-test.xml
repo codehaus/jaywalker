@@ -65,9 +65,15 @@
         </jaywalker>
     </target>
 
+    <target name="testUnifiedReportForEarArchive" depends="init">
+        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForEarArchive" tempDir="build/temp">
+            <classlist file="build/dist/jaywalker-test.ear"/>
+        </jaywalker>
+    </target>
+
     <target name="testUnifiedReportForBuiltArchives" depends="init">
         <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForBuiltArchives" tempDir="build/temp">
-            <classlist dir="build/dist"/>
+            <classlist file="build/dist"/>
         </jaywalker>
     </target>
 

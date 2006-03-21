@@ -22,223 +22,269 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class URLHelper {
-    private final static StringHelper stringHelper = new StringHelper();
+	private final static StringHelper stringHelper = new StringHelper();
 
-    /**
-     * Returns the URL encoding of the classlist element in the folowing format:
-     * <p>[jar:]file:///path/[path/file-jar!/...]path/element</p>
-     *
-     * @return the URL encoding
-     * @throws java.net.MalformedURLException
-     * @throws java.net.URISyntaxException
-     */
-    public URL toEncodedURL(URL url) throws MalformedURLException, URISyntaxException {
-        // Return fast if the element is not in an archive
-        String str = url.toString();
-        final int idx = str.lastIndexOf("!/");
-        if (idx == -1) return url;
+	/**
+	 * Returns the URL encoding of the classlist element in the folowing format:
+	 * <p>
+	 * [jar:]file:///path/[path/file-jar!/...]path/element
+	 * </p>
+	 * 
+	 * @return the URL encoding
+	 * @throws java.net.MalformedURLException
+	 * @throws java.net.URISyntaxException
+	 */
+	public URL toEncodedURL(URL url) throws MalformedURLException,
+			URISyntaxException {
+		// Return fast if the element is not in an archive
+		String str = url.toString();
+		final int idx = str.lastIndexOf("!/");
+		if (idx == -1)
+			return url;
 
-        // Construct URL with safe naming taken into account
-        StringBuffer sb = new StringBuffer();
-        sb.append("file://");
-        if (System.getProperty("os.name").toLowerCase().indexOf("windows") != -1) {
-            sb.append("/");
-        }
-        sb.append(getTempDir().getAbsolutePath().replace('\\', '/'));
-        sb.append("/");
-        final String archiveDir = str.substring("jar:".length(), idx);
-        sb.append(toSafeDirectoryName(new File(new URI(archiveDir)).getAbsolutePath()));
-        if (!str.endsWith("!/")) {
-            sb.append("/");
-            sb.append(HashCode.encode(str.substring(idx + 2)));
-        }
-        return new URL(sb.toString());
-    }
+		// Construct URL with safe naming taken into account
+		StringBuffer sb = new StringBuffer();
+		sb.append("file://");
+		if (System.getProperty("os.name").toLowerCase().indexOf("windows") != -1) {
+			sb.append("/");
+		}
+		sb.append(getTempDir().getAbsolutePath().replace('\\', '/'));
+		sb.append("/");
+		final String archiveDir = str.substring("jar:".length(), idx);
+		sb.append(toSafeDirectoryName(new File(new URI(archiveDir))
+				.getAbsolutePath()));
+		if (!str.endsWith("!/")) {
+			sb.append("/");
+			sb.append(HashCode.encode(str.substring(idx + 2)));
+		}
+		return new URL(sb.toString());
+	}
 
-    private File getTempDir() {
-        return (File) ResourceLocator.instance().lookup("tempDir");
-    }
+	private File getTempDir() {
+		return (File) ResourceLocator.instance().lookup("tempDir");
+	}
 
-    protected String toSafeDirectoryName(String name) {
-        return name.replace('.', '_').replace(':', '~').replace(File.separatorChar, '.');
-    }
+	protected String toSafeDirectoryName(String name) {
+		return name.replace('.', '_').replace(':', '~').replace(
+				File.separatorChar, '.');
+	}
 
-    public URL toParentURL(URL url) {
-        String urlString = url.toString();
-        try {
-            urlString = urlString.substring(0, toLastContainerIdx(urlString));
-            urlString = stripProtocolIfTopLevelArchive(urlString);
-            return new URL(urlString);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+	public URL toParentURL(URL url) {
+		String urlString = url.toString();
+		try {
+			urlString = urlString.substring(0, toLastContainerIdx(urlString));
+			urlString = stripProtocolIfTopLevelArchive(urlString);
+			return new URL(urlString);
+		} catch (MalformedURLException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
-    public String stripProtocolIfTopLevelArchive(String directoryName) {
-        int lastIdx = directoryName.lastIndexOf("!/");
-        if (lastIdx != directoryName.length() - "!/".length()) return directoryName;
-        int nextToLastIdx = directoryName.lastIndexOf("!/", lastIdx - 1);
-        if (lastIdx != -1 && nextToLastIdx == -1) {
-            return directoryName.substring("jar:".length(), lastIdx);
-        } else {
-            return directoryName.substring(0, lastIdx);
-        }
-    }
+	public String stripProtocolIfTopLevelArchive(String directoryName) {
+		int lastIdx = directoryName.lastIndexOf("!/");
+		if (lastIdx != directoryName.length() - "!/".length())
+			return directoryName;
+		int nextToLastIdx = directoryName.lastIndexOf("!/", lastIdx - 1);
+		if (lastIdx != -1 && nextToLastIdx == -1) {
+			return directoryName.substring("jar:".length(), lastIdx);
+		} else {
+			return directoryName.substring(0, lastIdx);
+		}
+	}
 
+	public int toLastContainerIdx(String urlString) {
+		int endIdx = urlString.lastIndexOf("/");
+		if (urlString.endsWith("/")) {
+			endIdx = urlString.lastIndexOf("/", endIdx - 1);
+		}
+		return endIdx + 1;
+	}
 
-    public int toLastContainerIdx(String urlString) {
-        int endIdx = urlString.lastIndexOf("/");
-        if (urlString.endsWith("/")) {
-            endIdx = urlString.lastIndexOf("/", endIdx - 1);
-        }
-        return endIdx + 1;
-    }
+	public File toParentFile(URL url) {
+		return toEncodedFile(toParentURL(url));
+	}
 
-    public File toParentFile(URL url) {
-        return toEncodedFile(toParentURL(url));
-    }
+	public File toEncodedFile(URL url) {
+		URL newUrl = null;
+		try {
+			newUrl = toEncodedURL(url);
+			URI uri = new URI(newUrl.toString());
+			return new File(uri);
+		} catch (URISyntaxException e) {
+			throw newIllegalArgumentException("Illegal URI Syntax", e, url,
+					newUrl);
+		} catch (MalformedURLException e) {
+			throw newIllegalArgumentException("Malformed URL", e, url, newUrl);
+		}
+	}
 
-    public File toEncodedFile(URL url) {
-        URL newUrl = null;
-        try {
-            newUrl = toEncodedURL(url);
-            URI uri = new URI(newUrl.toString());
-            return new File(uri);
-        } catch (URISyntaxException e) {
-            throw newIllegalArgumentException("Illegal URI Syntax", e, url, newUrl);
-        } catch (MalformedURLException e) {
-            throw newIllegalArgumentException("Malformed URL", e, url, newUrl);
-        }
-    }
+	private IllegalArgumentException newIllegalArgumentException(
+			String message, Exception e, URL url, URL newUrl) {
+		return new IllegalArgumentException(message + " : " + e.getMessage()
+				+ " " + toInfo(url, newUrl));
+	}
 
-    private IllegalArgumentException newIllegalArgumentException(String message, Exception e, URL url, URL newUrl) {
-        return new IllegalArgumentException(message + " : " + e.getMessage() + " " + toInfo(url, newUrl));
-    }
+	private String toInfo(URL url, URL newUrl) {
+		StringBuffer sb = new StringBuffer("(");
+		sb.append("url=").append(url);
+		if (newUrl != null) {
+			sb.append(",encodedUrl=").append(newUrl);
+		}
+		sb.append(")");
+		return sb.toString();
+	}
 
-    private String toInfo(URL url, URL newUrl) {
-        StringBuffer sb = new StringBuffer("(");
-        sb.append("url=").append(url);
-        if (newUrl != null) {
-            sb.append(",encodedUrl=").append(newUrl);
-        }
-        sb.append(")");
-        return sb.toString();
-    }
+	public URL[] toURLs(URL url, File[] files) {
+		if (url == null || files == null)
+			return new URL[0];
+		String[] filenames = new String[files.length];
+		for (int i = 0; i < files.length; i++) {
+			filenames[i] = files[i].getName();
+		}
+		return toURLs(url, filenames);
+	}
 
-    public URL[] toURLs(URL url, File[] files) {
-        if (url == null || files == null) return new URL[0];
-        String [] filenames = new String[files.length];
-        for (int i = 0; i < files.length; i++) {
-            filenames[i] = files[i].getName();
-        }
-        return toURLs(url, filenames);
-    }
+	public URL[] toURLs(URL url, String[] filenames) {
+		if (url == null || filenames == null)
+			return new URL[0];
+		String[] urlStrings = prependUrlString(url, filenames);
+		URL[] urls = new URL[urlStrings.length];
+		try {
+			for (int i = 0; i < urlStrings.length; i++) {
+				urls[i] = new URL(urlStrings[i]);
+			}
+			return urls;
+		} catch (MalformedURLException e) {
+			return new URL[0];
+		}
+	}
 
-    public URL[] toURLs(URL url, String[] filenames) {
-        if (url == null || filenames == null) return new URL[0];
-        String [] urlStrings = prependUrlString(url, filenames);
-        URL [] urls = new URL [urlStrings.length];
-        try {
-            for (int i = 0; i < urlStrings.length; i++) {
-                urls[i] = new URL(urlStrings[i]);
-            }
-            return urls;
-        } catch (MalformedURLException e) {
-            return new URL[0];
-        }
-    }
+	public URL appendIfMissing(String suffix, URL target) {
+		String urlString = target.toString();
+		urlString = stringHelper.appendIfMissing("/", urlString);
+		try {
+			return new URL(urlString);
+		} catch (MalformedURLException e) {
+			return null;
+		}
+	}
 
-    public URL appendIfMissing(String suffix, URL target) {
-        String urlString = target.toString();
-        urlString = stringHelper.appendIfMissing("/", urlString);
-        try {
-            return new URL(urlString);
-        } catch (MalformedURLException e) {
-            return null;
-        }
-    }
+	public File toArchiveFile(URL url) {
+		return toEncodedFile(url);
+	}
 
-    public File toArchiveFile(URL url) {
-        return toEncodedFile(url);
-    }
+	public File toArchiveDir(URL url) throws MalformedURLException {
+		URL newURL = toArchiveURL(url);
+		return toEncodedFile(newURL);
+	}
 
-    public File toArchiveDir(URL url) throws MalformedURLException {
-        URL newURL = toArchiveURL(url);
-        return toEncodedFile(newURL);
-    }
+	public URL toArchiveURL(URL url) throws MalformedURLException {
+		String urlString = stringHelper
+				.prependIfMissing("jar:", url.toString());
+		return new URL(urlString + "!/");
+	}
 
-    public URL toArchiveURL(URL url) throws MalformedURLException {
-        String urlString = stringHelper.prependIfMissing("jar:", url.toString());
-        return new URL(urlString + "!/");
-    }
+	public File toArchiveIdx(URL baseUrl) throws MalformedURLException {
+		return new File(toArchiveDir(baseUrl), toArchiveFile(baseUrl).getName()
+				+ ".idx");
+	}
 
-    public File toArchiveIdx(URL baseUrl) throws MalformedURLException {
-        return new File(toArchiveDir(baseUrl), toArchiveFile(baseUrl).getName() + ".idx");
-    }
+	public File toArchiveLock(File archiveDir) {
+		return new File(archiveDir.getParentFile(), archiveDir.getName()
+				+ ".lck");
+	}
 
-    public File toArchiveLock(File archiveDir) {
-        return new File(archiveDir.getParentFile(), archiveDir.getName() + ".lck");
-    }
+	private final static SortedArray LEGAL_EXT_SET = SortedArray
+			.valueOf(new String[] { ".jar", ".ear", ".war", ".zip" });
 
-    private final static String [] LEGAL_EXTS = {".jar", ".ear", ".war", ".zip"};
+	public boolean isLegalArchiveExtension(URL url) {
+		String urlString = url.toString();
+		return isLegalArchiveExtension(urlString);
+	}
 
-    public boolean isLegalArchiveExtension(URL url) {
-        String urlString = url.toString();
-        for (int i = 0; i < LEGAL_EXTS.length; i++) {
-            if (urlString.endsWith(LEGAL_EXTS[i])) return true;
-        }
-        return false;
-    }
+	private boolean isLegalArchiveExtension(String urlString) {
+		int idx = urlString.lastIndexOf(".");
+		if (idx == -1) {
+			return false;
+		}
+		final String extension = urlString.substring(idx, urlString.length());
+		return LEGAL_EXT_SET.contains(extension);
+	}
 
-    public File toArchiveCls(URL baseUrl) throws MalformedURLException {
-        return new File(toArchiveDir(baseUrl), toArchiveFile(baseUrl).getName() + ".cls");
-    }
+	public URL toLegalArchiveUrl(URL url) throws MalformedURLException {
+		String urlString = url.toString();
+		return toLegalArchiveUrl(urlString);
+	}
 
-    public String[] prependUrlString(URL baseUrl, String[] filenames) {
-        String urlString = baseUrl.toString();
-        if (new URLHelper().isLegalArchiveExtension(baseUrl)) {
-            urlString = stringHelper.prependIfMissing("jar:", urlString);
-            urlString += "!/";
-        } else {
-            urlString += "/";
-        }
-        String [] urlStrings = new String[filenames.length];
-        for (int i = 0; i < filenames.length; i++) {
-            urlStrings[i] = urlString + filenames[i];
-        }
-        return urlStrings;
-    }
+	private URL toLegalArchiveUrl(String urlString)
+			throws MalformedURLException {
+		if (isLegalArchiveExtension(urlString)) {
+			return new URL(urlString);
+		}
+		String newUrlString = urlString;
+		int idx = urlString.lastIndexOf("!/");
+		if (idx != -1) {
+			final String archiveUrlString = urlString.substring(0, idx + 2);
+			newUrlString = stripProtocolIfTopLevelArchive(archiveUrlString);
+		}
+		if (isLegalArchiveExtension(newUrlString)) {
+			return new URL(newUrlString);
+		}
+		return null;
+	}
 
-    public String toBaseContainer(URL url) {
-        if (url == null) return null;
-        String urlString = url.toString();
-        int idx;
-        if ((idx = urlString.lastIndexOf("!/")) != -1) {
-            urlString = urlString.substring(0, idx);
-            if ((idx = urlString.lastIndexOf("!/")) != -1) {
-                return urlString;
-            } else {
-                return urlString.substring("jar:".length());
-            }
-        } else {
-            return urlString.substring(0, urlString.lastIndexOf("/"));
-        }
-    }
+	public File toArchiveCls(URL baseUrl) throws MalformedURLException {
+		return new File(toArchiveDir(baseUrl), toArchiveFile(baseUrl).getName()
+				+ ".cls");
+	}
 
-    public URL toBaseContainerUrl(URL url) {
-        try {
-            return new URL(toBaseContainer(url));
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("Error creating url", e);
-        }
-    }
+	public String[] prependUrlString(URL baseUrl, String[] filenames) {
+		String urlString = baseUrl.toString();
+		if (new URLHelper().isLegalArchiveExtension(baseUrl)) {
+			urlString = stringHelper.prependIfMissing("jar:", urlString);
+			urlString += "!/";
+		} else {
+			urlString += "/";
+		}
+		String[] urlStrings = new String[filenames.length];
+		for (int i = 0; i < filenames.length; i++) {
+			urlStrings[i] = urlString + filenames[i];
+		}
+		return urlStrings;
+	}
 
-    public String toFileName(URL url) {
-        String urlString = url.toString();
-        int idx = urlString.lastIndexOf('/');
-        if (idx == -1) return "";
-        return url.toString().substring(idx + 1);
-    }
+	public String toBaseContainer(URL url) {
+		if (url == null)
+			return null;
+		String urlString = url.toString();
+		int idx;
+		if ((idx = urlString.lastIndexOf("!/")) != -1) {
+			urlString = urlString.substring(0, idx);
+			if ((idx = urlString.lastIndexOf("!/")) != -1) {
+				return urlString;
+			} else {
+				return urlString.substring("jar:".length());
+			}
+		} else {
+			return urlString.substring(0, urlString.lastIndexOf("/"));
+		}
+	}
+
+	public URL toBaseContainerUrl(URL url) {
+		try {
+			return new URL(toBaseContainer(url));
+		} catch (MalformedURLException e) {
+			throw new RuntimeException("Error creating url", e);
+		}
+	}
+
+	public String toFileName(URL url) {
+		String urlString = url.toString();
+		int idx = urlString.lastIndexOf('/');
+		if (idx == -1)
+			return "";
+		return url.toString().substring(idx + 1);
+	}
 
 }

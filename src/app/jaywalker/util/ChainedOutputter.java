@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Date;
 
 public class ChainedOutputter implements Outputter {
 
@@ -20,17 +21,16 @@ public class ChainedOutputter implements Outputter {
 	}
 
 	public void write(OutputStream outputStream) {
-		final File file = (File) locator.lookup("report.xml");
 		try {
-			String report = FileSystem.readFileIntoString(file);
+			String report = (String) locator.lookup("report.xml.value");
 			for (int i = 0; i < outputters.length; i++) {
+				Date start = new Date();
 				report = outputters[i].transform(report);
+				System.out.println(new Date().getTime() - start.getTime());
 			}
 			outputStream.write(report.getBytes());
-		} catch (FileNotFoundException e) {
-			throw new OutputterException("File not found : " + file, e);
 		} catch (IOException e) {
-			throw new OutputterException("IOException for : " + file, e);
+			throw new OutputterException("IOException while writing report.", e);
 		}
 	}
 

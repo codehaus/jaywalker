@@ -42,9 +42,17 @@ public class DependencyReportConfiguration implements Configuration {
 
 	private ReportSetupMap createReportTagMap(DependencyModel dependencyModel) {
 		ReportSetupMap dependencyReportTagMap = new ReportSetupMap();
+
+		Outputter[] archiveDependencyOutputters = new Outputter[] {
+				new XsltTransformer("archive-dependencies-resolved-html.xslt"),
+				new ChainedOutputter(new Outputter[] {
+						new XsltTransformer(
+								"archive-dependencies-resolved-dot.xslt"),
+						new DotOutputter("archive.resolved.dot") }) };
+
 		dependencyReportTagMap.put("dependency", "archive",
 				new ContainerDependencyTag(dependencyModel),
-				new XsltTransformer("archive-dependencies-resolved-html.xslt"));
+				archiveDependencyOutputters);
 
 		Outputter[] packageDependencyOutputters = new Outputter[] {
 				new XsltTransformer("package-dependencies-resolved-html.xslt"),

@@ -19,15 +19,8 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.Set;
 
 import jaywalker.classlist.ClasslistElement;
 import jaywalker.classlist.ClasslistElementFactory;
@@ -49,7 +42,7 @@ public class ReportExecutor {
 		AggregateReport report = execute(classlist, reports);
 
 		outputXml(outDir, report);
-		outputHtml(outDir, reports);
+		outputHtml(outDir, reports, classlist);
 	}
 
 	private void outputXml(File outDir, AggregateReport report)
@@ -57,13 +50,16 @@ public class ReportExecutor {
 		File output = new File(outDir, "report.xml");
 		ResourceLocator.instance().register("report.xml", output);
 		BufferedWriter writer = new BufferedWriter(new FileWriter(output));
-		writer.write(report.toString());
+		final String value = report.toString();
+		ResourceLocator.instance().register("report.xml.value", value);
+		writer.write(value);
 		writer.close();
 	}
 
-	private void outputHtml(File outDir, Report[] reports) throws IOException {
+	private void outputHtml(File outDir, Report[] reports, String classlist) throws IOException {
 		File output = new File(outDir, "report.html");
 		BufferedWriter writer = new BufferedWriter(new FileWriter(output));
+		writer.write(formatClasslist(classlist));
 		for (int i = 0; i < reports.length; i++) {
 			String[] strings = reports[i].transform();
 			for (int j = 0; j < strings.length; j++) {
@@ -71,6 +67,10 @@ public class ReportExecutor {
 			}
 		}
 		writer.close();
+	}
+
+	private String formatClasslist(String classlist) {
+		return "<b>Classlist:</b> " + classlist + "<br/>";
 	}
 
 	private void initOutDir(File outDir) {

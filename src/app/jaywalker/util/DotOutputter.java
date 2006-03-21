@@ -25,12 +25,12 @@ public class DotOutputter implements Outputter {
 			file.delete();
 			file.createNewFile();
 			FileSystem.writeStringIntoFile(file, value);
-			Shell.executeDot(file);
+			new DotProcess().executeDot(file);
 		} catch (IOException e) {
 			// do nothing
 		}
 
-		return "<img src=\"" + Shell.toPngFilename(file).getName() + "\"/>";
+		return "<img src=\"" + DotProcess.toPngFilename(file).getName() + "\"/>";
 	}
 
 }
