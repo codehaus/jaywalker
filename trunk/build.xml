@@ -76,7 +76,7 @@
         <jar destfile="build/dist/${ant.project.name}-test.jar">
             <fileset dir="build/classes-test">
                 <include name="**/test*/**"/>
-                <include name="**/*Test.class"/>
+                <include name="**/*.class"/>
                 <exclude name="test1/**"/>
                 <exclude name="test2/**"/>
                 <exclude name="test5/**"/>

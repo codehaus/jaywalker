@@ -15,142 +15,84 @@
  */
 package jaywalker.classlist;
 
-import jaywalker.util.FileSystem;
-import jaywalker.util.HashCode;
-import jaywalker.util.URLHelper;
-import org.apache.bcel.classfile.ClassParser;
-import org.apache.bcel.classfile.JavaClass;
-import org.apache.bcel.classfile.DescendingVisitor;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
-import java.util.Enumeration;
 import java.util.Properties;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import jaywalker.util.URLHelper;
+import jaywalker.util.ZipFileVisitor;
+import jaywalker.util.ZipFileVisitor.ZipEntryListener;
+
 public class ArchiveExpander {
-	private final URLHelper urlHelper = new URLHelper();
 
 	public void expand(URL url) throws IOException {
-		if (isCacheStale(url)) {
-			deleteCache(url);
+		ArchiveCache cache = new ArchiveCache(url);
+		if (cache.isStale()) {
+			cache.delete();
 		}
-		if (isCacheMissing(url)) {
-			writeToCache(url);
+		if (cache.isMissing()) {
+			cache.lock();
+			writeToCache(cache);
+			cache.unlock();
 		}
 	}
 
-	private boolean isCacheMissing(URL url) throws MalformedURLException {
-		File archiveDir = urlHelper.toArchiveDir(url);
-		return !archiveDir.exists();
-	}
-
-	private void deleteCache(URL url) throws MalformedURLException {
-		File archiveDir = urlHelper.toArchiveDir(url);
-		FileSystem.delete(archiveDir);
-	}
-
-	private boolean isCacheStale(URL url) throws MalformedURLException {
-		File archiveDir = urlHelper.toArchiveDir(url);
-		File archiveFile = urlHelper.toArchiveFile(url);
-		File archiveLock = urlHelper.toArchiveLock(archiveDir);
-		return archiveDir.exists()
-				&& (archiveDir.lastModified() <= archiveFile.lastModified() || archiveLock
-						.exists());
-	}
-
-	private void writeToCache(URL url) throws IOException {
+	private void writeToCache(final ArchiveCache cache) throws IOException {
 		URLHelper helper = new URLHelper();
-		File archiveDir = helper.toArchiveDir(url);
-		File archiveFile = helper.toArchiveFile(url);
-		File archiveLock = helper.toArchiveLock(archiveDir);
-		File archiveIdx = helper.toArchiveIdx(url);
-		File archiveCls = helper.toArchiveCls(url);
+		File archiveFile = cache.toArchiveFile();
+		File archiveIdx = helper.toArchiveIdx(cache.getURL());
+		File archiveCls = helper.toArchiveCls(cache.getURL());
 
-		archiveLock.createNewFile();
+		final String absolutePath = archiveFile.getAbsolutePath();
 
 		// Look at archive...
-		ZipFile zip = new ZipFile(archiveFile);
-		archiveDir.mkdirs();
+		ZipFile zip = new ZipFile(absolutePath);
 
-		Properties idxProperties = new Properties();
-		Properties clsProperties = new Properties();
+		final Properties idxProperties = new Properties();
+		final Properties clsProperties = new Properties();
 
-		for (Enumeration entries = zip.entries(); entries.hasMoreElements();) {
-			ZipEntry nextEntry = (ZipEntry) entries.nextElement();
-			final String filename = nextEntry.getName();
+		ZipFileVisitor visitor = new ZipFileVisitor(zip);
+		visitor.addListener(createZipEntryListener(cache, idxProperties,
+				clsProperties));
+		visitor.accept();
 
-			File subArchiveFile = new File(archiveDir, String.valueOf(HashCode
-					.encode(filename)));
-
-			if (nextEntry.isDirectory()) {
-				subArchiveFile.createNewFile();
-			} else {
-				// Extract archives into archive dir
-				subArchiveFile.getParentFile().mkdirs();
-				writeInputStreamToFile(zip.getInputStream(nextEntry), nextEntry
-						.getSize(), subArchiveFile);
-				if (filename.endsWith(".class")) {
-					clsProperties.setProperty(filename,
-							createClassFileString(subArchiveFile));
-				}
-			}
-
-			idxProperties.setProperty(filename, subArchiveFile
-					.getAbsolutePath());
-		}
-		idxProperties.store(new FileOutputStream(archiveIdx), archiveFile
-				.getAbsolutePath());
-		clsProperties.store(new FileOutputStream(archiveCls), archiveFile
-				.getAbsolutePath());
+		idxProperties.store(new FileOutputStream(archiveIdx), absolutePath);
+		clsProperties.store(new FileOutputStream(archiveCls), absolutePath);
 
 		zip.close();
 
-		archiveLock.delete();
 	}
 
-	private String createClassFileString(File subArchiveFile)
-			throws IOException {
-		JavaClass javaClass = new ClassParser(subArchiveFile.getAbsolutePath())
-				.parse();
-		StringBuffer sb = new StringBuffer();
-		sb.append(javaClass.getClassName()).append("|");
-		sb.append(javaClass.getSuperclassName()).append("|");
-		final String[] interfaceNames = javaClass.getInterfaceNames();
-		sb.append(interfaceNames.length).append("|");
-		for (int i = 0; i < interfaceNames.length; i++) {
-			sb.append(interfaceNames[i]).append("|");
-		}
-		// TODO: put in common area.
-		Set set = new HashSet();
-		DependencyVisitor dependencyVisitor = new DependencyVisitor();
-		DescendingVisitor traverser = new DescendingVisitor(javaClass,
-				dependencyVisitor);
-		traverser.visit();
-		Enumeration enumeration = dependencyVisitor.getDependencies();
-		while (enumeration.hasMoreElements()) {
-			String className = (String) enumeration.nextElement();
-			if (!className.equals(javaClass.getClassName())) {
-				set.add(className);
+	private ZipEntryListener createZipEntryListener(final ArchiveCache cache,
+			final Properties idxProperties, final Properties clsProperties) {
+		return new ZipEntryListener() {
+			public void visit(ZipFile zipFile, ZipEntry zipEntry)
+					throws IOException {
+				String filename = zipEntry.getName();
+				File cachedFile = cache.createFile(filename);
+
+				if (!zipEntry.isDirectory()) {
+					writeInputStreamToFile(zipFile.getInputStream(zipEntry),
+							zipEntry.getSize(), cachedFile);
+					if (filename.endsWith(".class")) {
+						ClassElementFile classElementFile = new ClassElementFile(
+								cachedFile.toURL());
+						clsProperties.setProperty(filename, classElementFile
+								.toPropertyValue());
+					}
+				}
+				idxProperties.setProperty(filename, cachedFile
+						.getAbsolutePath());
 			}
-		}
-		dependencyVisitor.clearDependencies();
-		String[] dependencies = (String[]) set.toArray(new String[set.size()]);
-		sb.append(dependencies.length).append("|");
-		for (int i = 0; i < dependencies.length; i++) {
-			sb.append(dependencies[i]).append("|");
-		}
-		return sb.toString();
+		};
 	}
 
 	private void writeInputStreamToFile(final InputStream inputStream,

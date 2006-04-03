@@ -35,9 +35,6 @@ import org.apache.bcel.classfile.DescendingVisitor;
 import org.apache.bcel.classfile.JavaClass;
 
 public class ClassElementFile {
-	private Map classMap;
-
-	private final ResourceLocator locator = ResourceLocator.instance();
 
 	private final URL url;
 
@@ -49,46 +46,69 @@ public class ClassElementFile {
 
 	private String[] dependencies;
 
+	public ClassElementFile(URL url, JavaClass javaClass) {
+		this.url = url;
+		initializeWith(javaClass);
+	}
+
 	public ClassElementFile(URL baseUrl) {
 		this.url = baseUrl;
 		URLHelper helper = new URLHelper();
 		try {
 			URL adjustedUrl = helper.toLegalArchiveUrl(url);
 			if (adjustedUrl != null) {
-				classMap = lookupClassMap(adjustedUrl);
+				Map classMap = lookupClassMap(adjustedUrl);
+				initializeWith(classMap);
 			} else {
 				JavaClass javaClass = new ClassParser(url.openStream(), baseUrl
 						.toString()).parse();
-				className = javaClass.getClassName();
-				superClassName = javaClass.getSuperclassName();
-				interfaces = javaClass.getInterfaceNames();
-				Set set = new HashSet();
-				DependencyVisitor dependencyVisitor = new DependencyVisitor();
-				DescendingVisitor traverser = new DescendingVisitor(javaClass,
-						dependencyVisitor);
-				traverser.visit();
-				Enumeration enumeration = dependencyVisitor.getDependencies();
-				while (enumeration.hasMoreElements()) {
-					String className = (String) enumeration.nextElement();
-					if (!className.equals(javaClass.getClassName())) {
-						set.add(className);
-					}
-				}
-				dependencyVisitor.clearDependencies();
-				dependencies = (String[]) set.toArray(new String[set.size()]);
-
+				initializeWith(javaClass);
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
 
+	private void initializeWith(JavaClass javaClass) {
+		className = javaClass.getClassName();
+		superClassName = javaClass.getSuperclassName();
+		interfaces = javaClass.getInterfaceNames();
+		Set set = new HashSet();
+		DependencyVisitor dependencyVisitor = new DependencyVisitor();
+		DescendingVisitor traverser = new DescendingVisitor(javaClass,
+				dependencyVisitor);
+		traverser.visit();
+		Enumeration enumeration = dependencyVisitor.getDependencies();
+		while (enumeration.hasMoreElements()) {
+			String className = (String) enumeration.nextElement();
+			if (!className.equals(javaClass.getClassName())) {
+				set.add(className);
+			}
+		}
+		dependencyVisitor.clearDependencies();
+		dependencies = (String[]) set.toArray(new String[set.size()]);
+	}
+
+	private void initializeWith(Map classMap) {
+		String classInfo = (String) classMap.get(url);
+		int idx = 0;
+		int nextIdx = toNextIdx(classInfo, idx);
+		className = classInfo.substring(0, nextIdx);
+		idx = nextIdx + 1;
+		nextIdx = toNextIdx(classInfo, idx);
+		superClassName = classInfo.substring(idx, nextIdx);
+		idx = nextIdx + 1;
+		interfaces = split(classInfo, idx);
+		idx = skipNextList(classInfo, idx);
+		dependencies = split(classInfo, idx);
 	}
 
 	private Map lookupClassMap(URL url) throws IOException {
 		URLHelper helper = new URLHelper();
-
 		final String key = "cl:" + url.toString();
 		Map map;
+		final ResourceLocator locator = ResourceLocator.instance();
+
 		if (!locator.contains(key)) {
 			map = createClassMap(url, helper.toArchiveCls(url));
 			locator.register(key, map);
@@ -118,45 +138,18 @@ public class ClassElementFile {
 	}
 
 	public String getClassName() {
-		if (className == null) {
-			String classInfo = (String) classMap.get(url);
-			int idx = 0;
-			className = classInfo.substring(0, toNextIdx(classInfo, idx));
-		}
 		return className;
 	}
 
 	public String getSuperClassName() {
-		if (superClassName == null) {
-			String classInfo = (String) classMap.get(url);
-			int idx = 0;
-			idx = toNextIdx(classInfo, idx) + 1;
-			superClassName = classInfo
-					.substring(idx, toNextIdx(classInfo, idx));
-		}
 		return superClassName;
 	}
 
 	public String[] getInterfaceNames() {
-		if (interfaces == null) {
-			String classInfo = (String) classMap.get(url);
-			int idx = 0;
-			idx = toNextIdx(classInfo, idx) + 1;
-			idx = toNextIdx(classInfo, idx) + 1;
-			interfaces = split(classInfo, idx);
-		}
 		return interfaces;
 	}
 
 	public String[] getDependencies() {
-		if (dependencies == null) {
-			String classInfo = (String) classMap.get(url);
-			int idx = 0;
-			idx = toNextIdx(classInfo, idx) + 1;
-			idx = toNextIdx(classInfo, idx) + 1;
-			idx = skipNextList(classInfo, idx);
-			dependencies = split(classInfo, idx);
-		}
 		return dependencies;
 	}
 
@@ -189,5 +182,23 @@ public class ClassElementFile {
 		if (endIdx == -1)
 			endIdx = classInfo.length();
 		return endIdx;
+	}
+
+	public String toPropertyValue() {
+		StringBuffer sb = new StringBuffer();
+		sb.append(className).append("|");
+		sb.append(superClassName).append("|");
+		sb.append(denormalize(interfaces, "|"));
+		sb.append(denormalize(dependencies, "|"));
+		return sb.toString();
+	}
+
+	private String denormalize(String[] values, String delimiter) {
+		StringBuffer sb = new StringBuffer();
+		sb.append(values.length).append(delimiter);
+		for (int i = 0; i < values.length; i++) {
+			sb.append(values[i]).append(delimiter);
+		}
+		return sb.toString();
 	}
 }
