@@ -8,6 +8,7 @@
         <pathelement location="build/dist/jaywalker-${project.version}.jar"/>
         <pathelement location="build/dist/jaywalker-ant-${project.version}.jar"/>
         <pathelement location="tools/bcel/bcel-5.1.jar"/>
+        <pathelement location="tools/ant/ant-testutil-1.6.3.jar"/>
     </path>
 
     <target name="init">
@@ -74,6 +75,7 @@
     <target name="testUnifiedReportForBuiltArchives" depends="init">
         <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForBuiltArchives" tempDir="build/temp">
             <classlist file="build/dist"/>
+            <classlist file="tools/ant/ant-testutil-1.6.3.jar"/>
         </jaywalker>
     </target>
 
@@ -82,6 +84,12 @@
             <classlist file="build/dist/jaywalker-cycle-part1.jar"/>
             <classlist file="build/dist/jaywalker-cycle-part2.jar"/>
             <option name="cycle" value="archive,package,class"/>
+        </jaywalker>
+    </target>
+
+    <target name="testUnifiedReportForWeblogic" depends="init">
+        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForWeblogic" tempDir="build/temp">
+            <classlist file="c:\temp\weblogic"/>
         </jaywalker>
     </target>
 

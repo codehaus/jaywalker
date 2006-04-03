@@ -65,5 +65,9 @@ public class JayWalkerTaskTest extends BuildFileTest {
     public void testUnifiedReportForCycle1AndCycle2Archive() {
         executeTarget("testUnifiedReportForCycle1AndCycle2Archive");
     }
+    
+//    public void testUnifiedReportForWeblogic() {
+//        executeTarget("testUnifiedReportForWeblogic");
+//    }
 
 }

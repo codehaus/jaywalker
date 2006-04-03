@@ -26,7 +26,6 @@ public class ChainedOutputter implements Outputter {
 			for (int i = 0; i < outputters.length; i++) {
 				Date start = new Date();
 				report = outputters[i].transform(report);
-				System.out.println(new Date().getTime() - start.getTime());
 			}
 			outputStream.write(report.getBytes());
 		} catch (IOException e) {

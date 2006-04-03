@@ -73,19 +73,13 @@ public class SerialVersionUidHelper {
 	}
 
 	public boolean isSerializable(URL url) {
-		try {
-			String isSerializable = (String) isUrlSerializableMap.get(url);
-			if (isSerializable != null)
-				return toBoolean(isSerializable);
+		String isSerializable = (String) isUrlSerializableMap.get(url);
+		if (isSerializable != null)
+			return toBoolean(isSerializable);
 
-			isUrlSerializableMap.put(url, SERIALIZABLE_PENDING);
-			ClassElement classElement = (ClassElement) factory.create(url);
-			return isSerializable(classElement);
-		} catch (IllegalStateException e) {
-			System.out.println("huh?" + url);
-			throw e;
-		}
-
+		isUrlSerializableMap.put(url, SERIALIZABLE_PENDING);
+		ClassElement classElement = (ClassElement) factory.create(url);
+		return isSerializable(classElement);
 	}
 
 	private boolean isSerializable(ClassElement classElement) {
@@ -175,6 +169,10 @@ public class SerialVersionUidHelper {
 		isClassNameSerializableMap.put(className, SERIALIZABLE_PENDING);
 
 		JavaClass javaClass = Repository.lookupClass(className);
+		if (javaClass == null) {
+			throw new IllegalStateException(
+					"Could not find class file for class name: " + className);
+		}
 		return isSerializable(javaClass);
 	}
 
