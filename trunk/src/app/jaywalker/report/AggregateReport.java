@@ -1,117 +1,135 @@
 package jaywalker.report;
 
-import jaywalker.classlist.*;
-import jaywalker.xml.TagHelper;
-
+import java.io.IOException;
+import java.io.Writer;
 import java.net.URL;
 import java.util.Stack;
 
+import jaywalker.classlist.ClassElement;
+import jaywalker.classlist.ClasslistContainer;
+import jaywalker.classlist.ClasslistElement;
+import jaywalker.classlist.ClasslistElementEvent;
+import jaywalker.classlist.ClasslistElementListener;
+import jaywalker.classlist.DirectoryContainer;
+import jaywalker.xml.TagHelper;
+
 public class AggregateReport implements ClasslistElementListener {
 	private final TagHelper reportHelper = new TagHelper();
-
-	private String stringValue;
-
-	private StringBuffer sbReport = new StringBuffer();
 
 	private Stack stack = new Stack();
 
 	private final Report[] reports;
 
-	public AggregateReport(Report[] reports) {
+	private Writer writer;
+
+	private boolean isEmpty = true;
+
+	private static final String XML_HEADER = "<?xml version=\"1.0\"?>\n<report";
+
+	public AggregateReport(Report[] reports, Writer writer) throws IOException {
 		this.reports = reports;
+		this.writer = writer;
+		writer.write(XML_HEADER);
 	}
 
 	public void classlistElementVisited(ClasslistElementEvent event) {
-		final ClasslistElement element = event.getElement();
-		final URL url = element.getURL();
-		while (isElementNotOnStackTop(element)) {
-			stack.pop();
-			sbReport.append(reportHelper.toSpaces(stack.size()));
-			sbReport.append("</container>\n");
-		}
-
-		sbReport.append(reportHelper.toSpaces(stack.size()));
-
-		if (element instanceof ClasslistContainer) {
-			sbReport.append("<container type=\"").append(element.getType())
-					.append("\"");
-			sbReport.append(" url=\"").append(element.getURL()).append("\"");
-			if (element.getClass() == DirectoryContainer.class) {
-				DirectoryContainer directoryContainer = (DirectoryContainer) element;
-				final String packageName = directoryContainer.getPackageName();
-				if (packageName != null) {
-					sbReport.append(" value=\"");
-					sbReport.append(packageName);
-					sbReport.append("\"");
-				}
-			}
-			sbReport.append(">\n");
-			stack.push(element.getURL());
-			for (int i = 0; i < reports.length; i++) {
-				sbReport.append(reports[i].toTagString(url, stack));
-			}
-		} else if (element instanceof ClassElement) {
-			ClassElement classElement = (ClassElement) element;
-			sbReport.append("<element type=\"class\" url=\"").append(url)
-					.append("\" value=\"");
-			sbReport.append(classElement.getName()).append("\"");
-
-			stack.push(url);
-			StringBuffer sbXmlTags = new StringBuffer();
-
-			for (int i = 0; i < reports.length; i++) {
-				sbXmlTags.append(reports[i].toTagString(url, stack));
-			}
-
-			if (sbXmlTags.length() == 0) {
+		try {
+			final ClasslistElement element = event.getElement();
+			final URL url = element.getURL();
+			while (isElementNotOnStackTop(element)) {
 				stack.pop();
-				sbReport.append("/>\n");
-				return;
+				writer.write(reportHelper.toSpaces(stack.size()));
+				writer.write("</container>\n");
 			}
 
-			sbReport.append(">\n");
+			if (isEmpty) {
+				writer.write(">\n");
+				isEmpty = false;
+			}
 
-			sbReport.append(sbXmlTags);
+			writer.write(reportHelper.toSpaces(stack.size()));
 
-			stack.pop();
-			sbReport.append(reportHelper.toSpaces(stack.size()));
-			sbReport.append("</element>\n");
+			if (element instanceof ClasslistContainer) {
+				writer.write("<container type=\"");
+				writer.write(element.getType());
+				writer.write("\"");
+				writer.write(" url=\"");
+				writer.write(element.getURL().toString());
+				writer.write("\"");
+				if (element.getClass() == DirectoryContainer.class) {
+					DirectoryContainer directoryContainer = (DirectoryContainer) element;
+					final String packageName = directoryContainer
+							.getPackageName();
+					if (packageName != null) {
+						writer.write(" value=\"");
+						writer.write(packageName);
+						writer.write("\"");
+					}
+				}
+				writer.write(">\n");
+				stack.push(element.getURL());
+				for (int i = 0; i < reports.length; i++) {
+					writer.write(reports[i].toTagString(url, stack));
+				}
+			} else if (element instanceof ClassElement) {
+				ClassElement classElement = (ClassElement) element;
+				writer.write("<element type=\"class\" url=\"");
+				writer.write(url.toString());
+				writer.write("\" value=\"");
+				writer.write(classElement.getName());
+				writer.write("\"");
 
-		} else {
-			sbReport.append("<element type=\"").append(element.getType())
-					.append("\"");
-			sbReport.append(" url=\"").append(element.getURL())
-					.append("\"/>\n");
+				stack.push(url);
+				StringBuffer sbXmlTags = new StringBuffer();
+
+				for (int i = 0; i < reports.length; i++) {
+					sbXmlTags.append(reports[i].toTagString(url, stack));
+				}
+
+				if (sbXmlTags.length() == 0) {
+					stack.pop();
+					writer.write("/>\n");
+					return;
+				}
+
+				writer.write(">\n");
+
+				writer.write(sbXmlTags.toString());
+
+				stack.pop();
+				writer.write(reportHelper.toSpaces(stack.size()));
+				writer.write("</element>\n");
+
+			} else {
+				writer.write("<element type=\"");
+				writer.write(element.getType());
+				writer.write("\"");
+				writer.write(" url=\"");
+				writer.write(element.getURL().toString());
+				writer.write("\"/>\n");
+			}
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 
 	}
 
 	public void lastClasslistElementVisited() {
-		final String header = "<?xml version=\"1.0\"?>\n";
-		final StringBuffer sb = new StringBuffer(header);
-		sb.append("<report");
+		try {
+			if (isEmpty) {
+				writer.write("/>");
+				return;
+			}
 
-		if (sbReport.length() == 0) {
-			sb.append("/>");
-			stringValue = sb.toString();
+			while (!stack.isEmpty()) {
+				writer.write(createContainerEndTag());
+			}
+
+			writer.write("</report>");
+		} catch (IOException e) {
+			throw new RuntimeException(e);
 		}
 
-		sb.append(">\n");
-
-		sb.append(sbReport);
-
-		while (!stack.isEmpty()) {
-			sb.append(createContainerEndTag());
-		}
-
-		sb.append("</report>");
-
-		stringValue = sb.toString();
-
-	}
-
-	public String toString() {
-		return stringValue;
 	}
 
 	private String createContainerEndTag() {

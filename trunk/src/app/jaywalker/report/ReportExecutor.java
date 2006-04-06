@@ -39,24 +39,20 @@ public class ReportExecutor {
 			throws IOException {
 		initOutDir(outDir);
 		Report[] reports = configurationSetup.toReports(properties);
-		AggregateReport report = execute(classlist, reports);
+		File output = new File(outDir, "report.xml");
+		AggregateReport report = execute(classlist, reports, output);
 
-		outputXml(outDir, report);
+		outputXml(outDir, report, output);
 		outputHtml(outDir, reports, classlist);
 	}
 
-	private void outputXml(File outDir, AggregateReport report)
+	private void outputXml(File outDir, AggregateReport report, File output)
 			throws IOException {
-		File output = new File(outDir, "report.xml");
 		ResourceLocator.instance().register("report.xml", output);
-		BufferedWriter writer = new BufferedWriter(new FileWriter(output));
-		final String value = report.toString();
-		ResourceLocator.instance().register("report.xml.value", value);
-		writer.write(value);
-		writer.close();
 	}
 
-	private void outputHtml(File outDir, Report[] reports, String classlist) throws IOException {
+	private void outputHtml(File outDir, Report[] reports, String classlist)
+			throws IOException {
 		File output = new File(outDir, "report.html");
 		BufferedWriter writer = new BufferedWriter(new FileWriter(output));
 		writer.write(formatClasslist(classlist));
@@ -80,18 +76,22 @@ public class ReportExecutor {
 		outDir.mkdir();
 	}
 
-	private AggregateReport execute(String classlist, Report[] reports)
-			throws IOException {
+	private AggregateReport execute(String classlist, Report[] reports,
+			File file) throws IOException {
 		final ClasslistElement[] elements = factory.create(classlist);
 		initReportModels(reports, elements);
-		return createAggregateReport(reports, elements);
+		return createAggregateReport(reports, elements, file);
 	}
 
-	private AggregateReport createAggregateReport(Report[] reports, final ClasslistElement[] elements) throws IOException {
+	private AggregateReport createAggregateReport(Report[] reports,
+			final ClasslistElement[] elements, final File file)
+			throws IOException {
 		ClasslistElementVisitor visitor = new ClasslistElementVisitor(elements);
-		AggregateReport report = new AggregateReport(reports);
+		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+		AggregateReport report = new AggregateReport(reports, writer);
 		visitor.addListener(report);
 		visitor.accept();
+		writer.close();
 		return report;
 	}
 
@@ -111,7 +111,7 @@ public class ReportExecutor {
 		System.out.println(statisticListener + " instrumented.");
 		visitor.removeAllListeners();
 	}
-	
+
 	public String[] getReportDescriptions() {
 		return configurationSetup.getReportDescriptions();
 	}

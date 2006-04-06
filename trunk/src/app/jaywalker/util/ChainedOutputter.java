@@ -22,9 +22,9 @@ public class ChainedOutputter implements Outputter {
 
 	public void write(OutputStream outputStream) {
 		try {
-			String report = (String) locator.lookup("report.xml.value");
+			String report = FileSystem.readFileIntoString((File) locator
+					.lookup("report.xml"));
 			for (int i = 0; i < outputters.length; i++) {
-				Date start = new Date();
 				report = outputters[i].transform(report);
 			}
 			outputStream.write(report.getBytes());
