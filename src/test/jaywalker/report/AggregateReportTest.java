@@ -29,7 +29,11 @@ import jaywalker.xml.SerialVersionUidConflictTag;
 import jaywalker.xml.Tag;
 import jaywalker.xml.UnresolvedClassNameDependencyTag;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
@@ -56,8 +60,10 @@ public class AggregateReportTest extends JayWalkerTestCase {
 
 		AggregateModel model = new AggregateModel(getClasslistElementListeners());
 		assertVisit(url, model);
-		AggregateReport report = new AggregateReport(reports);
+		BufferedWriter writer = new BufferedWriter(new StringWriter());
+		AggregateReport report = new AggregateReport(reports, writer);
 		assertVisit(url, report);
+		writer.close();
 		System.out.println("Report initialization time : "
 				+ (new Date().getTime() - start.getTime()));
 		start = new Date();

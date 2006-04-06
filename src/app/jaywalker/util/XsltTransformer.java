@@ -84,7 +84,8 @@ public class XsltTransformer implements Outputter {
 	public void write(OutputStream outputStream) {
 
 		try {
-			String value = (String) locator.lookup("report.xml.value");
+			String value = FileSystem.readFileIntoString((File) locator
+					.lookup("report.xml"));
 			value = transform(value);
 			outputStream.write(value.getBytes());
 		} catch (FileNotFoundException e) {
