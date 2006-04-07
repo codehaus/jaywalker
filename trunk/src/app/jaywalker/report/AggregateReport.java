@@ -1,6 +1,7 @@
 package jaywalker.report;
 
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URL;
 import java.util.Stack;
@@ -143,6 +144,12 @@ public class AggregateReport implements ClasslistElementListener {
 	private boolean isElementNotOnStackTop(ClasslistElement element) {
 		return !stack.isEmpty()
 				&& !element.getContainer().getURL().equals(stack.peek());
+	}
+
+	public void transform(OutputStream fos) {
+		for (int i = 0; i < reports.length; i++) {
+			reports[i].transform(fos);
+		}
 	}
 
 }

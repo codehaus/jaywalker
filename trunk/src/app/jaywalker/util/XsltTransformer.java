@@ -1,7 +1,5 @@
 package jaywalker.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -76,24 +74,15 @@ public class XsltTransformer implements Outputter {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see jaywalker.util.Outputter#write(java.io.OutputStream)
-	 */
 	public void write(OutputStream outputStream) {
 
 		try {
-			String value = FileSystem.readFileIntoString((File) locator
-					.lookup("report.xml"));
-			value = transform(value);
-			outputStream.write(value.getBytes());
+			File report = (File) locator.lookup("report.xml");
+			InputStream is = new FileInputStream(report);
+			transform(is, outputStream);
 		} catch (FileNotFoundException e) {
 			throw new OutputterException(
 					"FileNotFoundException thrown while reading in XML file", e);
-		} catch (IOException e) {
-			throw new OutputterException(
-					"IOException thrown while reading in XML file", e);
 		}
 	}
 
@@ -116,35 +105,33 @@ public class XsltTransformer implements Outputter {
 		return valueOf(new String[] { filename1, filename2 });
 	}
 
-	public String transform(String value) {
+	public void transform(InputStream is, OutputStream os) {
 		try {
-			DOMSource source = lookupDOMSource(value);
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			StreamResult result = new StreamResult(baos);
+			DOMSource source = lookupDOMSource(is);
+			StreamResult result = new StreamResult(os);
 			transformer.transform(source, result);
-			return baos.toString();
 		} catch (Throwable t) {
 			throw new OutputterException(
 					"Exception thrown while transforming XML", t);
 		}
 	}
 
-	private DOMSource lookupDOMSource(String value)
+	private DOMSource lookupDOMSource(InputStream value)
 			throws ParserConfigurationException, SAXException, IOException {
-		final String key = toDOMSourceKey(value);
-		if (!locator.contains(key)) {
-			DocumentBuilder builder = FACTORY.newDocumentBuilder();
-			Document document = builder.parse(new ByteArrayInputStream(value
-					.getBytes()));
-			Element root = (Element) document.getElementsByTagName("report")
-					.item(0);
-			locator.register(key, new DOMSource(root));
-		}
-		return (DOMSource) locator.lookup(key);
+		// final String key = toDOMSourceKey(value);
+		// if (!locator.contains(key)) {
+		DocumentBuilder builder = FACTORY.newDocumentBuilder();
+		Document document = builder.parse(value);
+		Element root = (Element) document.getElementsByTagName("report")
+				.item(0);
+		// locator.register(key, new DOMSource(root));
+		// }
+		// return (DOMSource) locator.lookup(key);
+		return new DOMSource(root);
 	}
 
-	private String toDOMSourceKey(String value) {
-		return "DOMSource-" + value.hashCode();
-	}
+	// private String toDOMSourceKey(String value) {
+	// return "DOMSource-" + value.hashCode();
+	// }
 
 }

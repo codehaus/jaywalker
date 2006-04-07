@@ -18,15 +18,12 @@ package jaywalker.classlist;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URL;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
-import java.nio.channels.ReadableByteChannel;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
+import jaywalker.util.FileSystem;
 import jaywalker.util.URLHelper;
 import jaywalker.util.ZipFileVisitor;
 import jaywalker.util.ZipFileVisitor.ZipEntryListener;
@@ -80,7 +77,7 @@ public class ArchiveExpander {
 				File cachedFile = cache.createFile(filename);
 
 				if (!zipEntry.isDirectory()) {
-					writeInputStreamToFile(zipFile.getInputStream(zipEntry),
+					FileSystem.writeInputStreamToFile(zipFile.getInputStream(zipEntry),
 							zipEntry.getSize(), cachedFile);
 					if (filename.endsWith(".class")) {
 						ClassElementFile classElementFile = new ClassElementFile(
@@ -93,14 +90,5 @@ public class ArchiveExpander {
 						.getAbsolutePath());
 			}
 		};
-	}
-
-	private void writeInputStreamToFile(final InputStream inputStream,
-			final long size, final File file) throws IOException {
-		ReadableByteChannel input = Channels.newChannel(inputStream);
-		FileChannel output = new FileOutputStream(file).getChannel();
-		output.transferFrom(input, 0, size);
-		input.close();
-		output.close();
 	}
 }

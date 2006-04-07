@@ -1,6 +1,7 @@
 package jaywalker.report;
 
 import java.io.ByteArrayOutputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.Stack;
 
@@ -26,18 +27,12 @@ public class Report {
 		return sb.toString();
 	}
 
-	public String[] transform() {
-		String[] values = new String[transformers.length];
+	public void transform(OutputStream os) {
 		for (int i = 0; i < transformers.length; i++) {
 			if (transformers[i] != null) {
-				ByteArrayOutputStream baos = new ByteArrayOutputStream();
-				transformers[i].write(baos);
-				values[i] = baos.toString();
-			} else {
-				values[i] = "";
+				transformers[i].write(os);
 			}
 		}
-		return values;
 	}
 
 }

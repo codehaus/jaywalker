@@ -15,14 +15,17 @@
  */
 package jaywalker.util;
 
-import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
+import java.io.OutputStream;
+import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.FileChannel;
+import java.nio.channels.ReadableByteChannel;
 
 public class FileSystem {
 
@@ -72,19 +75,42 @@ public class FileSystem {
 		return sb.toString();
 	}
 
+	public static void readInputStreamIntoOutputStream(InputStream is,
+			OutputStream os) throws IOException {
+		byte[] bytes = new byte[1024];
+		while (is.available() > 0) {
+			int length = (is.available() < bytes.length) ? is.available()
+					: bytes.length;
+			is.read(bytes, 0, length);
+			os.write(bytes, 0, length);
+		}
+		is.close();
+		os.close();
+	}
+
 	public static String readFileIntoString(File file)
 			throws FileNotFoundException, IOException {
-		BufferedInputStream bis = new BufferedInputStream(new FileInputStream(
-				file));
+		InputStream bis = new FileInputStream(file);
 		return readInputStreamIntoString(bis);
 	}
 
 	public static void writeStringIntoFile(File file, String value)
 			throws FileNotFoundException, IOException {
-		FileOutputStream fos = new FileOutputStream(file);
-		fos.write(value.getBytes());
-		fos.flush();
-		fos.close();
+	    FileOutputStream fos = new FileOutputStream(file);
+	    FileChannel channel = fos.getChannel();
+	    ByteBuffer buf = ByteBuffer.allocate(value.length());
+	    buf.put(value.getBytes());
+	    channel.write(buf);
+	    channel.close();
+	}
+
+	public static void writeInputStreamToFile(final InputStream inputStream,
+			final long size, final File file) throws IOException {
+		ReadableByteChannel input = Channels.newChannel(inputStream);
+		FileChannel output = new FileOutputStream(file).getChannel();
+		output.transferFrom(input, 0, size);
+		input.close();
+		output.close();
 	}
 
 }

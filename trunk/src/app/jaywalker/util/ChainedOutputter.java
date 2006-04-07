@@ -1,10 +1,13 @@
 package jaywalker.util;
 
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Date;
 
 public class ChainedOutputter implements Outputter {
 
@@ -22,20 +25,24 @@ public class ChainedOutputter implements Outputter {
 
 	public void write(OutputStream outputStream) {
 		try {
-			String report = FileSystem.readFileIntoString((File) locator
-					.lookup("report.xml"));
+			File report = (File) locator.lookup("report.xml");
+			InputStream is = new FileInputStream(report);
 			for (int i = 0; i < outputters.length; i++) {
-				report = outputters[i].transform(report);
+				if (i + 1 < outputters.length) {
+					ByteArrayOutputStream baos = new ByteArrayOutputStream();
+					outputters[i].transform(is, baos);
+					is = new ByteArrayInputStream(baos.toByteArray());
+				} else {
+					outputters[i].transform(is, outputStream);
+				}
 			}
-			outputStream.write(report.getBytes());
 		} catch (IOException e) {
 			throw new OutputterException("IOException while writing report.", e);
 		}
 	}
 
-	public String transform(String value) {
+	public void transform(InputStream is, OutputStream os) {
 		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
