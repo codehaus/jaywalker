@@ -88,7 +88,7 @@
     </target>
 
     <target name="testUnifiedReportForWeblogic" depends="init">
-        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForWeblogic" tempDir="build/temp">
+        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForWeblogic" tempDir="c:\temp\weblogic-temp">
             <classlist file="c:\temp\weblogic"/>
         </jaywalker>
     </target>

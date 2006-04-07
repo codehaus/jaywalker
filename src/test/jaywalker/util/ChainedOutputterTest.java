@@ -26,7 +26,7 @@ public class ChainedOutputterTest extends BuildFileTest {
 
 	public void testEmptyChainShouldReturnNothing() {
 		ByteArrayOutputStream baos = transformFrom(null);
-		assertEquals(file.length(), baos.toString().length());
+		assertEquals(0, baos.toString().length());
 	}
 
 	private ByteArrayOutputStream transformFrom(Outputter[] outputters) {
