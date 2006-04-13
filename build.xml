@@ -34,6 +34,8 @@
         <pathelement path="tools/junit/junit-3.8.1.jar"/>
         <pathelement path="tools/ant/ant-testutil-1.6.3.jar"/>
         <pathelement path="tools/log4j/log4j-1.2.9.jar"/>
+        <pathelement path="tools/xalan/xalan-2.7.0.jar"/>
+        <pathelement path="tools/xalan/serializer.jar"/>
     </path>
 
     <target name="all" depends="clean, test" description="build all"/>

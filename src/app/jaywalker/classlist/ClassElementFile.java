@@ -18,6 +18,7 @@ package jaywalker.classlist;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -64,6 +65,17 @@ public class ClassElementFile {
 						.toString()).parse();
 				initializeWith(javaClass);
 			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public ClassElementFile(InputStream inputStream, URL baseUrl) {
+		this.url = baseUrl;
+		try {
+			JavaClass javaClass = new ClassParser(inputStream, baseUrl
+					.toString()).parse();
+			initializeWith(javaClass);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -201,4 +213,5 @@ public class ClassElementFile {
 		}
 		return sb.toString();
 	}
+
 }

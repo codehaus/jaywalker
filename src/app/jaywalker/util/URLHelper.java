@@ -203,7 +203,7 @@ public class URLHelper {
 		return isLegalArchiveExtension(urlString);
 	}
 
-	private boolean isLegalArchiveExtension(String urlString) {
+	public boolean isLegalArchiveExtension(String urlString) {
 		int idx = urlString.lastIndexOf(".");
 		if (idx == -1) {
 			return false;
@@ -237,6 +237,11 @@ public class URLHelper {
 	public File toArchiveCls(URL baseUrl) throws MalformedURLException {
 		return new File(toArchiveDir(baseUrl), toArchiveFile(baseUrl).getName()
 				+ ".cls");
+	}
+	
+	public File toArchiveCch(URL baseUrl) throws MalformedURLException {
+		return new File(toArchiveDir(baseUrl), toArchiveFile(baseUrl).getName()
+				+ ".cch");
 	}
 
 	public String[] prependUrlString(URL baseUrl, String[] filenames) {
@@ -285,6 +290,10 @@ public class URLHelper {
 		if (idx == -1)
 			return "";
 		return url.toString().substring(idx + 1);
+	}
+
+	public boolean isArchivedFile(URL url) {
+		return url.getProtocol().startsWith("jar");
 	}
 
 }

@@ -9,6 +9,8 @@
         <pathelement location="build/dist/jaywalker-ant-${project.version}.jar"/>
         <pathelement location="tools/bcel/bcel-5.1.jar"/>
         <pathelement location="tools/ant/ant-testutil-1.6.3.jar"/>
+        <pathelement location="tools/xalan/xalan-2.7.0.jar"/>
+        <pathelement location="tools/xalan/serializer.jar"/>
     </path>
 
     <target name="init">

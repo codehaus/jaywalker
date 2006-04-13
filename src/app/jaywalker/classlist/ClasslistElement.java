@@ -33,14 +33,6 @@ public class ClasslistElement {
         return url;
     }
 
-    public URL getEncodedURL() throws MalformedURLException, URISyntaxException {
-        return new URLHelper().toEncodedURL(url);
-    }
-
-    public File getEncodedFile() throws MalformedURLException, URISyntaxException {
-        return new URLHelper().toEncodedFile(url);
-    }
-
     public ClasslistContainer getContainer() {
         URL parentUrl = new URLHelper().toParentURL(url);
         if (parentUrl == null) return null;

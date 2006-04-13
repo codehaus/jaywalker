@@ -22,40 +22,43 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import jaywalker.util.ResourceLocator;
+import jaywalker.util.ThreadHelper;
+
 public class ClasslistElementFactory {
 
-    private final static ClasslistElementCreator[] CREATORS = new ClasslistElementCreator []{
-            new ClassElement.Creator(),
-            new DirectoryContainer.Creator(),
-            new ArchiveContainer.Creator(),
-            new FileElement.Creator()
-    };
+	private final static ClasslistElementCreator[] CREATORS = new ClasslistElementCreator[] {
+			new ClassElement.Creator(), new DirectoryContainer.Creator(),
+			new ArchiveContainer.Creator(), new FileElement.Creator() };
 
-    public ClasslistElement create(URL url) {
-        return findAndCreate(url);
-    }
+	public ClasslistElement create(URL url) {
+		return findAndCreate(url);
+	}
 
-    private ClasslistElement findAndCreate(URL url) {
-        for (int i = 0; i < CREATORS.length; i++) {
-            if (CREATORS[i].isType(url)) {
-                return CREATORS[i].create(url);
-            }
-        }
-        throw new IllegalArgumentException("URL doesn't map to any known file types: " + url);
-    }
+	private ClasslistElement findAndCreate(URL url) {
+		new ThreadHelper().verify(url);
+		for (int i = 0; i < CREATORS.length; i++) {
+			if (CREATORS[i].isType(url)) {
+				return CREATORS[i].create(url);
+			}
+		}
+		throw new IllegalArgumentException(
+				"URL doesn't map to any known file types: " + url);
+	}
 
-    public ClasslistElement [] create(String classlist) {
-        StringTokenizer st = new StringTokenizer(classlist, File.pathSeparator);
-        List list = new ArrayList();
+	public ClasslistElement[] create(String classlist) {
+		StringTokenizer st = new StringTokenizer(classlist, File.pathSeparator);
+		List list = new ArrayList();
 
-        while ( st.hasMoreTokens() ) {
-            try {
-                list.add(create(new File(st.nextToken()).toURL()));
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-        }
+		while (st.hasMoreTokens()) {
+			try {
+				list.add(create(new File(st.nextToken()).toURL()));
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
 
-        return (ClasslistElement[]) list.toArray(new ClasslistElement[list.size()]);
-    }
+		return (ClasslistElement[]) list.toArray(new ClasslistElement[list
+				.size()]);
+	}
 }

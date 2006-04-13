@@ -16,6 +16,7 @@
 package jaywalker.classlist;
 
 import jaywalker.testutil.Path;
+import jaywalker.util.URLHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,21 +30,24 @@ public class ClassElementTest extends JayWalkerTestCase {
         URL url = Path.FILE_CLASSLIST_ELEMENT_FACTORY_CLASS.toURL();
         final ClassElement classElement = new ClassElement(url);
         assertNotNull(classElement);
-        assertTrue(new File(new URI(classElement.getEncodedURL().toString())).exists());
+        assertTrue(new File(new URI(classElement.getURL().toString())).exists());
     }
 
     public void testShouldCreateValidInstanceFromArchivedClassFile() throws IOException, URISyntaxException {
         URL url = new URL("jar:" + Path.FILE_TEST1_JAR.toURL() + "!/SerializableImpl.class");
         final ClassElement classElement = new ClassElement(url);
         assertNotNull(classElement);
-        assertTrue(new File(new URI(classElement.getEncodedURL().toString())).exists());
+        URL cacheUrl = new URLHelper().toBaseContainerUrl(classElement.getURL());
+        assertTrue(new File(new URI(cacheUrl.toString())).exists());
     }
 
     public void testShouldCreateValidInstanceFromNestedArchivedClassFile() throws IOException, URISyntaxException {
         URL url = new URL("jar:" + Path.FILE_TEST4_JAR.toURL() + "!/jaywalker-test3.jar!/jaywalker-test1.jar!/SerializableImpl.class");
         final ClassElement classElement = new ClassElement(url);
         assertNotNull(classElement);
-        assertTrue(new File(new URI(classElement.getEncodedURL().toString())).exists());
+        URL cacheUrl = new URLHelper().toBaseContainerUrl(classElement.getURL());
+        ArchiveCache cache = new ArchiveCache(cacheUrl);
+        assertTrue(cache.getArchiveFile().exists());
     }
 
 

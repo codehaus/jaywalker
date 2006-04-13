@@ -15,42 +15,44 @@
  */
 package jaywalker.util;
 
-import jaywalker.classlist.ArchiveExpander;
-import jaywalker.classlist.JayWalkerTestCase;
-import jaywalker.util.URLHelper;
-import jaywalker.testutil.Path;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import jaywalker.classlist.ArchiveExpander;
+import jaywalker.classlist.JayWalkerTestCase;
+import jaywalker.testutil.Path;
+
 public class DirectoryListingTest extends JayWalkerTestCase {
-    public void testShouldReturnTopLevelElementUrls() throws IOException, URISyntaxException {
+	public void testShouldReturnTopLevelElementUrls() throws IOException,
+			URISyntaxException {
 
-        // Clean up any temporary files
-        final URL url = Path.FILE_TEST1_JAR.toURL();
-        final File expandedURL = new URLHelper().toEncodedFile(new URL("jar:" + url.toString() + "!/"));
-        FileSystem.delete(expandedURL);
+		// Clean up any temporary files
+		final URL url = Path.FILE_TEST1_JAR.toURL();
+		final File expandedURL = new URLHelper().toEncodedFile(new URL("jar:"
+				+ url.toString() + "!/"));
+		FileSystem.delete(expandedURL);
 
-        // Expand the archive into the temporary directory
-        // Show that the classlist element's file representation exists
-        ArchiveExpander expander = new ArchiveExpander();
-        expander.expand(url);
-        URLHelper helper = new URLHelper();
-        File fileIdx = helper.toArchiveIdx(url);
-        DirectoryListing listing = new DirectoryListing(url, fileIdx);
-        URL [] urls = listing.toUrls(url);
-        assertEquals(6, urls.length);
-        for ( int i = 0; i < urls.length; i++) {
-            final int length = listing.toUrls(urls[i]).length;
-            if ( urls[i].toString().endsWith("/META-INF/")) {
-                assertEquals(1,length);
-            } else {
-                assertEquals(0,length);
-            }
-        }
+		// Expand the archive into the temporary directory
+		// Show that the classlist element's file representation exists
+		ArchiveExpander expander = new ArchiveExpander();
+		expander.expand(url);
+		new ThreadHelper().verify(url);
+		URLHelper helper = new URLHelper();
+		File fileIdx = helper.toArchiveIdx(url);
+		DirectoryListing listing = new DirectoryListing(url, fileIdx);
+		URL[] urls = listing.toUrls(url);
+		assertEquals(6, urls.length);
+		for (int i = 0; i < urls.length; i++) {
+			final int length = listing.toUrls(urls[i]).length;
+			if (urls[i].toString().endsWith("/META-INF/")) {
+				assertEquals(1, length);
+			} else {
+				assertEquals(0, length);
+			}
+		}
 
-    }
+	}
 
 }

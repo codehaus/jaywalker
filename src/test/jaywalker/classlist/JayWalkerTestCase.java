@@ -18,11 +18,14 @@ package jaywalker.classlist;
 import jaywalker.testutil.Path;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.Shell;
+import jaywalker.util.URLHelper;
 import junit.framework.TestCase;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
@@ -51,7 +54,9 @@ public class JayWalkerTestCase extends TestCase {
         ClasslistElement element = findElementByKeyword(archive, keyword);
         assertNotNull(element);
         assertTrue(element.getClass() == clazz);
-        assertTrue(element.getEncodedFile().exists());
+        URL cacheUrl = new URLHelper().toBaseContainerUrl(element.getURL());
+        ArchiveCache cache = new ArchiveCache(cacheUrl);
+        assertTrue(cache.getArchiveFile().exists());
         return element;
     }
 

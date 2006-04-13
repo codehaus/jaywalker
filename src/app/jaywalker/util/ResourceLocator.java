@@ -19,31 +19,37 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResourceLocator {
-    private final static ResourceLocator INSTANCE = new ResourceLocator();
-    private Map map = new HashMap();
+	private final static ResourceLocator INSTANCE = new ResourceLocator();
 
-    public static ResourceLocator instance() {
-        return INSTANCE;
-    }
+	private Map map = new HashMap();
 
-    public boolean contains(String key) {
-        return map.containsKey(key);
-    }
+	public static ResourceLocator instance() {
+		return INSTANCE;
+	}
 
-    public Object lookup(String key) {
-        Object value = map.get(key);
-        if (value == null) {
-            throw new ResourceNotFoundException("Could not find resource: " + key);
-        } else {
-            return value;
-        }
-    }
+	public boolean contains(String key) {
+		return map.containsKey(key);
+	}
 
-    public void register(String key, Object value) {
-        map.put(key, value);
-    }
+	public Object lookup(String key) {
+		Object value = map.get(key);
+		if (value == null) {
+			throw new ResourceNotFoundException("Could not find resource: "
+					+ key);
+		} else {
+			return value;
+		}
+	}
 
-    public void clear() {
-        map.clear();
-    }
+	public void register(String key, Object value) {
+		map.put(key, value);
+	}
+
+	public void clear() {
+		map.clear();
+	}
+
+	public void clear(String key) {
+		map.remove(key);
+	}
 }

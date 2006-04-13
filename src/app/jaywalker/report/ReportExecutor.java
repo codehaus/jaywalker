@@ -36,14 +36,25 @@ public class ReportExecutor {
 
 	private ClasslistElementFactory factory = new ClasslistElementFactory();
 
+	public ReportExecutor() {
+		String key = "javax.xml.transform.TransformerFactory";
+		String value = "org.apache.xalan.xsltc.trax.TransformerFactoryImpl";
+		Properties props = System.getProperties();
+		props.put(key, value);
+		System.setProperties(props);
+	}
+	
 	public void execute(String classlist, Properties properties, File outDir)
 			throws IOException {
 		initOutDir(outDir);
 		Report[] reports = configurationSetup.toReports(properties);
 		File output = new File(outDir, "report.xml");
 		ResourceLocator.instance().register("report.xml", output);
+		Date start = new Date();
 		AggregateReport report = execute(classlist, reports, output);
 		outputHtml(outDir, report, classlist);
+		System.out.println("Time to create reports : "
+				+ (new Date().getTime() - start.getTime()));
 	}
 
 	private void outputHtml(File outDir, AggregateReport report, String classlist)

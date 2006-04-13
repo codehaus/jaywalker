@@ -17,6 +17,7 @@ package jaywalker.classlist;
 
 import jaywalker.testutil.Path;
 import jaywalker.util.FileSystem;
+import jaywalker.util.ThreadHelper;
 import jaywalker.util.URLHelper;
 
 import java.io.File;
@@ -35,6 +36,7 @@ public class ArchiveContainerTest extends JayWalkerTestCase {
         assertTrue(Path.FILE_TEST1_JAR.exists());
         ClasslistElementFactory factory = new ClasslistElementFactory();
         ClasslistElement cle = factory.create(Path.FILE_TEST1_JAR.toURL());
+        new ThreadHelper().verify(Path.FILE_TEST1_JAR.toURL());
         assertNotNull(cle);
         assertTrue(cle instanceof ArchiveContainer);
 
@@ -54,6 +56,7 @@ public class ArchiveContainerTest extends JayWalkerTestCase {
         assertTrue(Path.FILE_TEST4_JAR.exists());
         ClasslistElementFactory factory = new ClasslistElementFactory();
         ClasslistElement cle = factory.create(Path.FILE_TEST4_JAR.toURL());
+        new ThreadHelper().verify(Path.FILE_TEST1_JAR.toURL());
         assertNotNull(cle);
         assertTrue(cle instanceof ArchiveContainer);
 

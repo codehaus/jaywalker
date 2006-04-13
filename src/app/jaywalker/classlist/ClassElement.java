@@ -25,72 +25,80 @@ import org.apache.bcel.classfile.ClassParser;
 import org.apache.bcel.classfile.JavaClass;
 
 public class ClassElement extends ClasslistElement {
-    private ClassElementFile file;
-    private JavaClass javaClass;
+	private ClassElementFile file;
 
-    public static class Creator implements ClasslistElementCreator {
-        public boolean isType(URL url) {
-            return url.toString().endsWith(".class");
-        }
+	private JavaClass javaClass;
 
-        public ClasslistElement create(URL url) {
-            return new ClassElement(url);
-        }
-    }
+	public static class Creator implements ClasslistElementCreator {
+		public boolean isType(URL url) {
+			return url.toString().endsWith(".class");
+		}
 
-    public ClassElement(URL url) {
-        super(url);
-    }
+		public ClasslistElement create(URL url) {
+			return new ClassElement(url);
+		}
+	}
 
-    public String getName() {
-        return getClassFile().getClassName();
-    }
+	public ClassElement(URL url) {
+		super(url);
+	}
 
-    public String getPackageName() {
-        String name = getName();
-        int idx = name.lastIndexOf('.');
-        if ( idx != -1 ) return name.substring(0,idx);
-        return "";
-    }
+	public String getName() {
+		return getClassFile().getClassName();
+	}
 
-    public String getSuperName() {
-        return getClassFile().getSuperClassName();
-    }
+	public String getPackageName() {
+		String name = getName();
+		int idx = name.lastIndexOf('.');
+		if (idx != -1)
+			return name.substring(0, idx);
+		return "";
+	}
 
-    public String[] getInterfaceNames() {
-        return getClassFile().getInterfaceNames();
-    }
+	public String getSuperName() {
+		return getClassFile().getSuperClassName();
+	}
 
-    public String[] getDependencies() {
-        return file.getDependencies();
-    }
+	public String[] getInterfaceNames() {
+		return getClassFile().getInterfaceNames();
+	}
 
+	public String[] getDependencies() {
+		return file.getDependencies();
+	}
 
-    private ClassElementFile getClassFile() {
-        if (file == null) {
-            file = new ClassElementFile(url);
-        }
-        return file;
-    }
+	private ClassElementFile getClassFile() {
+		if (file == null) {
+			file = new ClassElementFile(url);
+		}
+		return file;
+	}
 
-    public JavaClass getJavaClass() {
-        try {
-            if (javaClass == null) {
-                URL encodedUrl = new URLHelper().toEncodedURL(url);
-                javaClass = new ClassParser(encodedUrl.openStream(), encodedUrl.toString()).parse();
-            }
-            return javaClass;
-        } catch (IOException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            return null;
-        } catch (URISyntaxException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            return null;
-        }
-    }
+	public JavaClass getJavaClass() {
+		try {
+			if (javaClass == null) {
+				URLHelper urlHelper = new URLHelper();
+				if (urlHelper.isArchivedFile(url)) {
+					URL baseUrl = urlHelper.toBaseContainerUrl(url);
+					ArchiveCache cache = new ArchiveCache(baseUrl);
+					String fileName = url.toString();
+					fileName = fileName
+							.substring(fileName.lastIndexOf("!/") + 2);
+					javaClass = cache.toJavaClass(fileName);
+				} else {
+					javaClass = new ClassParser(url.openStream(), url
+							.toString()).parse();
+				}
+			}
+			return javaClass;
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
-    public String getType() {
-        return "class";
-    }
+	public String getType() {
+		return "class";
+	}
 
 }
