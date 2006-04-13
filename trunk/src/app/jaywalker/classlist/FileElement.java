@@ -23,7 +23,8 @@ public class FileElement extends ClasslistElement {
 
     public static class Creator implements ClasslistElementCreator {
         public boolean isType(URL url) {
-            return new URLHelper().toEncodedFile(url).exists();
+        	//return new URLHelper().toEncodedFile(url).exists();
+        	return true;
         }
 
         public ClasslistElement create(URL url) {

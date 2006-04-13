@@ -18,11 +18,13 @@ package jaywalker.classlist;
 import jaywalker.testutil.Path;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.Shell;
+import jaywalker.util.URLHelper;
 import junit.framework.TestCase;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -45,12 +47,12 @@ public class ClasslistElementFactoryTest extends TestCase {
         URL url = Path.FILE_CLASSLIST_ELEMENT_FACTORY_CLASS.toURL();
         final ClasslistElement classlistElement = new ClasslistElementFactory().create(url);
         assertValidClasslistElement(classlistElement, ClassElement.class);
-        assertTrue(classlistElement.getEncodedFile().exists());
     }
 
     public void assertClassElement(ClasslistElement element) throws MalformedURLException, URISyntaxException {
         assertValidClasslistElement(element, ClassElement.class);
-        assertTrue(element.getEncodedFile().exists());
+        URL cacheUrl = new URLHelper().toBaseContainerUrl(element.getURL());
+        assertTrue(new File(new URI(cacheUrl.toString())).exists());
     }
 
     public void testShouldCreateValidArchivedClassElement() throws MalformedURLException, URISyntaxException {

@@ -15,51 +15,65 @@
  */
 package jaywalker.classlist;
 
-import jaywalker.util.DirectoryListing;
-import jaywalker.util.URLHelper;
-
-import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 
+import jaywalker.util.DirectoryListing;
+import jaywalker.util.ThreadHelper;
+import jaywalker.util.URLHelper;
+
 public class ArchiveContainer extends ClasslistContainer {
-    public static class Creator implements ClasslistElementCreator {
+	public static class Creator implements ClasslistElementCreator {
 
-        public boolean isType(URL url) {
-            final URLHelper helper = new URLHelper();
-            final File file = helper.toEncodedFile(url);
-            return file.exists() && helper.isLegalArchiveExtension(url);
-        }
+		public boolean isType(URL url) {
+			final URLHelper helper = new URLHelper();
+			return helper.isLegalArchiveExtension(url);
+		}
 
-        public ClasslistElement create(URL url) {
-            return new ArchiveContainer(url);
-        }
-    }
+		public ClasslistElement create(URL url) {
+			return new ArchiveContainer(url);
+		}
+	}
 
-    public ArchiveContainer(URL url) {
-        super(url);
-        urls = toUrls(url);
-    }
+	public ArchiveContainer(URL url) {
+		super(url);
+		expand(url);
+		urls = null;
+	}
 
-    private URL [] toUrls(URL url) {
-        try {
-            ArchiveExpander expander = new ArchiveExpander();
-            expander.expand(url);
-            DirectoryListing listing = new DirectoryListing(url);
-            return listing.toUrls(url);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new URL[0];
-        }
-    }
+	private URL[] toUrls(URL url) {
+		try {
+			DirectoryListing listing = new DirectoryListing(url);
+			return listing.toUrls(url);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return new URL[0];
+		}
+	}
 
-    public String getType() {
-        return "archive";
-    }
+	private void expand(URL url) {
+		try {
+			ArchiveExpander expander = new ArchiveExpander();
+			expander.expand(url);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
-    public String getName() {
-        return new URLHelper().toFileName(url);
-    }
+	public ClasslistElement[] getClasslistElements() {
+		new ThreadHelper().verify(url);
+		if (urls == null) {
+			urls = toUrls(url);
+		}
+		return super.getClasslistElements();
+	}
 
+	public String getType() {
+		return "archive";
+	}
+
+	public String getName() {
+		return new URLHelper().toFileName(url);
+	}
 
 }

@@ -3,25 +3,17 @@ package jaywalker.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Properties;
 
-import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Source;
-import javax.xml.transform.Templates;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 public class XsltTransformer implements Outputter {
 
@@ -46,8 +38,7 @@ public class XsltTransformer implements Outputter {
 		try {
 			TransformerFactory factory = lookupTransformerFactory();
 			Source xsltSource = new StreamSource(toInputStream(filename));
-			Templates templates = factory.newTemplates(xsltSource);
-			transformer = templates.newTransformer();
+			transformer = factory.newTransformer(xsltSource);
 		} catch (Throwable t) {
 			throw new OutputterException(
 					"Exception thrown while creating XML transformer", t);
@@ -78,8 +69,8 @@ public class XsltTransformer implements Outputter {
 
 		try {
 			File report = (File) locator.lookup("report.xml");
-			InputStream is = new FileInputStream(report);
-			transform(is, outputStream);
+			InputStream inputStream = new FileInputStream(report);
+			transform(inputStream, outputStream);
 		} catch (FileNotFoundException e) {
 			throw new OutputterException(
 					"FileNotFoundException thrown while reading in XML file", e);
@@ -107,7 +98,7 @@ public class XsltTransformer implements Outputter {
 
 	public void transform(InputStream is, OutputStream os) {
 		try {
-			DOMSource source = lookupDOMSource(is);
+			StreamSource source = new StreamSource(is);
 			StreamResult result = new StreamResult(os);
 			transformer.transform(source, result);
 		} catch (Throwable t) {
@@ -115,23 +106,5 @@ public class XsltTransformer implements Outputter {
 					"Exception thrown while transforming XML", t);
 		}
 	}
-
-	private DOMSource lookupDOMSource(InputStream value)
-			throws ParserConfigurationException, SAXException, IOException {
-		// final String key = toDOMSourceKey(value);
-		// if (!locator.contains(key)) {
-		DocumentBuilder builder = FACTORY.newDocumentBuilder();
-		Document document = builder.parse(value);
-		Element root = (Element) document.getElementsByTagName("report")
-				.item(0);
-		// locator.register(key, new DOMSource(root));
-		// }
-		// return (DOMSource) locator.lookup(key);
-		return new DOMSource(root);
-	}
-
-	// private String toDOMSourceKey(String value) {
-	// return "DOMSource-" + value.hashCode();
-	// }
 
 }
