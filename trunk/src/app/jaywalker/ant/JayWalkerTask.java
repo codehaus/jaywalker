@@ -16,6 +16,7 @@
 package jaywalker.ant;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
@@ -29,6 +30,7 @@ import jaywalker.util.Shell;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
 
@@ -61,12 +63,10 @@ public class JayWalkerTask extends Task {
 
 		try {
 			String classlist = createClasslist();
-			log("classlist:" + classlist);
-			getProject().setNewProperty("classlist", classlist);
+			registerClasslist(classlist);
 			String tempPath = (tempDir != null) ? tempDir.getAbsolutePath()
 					: "";
-			ResourceLocator.instance().register("tempDir",
-					Shell.toWorkingDir(tempPath));
+			registerWorkingDir(tempPath);
 			ResourceLocator.instance().register("classlistElementCache",
 					new ClasslistElementCache());
 
@@ -81,6 +81,17 @@ public class JayWalkerTask extends Task {
 			throw new BuildException(e);
 		}
 
+	}
+
+	private void registerClasslist(String classlist) {
+		log("classlist:" + classlist);
+		getProject().setNewProperty("classlist", classlist);
+	}
+
+	private void registerWorkingDir(String tempPath) throws IOException {
+		File workingDir = Shell.toWorkingDir(tempPath);
+		ResourceLocator.instance().register("tempDir", workingDir);
+		log("tempDir: " + workingDir.getAbsolutePath(), Project.MSG_DEBUG);
 	}
 
 	private void initializeDefaults() {
