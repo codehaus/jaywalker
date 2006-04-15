@@ -27,6 +27,8 @@ import jaywalker.classlist.ClasslistElement;
 import jaywalker.classlist.ClasslistElementFactory;
 import jaywalker.classlist.ClasslistElementStatistic;
 import jaywalker.classlist.ClasslistElementVisitor;
+import jaywalker.util.Clock;
+import jaywalker.util.ClockSubject;
 import jaywalker.util.FileSystem;
 import jaywalker.util.ResourceLocator;
 
@@ -43,27 +45,35 @@ public class ReportExecutor {
 		props.put(key, value);
 		System.setProperties(props);
 	}
-	
-	public void execute(String classlist, Properties properties, File outDir)
-			throws IOException {
+
+	public void execute(final String classlist, Properties properties,
+			File outDir) throws IOException {
 		initOutDir(outDir);
-		Report[] reports = configurationSetup.toReports(properties);
-		File output = new File(outDir, "report.xml");
+		ResourceLocator.instance().register("clock", new Clock());
+		final Report[] reports = configurationSetup.toReports(properties);
+		final File output = new File(outDir, "report.xml");
 		ResourceLocator.instance().register("report.xml", output);
-		Date start = new Date();
 		AggregateReport report = execute(classlist, reports, output);
 		outputHtml(outDir, report, classlist);
-		System.out.println("Time to create reports : "
-				+ (new Date().getTime() - start.getTime()));
 	}
 
-	private void outputHtml(File outDir, AggregateReport report, String classlist)
-			throws IOException {
-		File output = new File(outDir, "report.html");
-		FileOutputStream fos = new FileOutputStream(output);
-		fos.write(formatClasslist(classlist));
-		report.transform(fos);
-		fos.close();
+	// TODO: smells like an aspect
+	private void outputHtml(File outDir, AggregateReport report,
+			String classlist) throws IOException {
+		Clock clock = (Clock) ResourceLocator.instance().lookup("clock");
+		final String clockType = "Time to create html report";
+		clock.start(clockType);
+		try {
+			File output = new File(outDir, "report.html");
+			FileOutputStream fos = new FileOutputStream(output);
+			fos.write(formatClasslist(classlist));
+			report.transform(fos);
+			fos.close();
+		} finally {
+			clock.stop(clockType);
+			System.out.println(clock.toString(clockType));
+		}
+
 	}
 
 	private byte[] formatClasslist(String classlist) {
@@ -78,18 +88,27 @@ public class ReportExecutor {
 		outDir.mkdir();
 	}
 
+	// TODO: smells like an aspect
 	private AggregateReport execute(String classlist, Report[] reports,
 			File file) throws IOException {
-		final ClasslistElement[] elements = factory.create(classlist);
-		initReportModels(reports, elements);
-		return createAggregateReport(reports, elements, file);
+		Clock clock = (Clock) ResourceLocator.instance().lookup("clock");
+		final String clockType = "Time to execute report";
+		clock.start(clockType);
+		try {
+			final ClasslistElement[] elements = factory.create(classlist);
+			initReportModels(reports, elements);
+			return createAggregateReport(reports, elements, file);
+		} finally {
+			clock.stop(clockType);
+			System.out.println(clock.toString(clockType));
+		}
 	}
 
 	private AggregateReport createAggregateReport(Report[] reports,
 			final ClasslistElement[] elements, final File file)
 			throws IOException {
 		ClasslistElementVisitor visitor = new ClasslistElementVisitor(elements);
-		BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+		FileWriter writer = new FileWriter(file);
 		AggregateReport report = new AggregateReport(reports, writer);
 		visitor.addListener(report);
 		visitor.accept();
@@ -97,21 +116,29 @@ public class ReportExecutor {
 		return report;
 	}
 
+	// TODO: smells like an aspect
 	private void initReportModels(Report[] reports,
 			final ClasslistElement[] elements) throws IOException {
-		ClasslistElementVisitor visitor = new ClasslistElementVisitor(elements);
-		final ClasslistElementStatistic statisticListener = new ClasslistElementStatistic();
-		visitor.addListener(statisticListener);
+		Clock clock = (Clock) ResourceLocator.instance().lookup("clock");
+		final String clockType = "Time to initialize the report";
+		clock.start(clockType);
+		try {
+			ClasslistElementVisitor visitor = new ClasslistElementVisitor(
+					elements);
+			final ClasslistElementStatistic statisticListener = new ClasslistElementStatistic();
+			visitor.addListener(statisticListener);
 
-		AggregateModel model = new AggregateModel(configurationSetup
-				.getClasslistElementListeners());
-		visitor.addListener(model);
-		Date start = new Date();
-		visitor.accept();
-		System.out.println("Time to visit elements : "
-				+ (new Date().getTime() - start.getTime()));
-		System.out.println(statisticListener + " instrumented.");
-		visitor.removeAllListeners();
+			AggregateModel model = new AggregateModel(configurationSetup
+					.getClasslistElementListeners());
+			visitor.addListener(model);
+			visitor.accept();
+
+			System.out.println(statisticListener + " instrumented.");
+			visitor.removeAllListeners();
+		} finally {
+			clock.stop(clockType);
+			System.out.println(clock.toString(clockType));
+		}
 	}
 
 	public String[] getReportDescriptions() {
