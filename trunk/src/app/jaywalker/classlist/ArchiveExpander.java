@@ -43,7 +43,8 @@ public class ArchiveExpander {
 			cache.delete();
 		}
 		if (cache.isMissing()) {
-			createAsynchronously(cache);
+			create(cache);
+			//createAsynchronously(cache);
 		}
 	}
 
