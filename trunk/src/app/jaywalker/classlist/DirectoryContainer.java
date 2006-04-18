@@ -15,14 +15,11 @@
  */
 package jaywalker.classlist;
 
+import java.io.IOException;
+import java.net.URL;
+
 import jaywalker.util.DirectoryListing;
 import jaywalker.util.URLHelper;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 
 public class DirectoryContainer extends ClasslistContainer {
 
@@ -30,8 +27,6 @@ public class DirectoryContainer extends ClasslistContainer {
 
 	public static class Creator implements ClasslistElementCreator {
 		public boolean isType(URL url) {
-			// final File file = new URLHelper().toEncodedFile(url);
-			// return file.exists() && url.toString().endsWith("/");
 			return url.toString().endsWith("/");
 		}
 
