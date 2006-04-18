@@ -84,7 +84,6 @@ public class JayWalkerTask extends Task {
 	}
 
 	private void registerClasslist(String classlist) {
-		log("classlist:" + classlist);
 		getProject().setNewProperty("classlist", classlist);
 	}
 

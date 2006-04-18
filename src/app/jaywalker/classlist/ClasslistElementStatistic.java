@@ -16,9 +16,9 @@
 package jaywalker.classlist;
 
 public class ClasslistElementStatistic implements ClasslistElementListener {
-    private long archiveCnt = 0L;
-    private long dirCnt = 0L;
-    private long fileCnt = 0L;
+    private long archiveCnt;
+    private long dirCnt;
+    private long fileCnt;
 
     public void classlistElementVisited(ClasslistElementEvent event) {
         final ClasslistElement element = event.getElement();
