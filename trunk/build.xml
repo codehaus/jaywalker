@@ -127,7 +127,7 @@
         <mkdir dir="build/doc/junit"/>
         <delete file="build/doc/emma/coverage.emma"/>
 
-        <junit printsummary="yes" fork="false">
+        <junit printsummary="yes" failureproperty="junit-failure">
             <classpath>
                 <pathelement location="build/classes-instr"/>
                 <pathelement location="build/classes-test"/>
@@ -136,7 +136,7 @@
                 <path location="build/dist/${ant.project.name}-${project.version}.jar"/>
             </classpath>
 
-            <batchtest fork="yes" todir="build/doc/junit">
+            <batchtest fork="true" todir="build/doc/junit">
                 <formatter type="xml"/>
                 <fileset dir="src/test">
                     <include name="**/*Test.java"/>
@@ -176,6 +176,8 @@
             </fileset>
             <report format="frames" todir="build/doc/junit-reports/html"/>
         </junitreport>
+        
+        <fail message="JUnit test(s) failed" if="junit-failure"/>
 
     </target>
 
