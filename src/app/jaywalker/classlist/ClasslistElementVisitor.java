@@ -18,7 +18,7 @@ package jaywalker.classlist;
 import java.io.IOException;
 
 public class ClasslistElementVisitor {
-	private static final int DEFAULT_LISTENERS_LENGTH = 5;
+	private static final int DEFAULT_CAPACITY = 5;
 
 	private final ClasslistElement[] classlistElements;
 
@@ -63,16 +63,29 @@ public class ClasslistElementVisitor {
 	}
 
 	public void addListener(ClasslistElementListener listener) {
+		ensureCapacity();
+		listeners[lastIdx++] = listener;
+	}
+
+	private void ensureCapacity() {
+		initListeners();
+		if (lastIdx + 1 >= listeners.length - 1) {
+			resizeListenersByFactor(2);
+		}
+	}
+
+	private void resizeListenersByFactor(int factor) {
+		ClasslistElementListener[] newListeners = new ClasslistElementListener[listeners.length
+				* factor];
+		System.arraycopy(listeners, 0, newListeners, 0, listeners.length);
+		listeners = newListeners;
+	}
+
+	private void initListeners() {
 		if (0 == listeners.length) {
-			listeners = new ClasslistElementListener[DEFAULT_LISTENERS_LENGTH];
+			listeners = new ClasslistElementListener[DEFAULT_CAPACITY];
 			lastIdx = 0;
 		}
-		if (lastIdx + 1 >= listeners.length - 1) {
-			ClasslistElementListener[] newListeners = new ClasslistElementListener[listeners.length * 2];
-			System.arraycopy(listeners, 0, newListeners, 0, listeners.length);
-			listeners = newListeners;
-		}
-		listeners[lastIdx++] = listener;
 	}
 
 	private void fireLastClasslistElementVisited() {
