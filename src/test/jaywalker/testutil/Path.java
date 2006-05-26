@@ -22,21 +22,21 @@ import java.io.File;
 import java.util.StringTokenizer;
 
 public class Path {
-    public static final File DIR_TEMP = new File("build" + File.separator + "temp");
-    public static final File DIR_BUILD_APP = new File("build" + File.separator + "classes");
-    public static final File DIR_BUILD_JAR = new File("build" + File.separator + "dist");
-    public static final File DIR_TEST1 = new File("build" + File.separator + "classes-test" + File.separator + "test1");
-    public static final File DIR_TEST2 = new File("build" + File.separator + "classes-test" + File.separator + "test2");
-    public static final File FILE_TEST1_JAR = new File(DIR_BUILD_JAR, "jaywalker-test1.jar");
-    public static final File FILE_TEST2_JAR = new File(DIR_BUILD_JAR, "jaywalker-test2.jar");
-    public static final File FILE_TEST3_JAR = new File(DIR_BUILD_JAR, "jaywalker-test3.jar");
-    public static final File FILE_TEST4_JAR = new File(DIR_BUILD_JAR, "jaywalker-test4.jar");
-    public static final File FILE_TEST5_JAR = new File(DIR_BUILD_JAR, "jaywalker-test5.jar");
-    public static final File FILE_CYCLE_PART1_JAR = new File(DIR_BUILD_JAR, "jaywalker-cycle-part1.jar");
-    public static final File FILE_CYCLE_PART2_JAR = new File(DIR_BUILD_JAR, "jaywalker-cycle-part2.jar");
-    public static final File FILE_TEST_EAR = new File(DIR_BUILD_JAR, "jaywalker-test.ear");
-    public static final File FILE_CLASSLIST_ELEMENT_FACTORY_CLASS = new File(DIR_BUILD_APP, toFilename(ClasslistElementFactory.class));
-    public static final File FILE_CLASSLIST_ELEMENT_VISITOR_CLASS = new File(DIR_BUILD_APP, toFilename(ClasslistElementVisitor.class));
+    public final static File DIR_TEMP = new File("build" + File.separator + "temp");
+    public final static File DIR_BUILD_APP = new File("build" + File.separator + "classes");
+    public final static File DIR_BUILD_JAR = new File("build" + File.separator + "dist");
+    public final static File DIR_TEST1 = new File("build" + File.separator + "classes-test" + File.separator + "test1");
+    public final static File DIR_TEST2 = new File("build" + File.separator + "classes-test" + File.separator + "test2");
+    public final static File FILE_TEST1_JAR = new File(DIR_BUILD_JAR, "jaywalker-test1.jar");
+    public final static File FILE_TEST2_JAR = new File(DIR_BUILD_JAR, "jaywalker-test2.jar");
+    public final static File FILE_TEST3_JAR = new File(DIR_BUILD_JAR, "jaywalker-test3.jar");
+    public final static File FILE_TEST4_JAR = new File(DIR_BUILD_JAR, "jaywalker-test4.jar");
+    public final static File FILE_TEST5_JAR = new File(DIR_BUILD_JAR, "jaywalker-test5.jar");
+    public final static File FILE_CYCLE_PART1_JAR = new File(DIR_BUILD_JAR, "jaywalker-cycle-part1.jar");
+    public final static File FILE_CYCLE_PART2_JAR = new File(DIR_BUILD_JAR, "jaywalker-cycle-part2.jar");
+    public final static File FILE_TEST_EAR = new File(DIR_BUILD_JAR, "jaywalker-test.ear");
+    public final static File FILE_CLASSLIST_ELEMENT_FACTORY_CLASS = new File(DIR_BUILD_APP, toFilename(ClasslistElementFactory.class));
+    public final static File FILE_CLASSLIST_ELEMENT_VISITOR_CLASS = new File(DIR_BUILD_APP, toFilename(ClasslistElementVisitor.class));
 
     static {
         DIR_TEMP.mkdirs();

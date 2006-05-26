@@ -16,7 +16,6 @@
 package jaywalker.classlist;
 
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URL;
 
 import jaywalker.util.URLHelper;

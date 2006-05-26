@@ -22,9 +22,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.StringTokenizer;
 
-import jaywalker.util.ResourceLocator;
-import jaywalker.util.ThreadHelper;
-
 public class ClasslistElementFactory {
 
 	private final static ClasslistElementCreator[] CREATORS = new ClasslistElementCreator[] {
@@ -36,7 +33,6 @@ public class ClasslistElementFactory {
 	}
 
 	private ClasslistElement findAndCreate(URL url) {
-		new ThreadHelper().verify(url);
 		for (int i = 0; i < CREATORS.length; i++) {
 			if (CREATORS[i].isType(url)) {
 				return CREATORS[i].create(url);

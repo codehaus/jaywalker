@@ -33,13 +33,15 @@ public class CollisionModel implements ClasslistElementListener {
         ClasslistElement classlistElement = event.getElement();
         if (classlistElement.getClass() == ClassElement.class) {
             ClassElement classElement = (ClassElement) classlistElement;
-            collisionHelper.register(classElement.getURL(), classElement.getName());
+            collisionHelper.register(classElement);
         }
     }
 
     public void lastClasslistElementVisited() {
         urlCollisionMap = collisionHelper.createUrlCollisionMap();
-        suidHelper = new SerialVersionUidHelper(collisionHelper.createClassNameToUrlsMap());
+        suidHelper = new SerialVersionUidHelper(collisionHelper.createClassNameToUrlMap());
+        collisionHelper.terminate();
+        collisionHelper = null;
     }
 
     public URL [] lookupCollisionUrls(URL url) {

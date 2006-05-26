@@ -15,11 +15,8 @@
  */
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Arrays;
 import java.util.Properties;
 
-import jaywalker.classlist.ClasslistElementCache;
 import jaywalker.report.ReportExecutor;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.Shell;
@@ -96,8 +93,6 @@ public class JayWalker {
 
 		ResourceLocator.instance().register("tempDir",
 				Shell.toWorkingDir(tempDir));
-		ResourceLocator.instance().register("classlistElementCache",
-				new ClasslistElementCache());
 
 		executor.execute(classlist, properties, outDir);
 	}

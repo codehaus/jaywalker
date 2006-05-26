@@ -16,73 +16,83 @@
 package jaywalker.util;
 
 public class StringHelper {
-    public static final String EMPTY = "";
+	public final static String EMPTY = "";
 
-    public String appendIfMissing(String suffix, String target) {
-        if (target == null) return suffix;
-        if (target.endsWith(suffix)) return target;
-        return target + suffix;
-    }
+	public String appendIfMissing(String suffix, String target) {
+		if (target == null)
+			return suffix;
+		if (target.endsWith(suffix))
+			return target;
+		return target + suffix;
+	}
 
-    public String prependIfMissing(String prefix, String target) {
-        if (target == null) return prefix;
-        if (target.startsWith(prefix)) return target;
-        return prefix + target;
-    }
+	public String prependIfMissing(String prefix, String target) {
+		if (target == null)
+			return prefix;
+		if (target.startsWith(prefix))
+			return target;
+		return prefix + target;
+	}
 
-    public boolean isEmpty(String str) {
-        return str == null || str.length() == 0;
-    }
+	public boolean isEmpty(String str) {
+		return str == null || str.length() == 0;
+	}
 
-    public String substringBeforeLast(String str, String delimiter) {
-        if (isEmpty(str) || isEmpty(delimiter)) {
-            return str;
-        }
-        int idx = str.lastIndexOf(delimiter);
-        if (idx == -1) {
-            return str;
-        }
-        return str.substring(0, idx);
-    }
+	public String substringBeforeLast(String str, String delimiter) {
+		return substringBeforeLast(str, delimiter, str);
+	}
 
-    public String substringAfterLast(String str, String delimiter) {
-        if (isEmpty(str)) {
-            return str;
-        }
-        if (isEmpty(delimiter)) {
-            return EMPTY;
-        }
-        int idx = str.lastIndexOf(delimiter);
-        if (idx == -1 || idx == (str.length() - delimiter.length())) {
-            return EMPTY;
-        }
-        return str.substring(idx + delimiter.length());
-    }
+	public String substringAfterLast(String str, String delimiter) {
+		if (isEmpty(str)) {
+			return str;
+		}
+		if (isEmpty(delimiter)) {
+			return EMPTY;
+		}
+		int idx = str.lastIndexOf(delimiter);
+		if (idx == -1 || idx == (str.length() - delimiter.length())) {
+			return EMPTY;
+		}
+		return str.substring(idx + delimiter.length());
+	}
 
-    public boolean isBlank(String str) {
-        int length;
-        if (str == null || (length = str.length()) == 0) {
-            return true;
-        }
-        for (int i = 0; i < length; i++) {
-            if ((!Character.isWhitespace(str.charAt(i)))) {
-                return false;
-            }
-        }
-        return true;
-    }
+	public boolean isBlank(String str) {
+		int length;
+		if (str == null || (length = str.length()) == 0) {
+			return true;
+		}
+		for (int i = 0; i < length; i++) {
+			if ((!Character.isWhitespace(str.charAt(i)))) {
+				return false;
+			}
+		}
+		return true;
+	}
 
-    public String extractCommonPrefix(String string1, String string2) {
-        StringBuffer sb = new StringBuffer();
-        int length = (string1.length() < string2.length()) ? string1.length() : string2.length();
-        for (int i = 0; i < length; i++) {
-            final char ch = string1.charAt(i);
-            if (ch == string2.charAt(i)) {
-                sb.append(ch);
-            } else {
-                return sb.toString();
-            }
-        }
-        return sb.toString();
-    }
+	public String extractCommonPrefix(String string1, String string2) {
+		StringBuffer sb = new StringBuffer();
+		int length = (string1.length() < string2.length()) ? string1.length()
+				: string2.length();
+		for (int i = 0; i < length; i++) {
+			final char ch = string1.charAt(i);
+			if (ch == string2.charAt(i)) {
+				sb.append(ch);
+			} else {
+				return sb.toString();
+			}
+		}
+		return sb.toString();
+	}
+
+	public String substringBeforeLast(String str, String delimiter,
+			String defaultString) {
+		if (isEmpty(str) || isEmpty(delimiter)) {
+			return defaultString;
+		}
+		int idx = str.lastIndexOf(delimiter);
+		if (idx == -1) {
+			return defaultString;
+		}
+		return str.substring(0, idx);
+	}
 }

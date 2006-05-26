@@ -21,14 +21,14 @@ import java.util.List;
 import java.util.Properties;
 
 import jaywalker.classlist.ClasslistElementListener;
+import jaywalker.util.CollectionHelper;
 import jaywalker.util.Outputter;
 import jaywalker.util.XsltTransformer;
-import jaywalker.xml.CollisionTag;
-import jaywalker.xml.NestedTag;
-import jaywalker.xml.SerialVersionUidConflictTag;
-import jaywalker.xml.Tag;
 
 public class CollisionReportConfiguration implements Configuration {
+
+	private final static CollectionHelper HELPER_COLLECTION = new CollectionHelper();
+
 	private final ReportSetupMap collisionNestedReportTagMap;
 
 	private final ReportSetupMap collisionReportTagMap;
@@ -41,7 +41,8 @@ public class CollisionReportConfiguration implements Configuration {
 		this.collisionNestedReportTagMap = createNestedReportTagMap(collisionModel);
 	}
 
-	private ReportSetupMap createNestedReportTagMap(CollisionModel collisionModel) {
+	private ReportSetupMap createNestedReportTagMap(
+			CollisionModel collisionModel) {
 		ReportSetupMap collisionNestedReportTagMap = new ReportSetupMap();
 		collisionNestedReportTagMap.put("conflict", "class",
 				new SerialVersionUidConflictTag(collisionModel),
@@ -78,13 +79,15 @@ public class CollisionReportConfiguration implements Configuration {
 		final List list = new ArrayList();
 		list.addAll(Arrays.asList(collisionReportTagMap.getKeys()));
 		list.addAll(Arrays.asList(collisionNestedReportTagMap.getKeys()));
-		return (String[]) list.toArray(new String[list.size()]);
+		return HELPER_COLLECTION.toStrings(list);
 	}
 
 	public Outputter[] toXsltTransformers(Properties properties) {
 		final List list = new ArrayList();
-		list.addAll(Arrays.asList(collisionReportTagMap.getHtmlTransformers(properties)));
-		list.addAll(Arrays.asList(collisionNestedReportTagMap.getHtmlTransformers(properties)));
+		list.addAll(Arrays.asList(collisionReportTagMap
+				.getHtmlTransformers(properties)));
+		list.addAll(Arrays.asList(collisionNestedReportTagMap
+				.getHtmlTransformers(properties)));
 		return (Outputter[]) list.toArray(new Outputter[list.size()]);
 	}
 

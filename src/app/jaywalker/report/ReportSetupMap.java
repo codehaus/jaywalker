@@ -22,10 +22,13 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
+import jaywalker.util.CollectionHelper;
 import jaywalker.util.Outputter;
-import jaywalker.xml.Tag;
 
 public class ReportSetupMap {
+
+	private final static CollectionHelper HELPER_COLLECTION = new CollectionHelper();
+
 	private Map map = new HashMap();
 
 	private static class Entry {
@@ -59,14 +62,12 @@ public class ReportSetupMap {
 		return (Entry) map.get(toKey(type, value));
 	}
 
-	public void put(String type, String value, Tag xmlTag,
-			Outputter htmlTag) {
+	public void put(String type, String value, Tag xmlTag, Outputter htmlTag) {
 		map.put(toKey(type, value), new Entry(xmlTag,
 				new Outputter[] { htmlTag }));
 	}
 
-	public void put(String type, String value, Tag xmlTag,
-			Outputter[] htmlTags) {
+	public void put(String type, String value, Tag xmlTag, Outputter[] htmlTags) {
 		map.put(toKey(type, value), new Entry(xmlTag, htmlTags));
 	}
 
@@ -102,7 +103,7 @@ public class ReportSetupMap {
 
 	private void accept(Properties properties, Visitor visitor) {
 		Set keySet = properties.keySet();
-		String[] keys = (String[]) keySet.toArray(new String[keySet.size()]);
+		String[] keys = HELPER_COLLECTION.toStrings(keySet);
 		for (int i = 0; i < keys.length; i++) {
 			String[] values = properties.getProperty(keys[i]).split(",");
 			for (int j = 0; j < values.length; j++) {
@@ -115,7 +116,7 @@ public class ReportSetupMap {
 
 	public String[] getKeys() {
 		Set keySet = map.keySet();
-		return (String[]) keySet.toArray(new String[keySet.size()]);
+		return HELPER_COLLECTION.toStrings(keySet);
 	}
 
 }

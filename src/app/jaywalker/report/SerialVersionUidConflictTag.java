@@ -13,30 +13,32 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jaywalker.xml;
-
-import jaywalker.report.DependencyModel;
-import jaywalker.util.URLHelper;
+package jaywalker.report;
 
 import java.net.URL;
 import java.util.Stack;
 
-public class ContainerCyclicDependencyTag implements Tag {
-    private final DependencyModel model;
+
+public class SerialVersionUidConflictTag implements NestedTag {
+    private final CollisionModel model;
     private final TagHelper reportHelper = new TagHelper();
 
-    public ContainerCyclicDependencyTag(DependencyModel model) {
+    public SerialVersionUidConflictTag(CollisionModel model) {
         this.model = model;
     }
 
     public String create(URL url, Stack parentUrlStack) {
-        URL [] containerCycleUrls = model.lookupContainerCyclicDependency(url);
-        if (containerCycleUrls == null) return "";
-        String [] values = new String[containerCycleUrls.length];
-        for (int i = 0; i < containerCycleUrls.length; i++) {
-            values[i] = new URLHelper().toFileName(containerCycleUrls[i]);
-        }
-        return reportHelper.createDependencyTags("cycle", "container", "archive", containerCycleUrls, values, parentUrlStack);
+        StringBuffer sb = new StringBuffer();
+        long serialVersionUid = model.toSerialVersionUID(url);
+        sb.append(reportHelper.toSpaces(parentUrlStack.size() + 1));
+        sb.append("<conflict type=\"serialVersionUid\" value=\"");
+        sb.append(serialVersionUid);
+        sb.append("\"/>\n");
+        return sb.toString();
+
     }
 
+    public boolean isNestedElementsConflicting(URL [] urls) {
+        return model.isSerialVersionUidsConflicting(urls);
+    }
 }

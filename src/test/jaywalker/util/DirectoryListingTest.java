@@ -38,7 +38,6 @@ public class DirectoryListingTest extends JayWalkerTestCase {
 		// Show that the classlist element's file representation exists
 		ArchiveExpander expander = new ArchiveExpander();
 		expander.expand(url);
-		new ThreadHelper().verify(url);
 		URLHelper helper = new URLHelper();
 		File fileIdx = helper.toArchiveIdx(url);
 		DirectoryListing listing = new DirectoryListing(url, fileIdx);

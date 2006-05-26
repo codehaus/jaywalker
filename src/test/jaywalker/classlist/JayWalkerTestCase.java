@@ -15,25 +15,22 @@
  */
 package jaywalker.classlist;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Date;
+
 import jaywalker.testutil.Path;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.Shell;
 import jaywalker.util.URLHelper;
 import junit.framework.TestCase;
 
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.io.File;
-import java.io.IOException;
-import java.util.Date;
-
 public class JayWalkerTestCase extends TestCase {
 
     public void setUp() throws IOException {
         ResourceLocator.instance().register("tempDir", Shell.toWorkingDir(Path.DIR_TEMP.getAbsolutePath()));
-        ResourceLocator.instance().register("classlistElementCache", new ClasslistElementCache());
     }
 
     public void tearDown() {

@@ -22,7 +22,6 @@ import java.net.URL;
 
 import jaywalker.testutil.Path;
 import jaywalker.util.FileSystem;
-import jaywalker.util.ThreadHelper;
 import jaywalker.util.URLHelper;
 
 public class ClassElementFileTest extends JayWalkerTestCase {
@@ -41,7 +40,6 @@ public class ClassElementFileTest extends JayWalkerTestCase {
         // Show that the classlist element's file representation exists
         ArchiveExpander expander = new ArchiveExpander();
         expander.expand(parentUrl);
-        new ThreadHelper().verify(parentUrl);
 
         ClassElementFile classElementFile = new ClassElementFile(url);
         assertEquals("SerializableImpl", classElementFile.getClassName());

@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jaywalker.xml;
+package jaywalker.report;
 
 import java.net.URL;
 import java.util.Stack;
 
-import jaywalker.report.DependencyModel;
 import jaywalker.util.StringHelper;
 
 public class PackageDependencyTag implements Tag {

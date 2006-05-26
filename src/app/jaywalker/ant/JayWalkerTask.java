@@ -23,7 +23,6 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
-import jaywalker.classlist.ClasslistElementCache;
 import jaywalker.report.ReportExecutor;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.Shell;
@@ -67,8 +66,6 @@ public class JayWalkerTask extends Task {
 			String tempPath = (tempDir != null) ? tempDir.getAbsolutePath()
 					: "";
 			registerWorkingDir(tempPath);
-			ResourceLocator.instance().register("classlistElementCache",
-					new ClasslistElementCache());
 
 			Option[] options = (Option[]) optionSet
 					.toArray(new Option[optionSet.size()]);

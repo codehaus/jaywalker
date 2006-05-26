@@ -13,36 +13,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jaywalker.xml;
+package jaywalker.report;
 
-import jaywalker.classlist.ClassElement;
+import jaywalker.classlist.ClasslistElement;
+import jaywalker.classlist.DirectoryContainer;
 import jaywalker.classlist.ClasslistElementFactory;
-import jaywalker.report.DependencyModel;
 
 import java.net.URL;
 import java.util.Stack;
 
-public class ElementCyclicDependencyTag implements Tag {
+public class PackageCyclicDependencyTag implements Tag {
     private final DependencyModel model;
     private final ClasslistElementFactory factory = new ClasslistElementFactory();
     private final TagHelper reportHelper = new TagHelper();
 
-    public ElementCyclicDependencyTag(DependencyModel model) {
+    public PackageCyclicDependencyTag(DependencyModel model) {
         this.model = model;
     }
 
     public String create(URL url, Stack parentUrlStack) {
-        URL [] cycleUrls = model.lookupElementCycleDependency(url);
-        String[] values = toValues(cycleUrls);
-        return reportHelper.createDependencyTags("cycle", "element", "class", cycleUrls, values, parentUrlStack);
-    }
-
-    private String[] toValues(URL[] cycleUrls) {
-        String [] values = new String[cycleUrls.length];
-        for (int i = 0; i < cycleUrls.length; i++) {
-            ClassElement classElement = (ClassElement) factory.create(cycleUrls[i]);
-            values[i] = classElement.getName();
+        URL [] packageCycleUrls = model.lookupPackageCycleDependency(url);
+        if (packageCycleUrls == null) return "";
+        String [] values = new String[packageCycleUrls.length];
+        for (int i = 0; i < packageCycleUrls.length; i++) {
+            ClasslistElement element = factory.create(packageCycleUrls[i]);
+            if (element.getClass() == DirectoryContainer.class) {
+                DirectoryContainer directory = (DirectoryContainer) element;
+                values[i] = directory.getPackageName();
+            } else {
+                values[i] = "";
+            }
         }
-        return values;
+        return reportHelper.createDependencyTags("cycle", "container", "package", packageCycleUrls, values, parentUrlStack);
     }
 }

@@ -13,12 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jaywalker.xml;
+package jaywalker.report;
 
 import java.net.URL;
 import java.util.Stack;
 
-import jaywalker.report.CollisionModel;
 
 public class CollisionTag implements Tag {
 	private final CollisionModel model;
@@ -63,12 +62,10 @@ public class CollisionTag implements Tag {
 	}
 
 	private boolean isConflicting(URL url, URL[] collisionUrls) {
-		boolean isConflict;
 		URL[] urls = new URL[collisionUrls.length + 1];
 		urls[0] = url;
 		System.arraycopy(collisionUrls, 0, urls, 1, collisionUrls.length);
-		isConflict = isNestedElementsConflicting(urls);
-		return isConflict;
+		return isNestedElementsConflicting(urls);
 	}
 
 	public void setNestedReportTags(NestedTag[] nestedReportTags) {

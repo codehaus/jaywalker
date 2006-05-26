@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.net.URL;
 
 import jaywalker.util.DirectoryListing;
-import jaywalker.util.ThreadHelper;
 import jaywalker.util.URLHelper;
 
 public class ArchiveContainer extends ClasslistContainer {
@@ -61,7 +60,6 @@ public class ArchiveContainer extends ClasslistContainer {
 	}
 
 	public ClasslistElement[] getClasslistElements() {
-		new ThreadHelper().verify(url);
 		if (urls == null) {
 			urls = toUrls(url);
 		}

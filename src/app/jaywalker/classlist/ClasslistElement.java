@@ -15,50 +15,51 @@
  */
 package jaywalker.classlist;
 
+import java.net.URL;
+
 import jaywalker.util.URLHelper;
 
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.io.File;
-
 public class ClasslistElement {
-    protected final URL url;
+	protected final URL url;
 
-    public ClasslistElement(URL url) {
-        this.url = url;
-    }
+	public ClasslistElement(URL url) {
+		this.url = url;
+	}
 
-    public URL getURL() {
-        return url;
-    }
+	public URL getURL() {
+		return url;
+	}
 
-    public ClasslistContainer getContainer() {
-        URL parentUrl = new URLHelper().toParentURL(url);
-        if (parentUrl == null) return null;
-        return (ClasslistContainer) new ClasslistElementFactory().create(parentUrl);
-    }
+	public ClasslistContainer getContainer() {
+		URL parentUrl = new URLHelper().toParentURL(url);
+		if (parentUrl == null)
+			return null;
+		return (ClasslistContainer) new ClasslistElementFactory()
+				.create(parentUrl);
+	}
 
-    public String toString() {
-        return url.toString();
-    }
+	public String toString() {
+		return url.toString();
+	}
 
-    public String getType() {
-        return "unknown";
-    }
+	public String getType() {
+		return "unknown";
+	}
 
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-        final ClasslistElement that = (ClasslistElement) o;
+		final ClasslistElement that = (ClasslistElement) o;
 
-        return url.equals(that.url);
+		return url.equals(that.url);
 
-    }
+	}
 
-    public int hashCode() {
-        return url.hashCode();
-    }
+	public int hashCode() {
+		return url.hashCode();
+	}
 
 }

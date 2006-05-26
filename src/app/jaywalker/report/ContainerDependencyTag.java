@@ -13,33 +13,34 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jaywalker.xml;
+package jaywalker.report;
+
+import jaywalker.util.URLHelper;
 
 import java.net.URL;
 import java.util.Stack;
 
-import jaywalker.report.CollisionModel;
-
-public class SerialVersionUidConflictTag implements NestedTag {
-    private final CollisionModel model;
+public class ContainerDependencyTag implements Tag {
+    private final DependencyModel model;
     private final TagHelper reportHelper = new TagHelper();
 
-    public SerialVersionUidConflictTag(CollisionModel model) {
+    public ContainerDependencyTag(DependencyModel model) {
         this.model = model;
     }
 
     public String create(URL url, Stack parentUrlStack) {
-        StringBuffer sb = new StringBuffer();
-        long serialVersionUid = model.toSerialVersionUID(url);
-        sb.append(reportHelper.toSpaces(parentUrlStack.size() + 1));
-        sb.append("<conflict type=\"serialVersionUid\" value=\"");
-        sb.append(serialVersionUid);
-        sb.append("\"/>\n");
-        return sb.toString();
-
+        URL [] containerDependencyUrls = model.lookupResolvedContainerDependencies(url);
+        if (containerDependencyUrls == null) return "";
+        String[] values = toFileNames(containerDependencyUrls);
+        return reportHelper.createDependencyTags("resolved", "container", "archive", containerDependencyUrls, values, parentUrlStack);
     }
 
-    public boolean isNestedElementsConflicting(URL [] urls) {
-        return model.isSerialVersionUidsConflicting(urls);
+    private String[] toFileNames(URL[] urls) {
+        String [] values = new String[urls.length];
+        for (int i = 0; i < urls.length; i++) {
+            values[i] = new URLHelper().toFileName(urls[i]);
+        }
+        return values;
     }
+
 }

@@ -1,12 +1,10 @@
 package jaywalker.report;
 
-import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.util.Stack;
 
 import jaywalker.util.Outputter;
-import jaywalker.xml.Tag;
 
 public class Report {
 

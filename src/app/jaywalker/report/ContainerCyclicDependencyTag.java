@@ -13,35 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jaywalker.xml;
+package jaywalker.report;
 
-import jaywalker.report.DependencyModel;
 import jaywalker.util.URLHelper;
 
 import java.net.URL;
 import java.util.Stack;
 
-public class ContainerDependencyTag implements Tag {
+public class ContainerCyclicDependencyTag implements Tag {
     private final DependencyModel model;
     private final TagHelper reportHelper = new TagHelper();
 
-    public ContainerDependencyTag(DependencyModel model) {
+    public ContainerCyclicDependencyTag(DependencyModel model) {
         this.model = model;
     }
 
     public String create(URL url, Stack parentUrlStack) {
-        URL [] containerDependencyUrls = model.lookupResolvedContainerDependencies(url);
-        if (containerDependencyUrls == null) return "";
-        String[] values = toFileNames(containerDependencyUrls);
-        return reportHelper.createDependencyTags("resolved", "container", "archive", containerDependencyUrls, values, parentUrlStack);
-    }
-
-    private String[] toFileNames(URL[] urls) {
-        String [] values = new String[urls.length];
-        for (int i = 0; i < urls.length; i++) {
-            values[i] = new URLHelper().toFileName(urls[i]);
+        URL [] containerCycleUrls = model.lookupContainerCyclicDependency(url);
+        if (containerCycleUrls == null) return "";
+        String [] values = new String[containerCycleUrls.length];
+        for (int i = 0; i < containerCycleUrls.length; i++) {
+            values[i] = new URLHelper().toFileName(containerCycleUrls[i]);
         }
-        return values;
+        return reportHelper.createDependencyTags("cycle", "container", "archive", containerCycleUrls, values, parentUrlStack);
     }
 
 }

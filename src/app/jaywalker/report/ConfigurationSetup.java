@@ -12,10 +12,12 @@ import java.util.Properties;
 import java.util.Set;
 
 import jaywalker.classlist.ClasslistElementListener;
+import jaywalker.util.CollectionHelper;
 import jaywalker.util.Outputter;
-import jaywalker.xml.Tag;
 
 public class ConfigurationSetup {
+
+	private final static CollectionHelper HELPER_COLLECTION = new CollectionHelper();
 
 	private final Configuration[] configurations = new Configuration[] {
 			new DependencyReportConfiguration(new DependencyModel()),
@@ -27,8 +29,7 @@ public class ConfigurationSetup {
 			reportTypeList.addAll(Arrays.asList(configurations[i]
 					.getReportTypes()));
 		}
-		return (String[]) reportTypeList.toArray(new String[reportTypeList
-				.size()]);
+		return HELPER_COLLECTION.toStrings(reportTypeList);
 	}
 
 	public Report[] toReports(Properties properties) {
@@ -51,7 +52,7 @@ public class ConfigurationSetup {
 		}
 		return listeners;
 	}
-	
+
 	public String[] getReportDescriptions() {
 		String[] reportTypes = getReportTypes();
 		Map map = toReportTypeMap(reportTypes);
@@ -69,8 +70,7 @@ public class ConfigurationSetup {
 			}
 			descriptionList.add(sb.toString());
 		}
-		return (String[]) descriptionList.toArray(new String[descriptionList
-				.size()]);
+		return HELPER_COLLECTION.toStrings(descriptionList);
 	}
 
 	private Map toReportTypeMap(String[] reportTypes) {
@@ -87,6 +87,5 @@ public class ConfigurationSetup {
 		}
 		return map;
 	}
-
 
 }

@@ -58,7 +58,7 @@ public class ClassElementFile {
 		try {
 			URL adjustedUrl = helper.toLegalArchiveUrl(url);
 			if (adjustedUrl != null) {
-				Map classMap = lookupClassMap(adjustedUrl);
+				Map classMap = lookupClassInfoByUrlMap(adjustedUrl);
 				initializeWith(classMap);
 			} else {
 				JavaClass javaClass = new ClassParser(url.openStream(), baseUrl
@@ -115,14 +115,14 @@ public class ClassElementFile {
 		dependencies = split(classInfo, idx);
 	}
 
-	private Map lookupClassMap(URL url) throws IOException {
+	private Map lookupClassInfoByUrlMap(URL url) throws IOException {
 		URLHelper helper = new URLHelper();
-		final String key = "cl:" + url.toString();
+		final String key = "classInfoByUrlMap:" + url.toString();
 		Map map;
 		final ResourceLocator locator = ResourceLocator.instance();
 
 		if (!locator.contains(key)) {
-			map = createClassMap(url, helper.toArchiveCls(url));
+			map = createClassInfoByUrlMap(url, helper.toArchiveCls(url));
 			locator.register(key, map);
 		} else {
 			map = (Map) locator.lookup(key);
@@ -130,7 +130,8 @@ public class ClassElementFile {
 		return map;
 	}
 
-	private Map createClassMap(URL baseUrl, File fileCls) throws IOException {
+	private Map createClassInfoByUrlMap(URL baseUrl, File fileCls)
+			throws IOException {
 		Properties properties = new Properties();
 		properties.load(new FileInputStream(fileCls));
 		final String[] filenames = extractKeys(properties);
@@ -143,8 +144,9 @@ public class ClassElementFile {
 	}
 
 	private String[] extractKeys(Properties properties) {
-		String[] decodedFilenames = (String[]) properties.keySet().toArray(
-				new String[properties.size()]);
+		final Set keySet = properties.keySet();
+		String[] decodedFilenames = (String[]) keySet.toArray(new String[keySet
+				.size()]);
 		Arrays.sort(decodedFilenames);
 		return decodedFilenames;
 	}

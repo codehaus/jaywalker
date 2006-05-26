@@ -15,80 +15,94 @@
  */
 package jaywalker.report;
 
-import java.util.*;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Map;
+import java.util.Stack;
 
 public class DependencyCycleFinder {
 
-    private final static String YES = "yes";
-    private final static String NO = "no";
-    private final static String UNDEFINED = "undefined";
+	private final static String YES = "yes";
 
-    private Map possibleCycleMap = new HashMap();
-    private Map cycleUrlListMap = new HashMap();
-    private DependencyCycleFinderHelper helper;
+	private final static String NO = "no";
 
-    public DependencyCycleFinder(DependencyCycleFinderHelper helper) {
-        this.helper = helper;
-    }
+	private final static String UNDEFINED = "undefined";
 
-    public URL [] lookupCycleDependency(URL url) {
-        Stack stack = new Stack();
-        return lookupCycleDependency(url, stack);
-    }
+	private Map possibleCycleMap = new HashMap();
 
-    private URL [] lookupCycleDependency(URL url, Stack stack) {
-        Object isPartOfCycle = possibleCycleMap.get(url);
-        if (isPartOfCycle == null) {
-            resolveCycleDependencies(url, stack);
-            isPartOfCycle = possibleCycleMap.get(url);
-        }
-        if (isPartOfCycle == YES) {
-            List list = (List) cycleUrlListMap.get(url);
-            return (URL[]) list.toArray(new URL[list.size()]);
-        } else {
-            return new URL[0];
-        }
-    }
+	private Map cycleUrlListMap = new HashMap();
 
-    private void resolveCycleDependencies(URL url, Stack stack) {
-        final URL[] resolvedDependencyUrls = helper.lookupResolvedDependencies(url);
-        if (resolvedDependencyUrls == null || resolvedDependencyUrls.length == 0) {
-            possibleCycleMap.put(url, NO);
-            return;
-        }
+	private DependencyCycleFinderHelper helper;
 
-        for (int i = 0; i < resolvedDependencyUrls.length; i++) {
-            Object isPartOfCycle = possibleCycleMap.get(resolvedDependencyUrls[i]);
-            if (isPartOfCycle == null) {
-                possibleCycleMap.put(resolvedDependencyUrls[i], UNDEFINED);
-                stack.push(url);
-                resolveCycleDependencies(resolvedDependencyUrls[i], stack);
-                if (!stack.isEmpty()) stack.pop();
-                isPartOfCycle = possibleCycleMap.get(resolvedDependencyUrls[i]);
-            }
-            if (isPartOfCycle == UNDEFINED && stack.size() > 0) {
-                List cycleUrlList = new LinkedList();
-                addCyclePart(url, cycleUrlList);
-                URL cyclePartUrl;
+	public DependencyCycleFinder(DependencyCycleFinderHelper helper) {
+		this.helper = helper;
+	}
 
-                for (ListIterator it = stack.listIterator(stack.size()); it.hasPrevious();) {
-                    URL nextUrl = (URL) it.previous();
-                    if (!nextUrl.equals(url)) {
-                        cyclePartUrl = nextUrl;
-                        addCyclePart(cyclePartUrl, cycleUrlList);
-                    } else {
-                        break;
-                    }
-                }
-            }
-        }
-    }
+	public URL[] lookupCycleDependency(URL url) {
+		Stack stack = new Stack();
+		return lookupCycleDependency(url, stack);
+	}
 
-    private void addCyclePart(URL url, List cycleUrlList) {
-        cycleUrlList.add(url);
-        cycleUrlListMap.put(url, cycleUrlList);
-        possibleCycleMap.put(url, YES);
-    }
+	private URL[] lookupCycleDependency(URL url, Stack stack) {
+		Object isPartOfCycle = possibleCycleMap.get(url);
+		if (isPartOfCycle == null) {
+			resolveCycleDependencies(url, stack);
+			isPartOfCycle = possibleCycleMap.get(url);
+		}
+		if (isPartOfCycle == YES) {
+			List list = (List) cycleUrlListMap.get(url);
+			return (URL[]) list.toArray(new URL[list.size()]);
+		} else {
+			return new URL[0];
+		}
+	}
+
+	private void resolveCycleDependencies(URL url, Stack stack) {
+		final URL[] resolvedDependencyUrls = helper
+				.lookupResolvedDependencies(url);
+		if (resolvedDependencyUrls == null
+				|| resolvedDependencyUrls.length == 0) {
+			possibleCycleMap.put(url, NO);
+			return;
+		}
+
+		for (int i = 0; i < resolvedDependencyUrls.length; i++) {
+			Object isPartOfCycle = possibleCycleMap
+					.get(resolvedDependencyUrls[i]);
+			if (isPartOfCycle == null) {
+				possibleCycleMap.put(resolvedDependencyUrls[i], UNDEFINED);
+				stack.push(url);
+				resolveCycleDependencies(resolvedDependencyUrls[i], stack);
+				if (!stack.isEmpty())
+					stack.pop();
+				isPartOfCycle = possibleCycleMap.get(resolvedDependencyUrls[i]);
+			}
+			if (isPartOfCycle == UNDEFINED && stack.size() > 0) {
+				List cycleUrlList = new LinkedList();
+				addCyclePart(url, cycleUrlList);
+				URL cyclePartUrl;
+
+				for (ListIterator it = stack.listIterator(stack.size()); it
+						.hasPrevious();) {
+					URL nextUrl = (URL) it.previous();
+					if (!nextUrl.equals(url)) {
+						cyclePartUrl = nextUrl;
+						addCyclePart(cyclePartUrl, cycleUrlList);
+					} else {
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	private void addCyclePart(URL url, List cycleUrlList) {
+		cycleUrlList.add(url);
+		cycleUrlListMap.put(url, cycleUrlList);
+		possibleCycleMap.put(url, YES);
+	}
 
 }

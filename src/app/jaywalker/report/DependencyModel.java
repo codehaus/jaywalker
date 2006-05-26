@@ -23,65 +23,74 @@ import jaywalker.classlist.ClasslistElementListener;
 import java.net.URL;
 
 public class DependencyModel implements ClasslistElementListener {
-    private final DependencyHelper dependencyHelper = new DependencyHelper();
-    private final DependencyCycleHelper dependencyCycleHelper = new DependencyCycleHelper(dependencyHelper);
+	private final DependencyHelper dependencyHelper = new DependencyHelper();
 
-    public void classlistElementVisited(ClasslistElementEvent event) {
-        ClasslistElement classlistElement = event.getElement();
-        if (classlistElement.getClass() == ClassElement.class) {
-            ClassElement classElement = (ClassElement) classlistElement;
-            URL url = classElement.getURL();
-            String className = classElement.getName();
-            dependencyHelper.markAsResolved(url, className);
-            String [] dependencies = classElement.getDependencies();
-            for (int i = 0; i < dependencies.length; i++) {
-                String dependency = asClassName(dependencies[i]);
-                if (!dependencyHelper.isResolved(dependency)) {
-                    dependencyHelper.markAsUnresolved(url, dependency);
-                } else {
-                    dependencyHelper.updateResolved(url, dependency);
-                }
-            }
-        }
-    }
+	private final DependencyCycleHelper dependencyCycleHelper = new DependencyCycleHelper(
+			dependencyHelper);
 
-    public void lastClasslistElementVisited() {
-        dependencyHelper.resolveSystemClasses();
-    }
+	public void classlistElementVisited(ClasslistElementEvent event) {
+		ClasslistElement classlistElement = event.getElement();
+		if (classlistElement.getClass() != ClassElement.class) {
+			return;
+		}
+		
+		URL url = classlistElement.getURL();
+		if (dependencyHelper.isResolved(url)) {
+			return;
+		}
+		
+		ClassElement classElement = (ClassElement) classlistElement;
+		String className = classElement.getName();
 
-    private String asClassName(String dependency) {
-        String value = dependency;
-        int idx;
-        if ((idx = value.lastIndexOf("[")) != -1)
-            value = value.substring(idx + 2);
-        if (value.endsWith(";"))
-            value = value.substring(0, value.length() - 1);
-        return value;
-    }
+		dependencyHelper.markAsResolved(url, className);
+		String[] dependencies = classElement.getDependencies();
+		for (int i = 0; i < dependencies.length; i++) {
+			String dependency = asClassName(dependencies[i]);
+			if (dependencyHelper.isResolved(dependency)) {
+				dependencyHelper.updateResolved(url, dependency);
+			} else {
+				dependencyHelper.markAsUnresolved(url, dependency);
+			}
+		}
 
-    public URL [] lookupResolvedContainerDependencies(URL url) {
-        return dependencyHelper.lookupResolvedContainerDependency(url);
-    }
+	}
 
-    public String[] lookupUnresolvedElementDependencies(URL url) {
-        return dependencyHelper.lookupUnresolvedElementDependency(url);
-    }
+	public void lastClasslistElementVisited() {
+		dependencyHelper.resolveSystemClasses();
+	}
 
-    public URL[] lookupElementCycleDependency(URL url) {
-        return dependencyCycleHelper.lookupElementCycleDependency(url);
-    }
+	private String asClassName(String dependency) {
+		String value = dependency;
+		int idx;
+		if ((idx = value.lastIndexOf("[")) != -1)
+			value = value.substring(idx + 2);
+		if (value.endsWith(";"))
+			value = value.substring(0, value.length() - 1);
+		return value;
+	}
 
-    public URL[] lookupContainerCyclicDependency(URL url) {
-        return dependencyCycleHelper.lookupContainerCycleDependency(url);
-    }
+	public URL[] lookupResolvedContainerDependencies(URL url) {
+		return dependencyHelper.lookupResolvedContainerDependency(url);
+	}
 
-    public String [] lookupResolvedPackageNameDependencies(URL url) {
-        return dependencyHelper.lookupResolvedPackageNameDependencies(url);
-    }
-    
-    public URL[] lookupPackageCycleDependency(URL url) {
-        return dependencyCycleHelper.lookupPackageCycleDependency(url);
-    }
+	public String[] lookupUnresolvedElementDependencies(URL url) {
+		return dependencyHelper.lookupUnresolvedElementDependency(url);
+	}
 
+	public URL[] lookupElementCycleDependency(URL url) {
+		return dependencyCycleHelper.lookupElementCycleDependency(url);
+	}
+
+	public URL[] lookupContainerCyclicDependency(URL url) {
+		return dependencyCycleHelper.lookupContainerCycleDependency(url);
+	}
+
+	public String[] lookupResolvedPackageNameDependencies(URL url) {
+		return dependencyHelper.lookupResolvedPackageNameDependencies(url);
+	}
+
+	public URL[] lookupPackageCycleDependency(URL url) {
+		return dependencyCycleHelper.lookupPackageCycleDependency(url);
+	}
 
 }
