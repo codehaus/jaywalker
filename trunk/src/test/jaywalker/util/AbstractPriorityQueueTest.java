@@ -37,9 +37,9 @@ public abstract class AbstractPriorityQueueTest extends TestCase {
         }
     }
 
-    protected static final IntegerPriority PRIORITY_1 = new IntegerPriority(1);
-    protected static final IntegerPriority PRIORITY_2 = new IntegerPriority(2);
-    protected static final IntegerPriority PRIORITY_3 = new IntegerPriority(3);
+    protected final static IntegerPriority PRIORITY_1 = new IntegerPriority(1);
+    protected final static IntegerPriority PRIORITY_2 = new IntegerPriority(2);
+    protected final static IntegerPriority PRIORITY_3 = new IntegerPriority(3);
 
     public abstract PriorityQueue createPriorityQueue();
 

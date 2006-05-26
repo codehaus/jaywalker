@@ -16,6 +16,9 @@
 package jaywalker.util;
 
 public class OutputterException extends RuntimeException {
+
+	private static final long serialVersionUID = -2308690103027218892L;
+
 	public OutputterException() {
 		super();
 	}

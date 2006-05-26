@@ -16,9 +16,17 @@
 package jaywalker.classlist;
 
 import java.io.IOException;
+import java.net.URL;
+
+import jaywalker.util.ResourceLocator;
+import jaywalker.util.Shell;
+import jaywalker.util.URLHelper;
 
 public class ClasslistElementVisitor {
-	private static final int DEFAULT_CAPACITY = 5;
+
+	private final static URLHelper HELPER_URL = new URLHelper();
+
+	private final static int DEFAULT_CAPACITY = 5;
 
 	private final ClasslistElement[] classlistElements;
 
@@ -51,8 +59,16 @@ public class ClasslistElementVisitor {
 
 		if (cle instanceof ClasslistContainer) {
 			new ClasslistElementVisitor((ClasslistContainer) cle).accept(this);
+			clearTemporaryStateFor((ClasslistContainer) cle);
 		}
 
+	}
+
+	private void clearTemporaryStateFor(ClasslistContainer clc) {
+		final ResourceLocator locator = ResourceLocator.instance();
+		URL url = clc.getURL();
+		locator.unregister("directoryListing:" + url);
+		locator.unregister("classInfoByUrlMap:" + url);
 	}
 
 	private void notifyListeners(ClasslistElement element) {

@@ -17,7 +17,6 @@ package jaywalker.classlist;
 
 import jaywalker.testutil.Path;
 import jaywalker.util.FileSystem;
-import jaywalker.util.ThreadHelper;
 import jaywalker.util.URLHelper;
 
 import java.io.File;
@@ -46,13 +45,11 @@ public class ArchiveExpanderTest extends JayWalkerTestCase {
         // Expand the archive into the temporary directory
         // Show that the classlist element's file representation exists
         new ArchiveExpander().expand(Path.FILE_TEST1_JAR.toURL());
-        new ThreadHelper().verify(Path.FILE_TEST1_JAR.toURL());
         assertTrue(toCacheFile(cle).exists());
 
         // Prove that caching is working
         long lastModified = toCacheFile(cle).lastModified();
         new ArchiveExpander().expand(Path.FILE_TEST1_JAR.toURL());
-        new ThreadHelper().verify(Path.FILE_TEST1_JAR.toURL());
         File file = toCacheFile(cle);
         assertTrue(file.exists());
         assertEquals(lastModified, file.lastModified());

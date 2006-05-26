@@ -1,10 +1,8 @@
 package jaywalker.util;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-import jaywalker.ant.JayWalkerTaskTest;
 import jaywalker.testutil.Path;
 
 import org.apache.tools.ant.BuildFileTest;
@@ -30,7 +28,9 @@ public class ChainedOutputterTest extends BuildFileTest {
 	}
 
 	private ByteArrayOutputStream transformFrom(Outputter[] outputters) {
-		executeTarget("testUnifiedReportForTest1Test2Archive");
+		if (!file.exists()) {
+			executeTarget("testUnifiedReportForTest1Test2Archive");
+		}
 		assertTrue(file.exists());
 		ResourceLocator.instance().register("report.xml", file);
 
@@ -43,14 +43,14 @@ public class ChainedOutputterTest extends BuildFileTest {
 	public void testOneOutputterInChain() {
 		Outputter[] outputters = new Outputter[] { new XsltTransformer(
 				"package-dependencies-resolved-dot.xslt") };
-		ByteArrayOutputStream baos = transformFrom(outputters);
+		transformFrom(outputters);
 	}
 
 	public void testTwoOutputterInChain() {
 		Outputter[] outputters = new Outputter[] {
 				new XsltTransformer("package-dependencies-resolved-dot.xslt"),
 				new DotOutputter("package.dot") };
-		ByteArrayOutputStream baos = transformFrom(outputters);
+		transformFrom(outputters);
 	}
 
 }

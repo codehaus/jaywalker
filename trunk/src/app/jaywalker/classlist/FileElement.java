@@ -17,13 +17,10 @@ package jaywalker.classlist;
 
 import java.net.URL;
 
-import jaywalker.util.URLHelper;
-
 public class FileElement extends ClasslistElement {
 
     public static class Creator implements ClasslistElementCreator {
         public boolean isType(URL url) {
-        	//return new URLHelper().toEncodedFile(url).exists();
         	return true;
         }
 

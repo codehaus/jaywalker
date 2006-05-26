@@ -22,13 +22,6 @@ import jaywalker.util.ChainedOutputter;
 import jaywalker.util.DotOutputter;
 import jaywalker.util.Outputter;
 import jaywalker.util.XsltTransformer;
-import jaywalker.xml.ContainerCyclicDependencyTag;
-import jaywalker.xml.ContainerDependencyTag;
-import jaywalker.xml.ElementCyclicDependencyTag;
-import jaywalker.xml.PackageCyclicDependencyTag;
-import jaywalker.xml.PackageDependencyTag;
-import jaywalker.xml.Tag;
-import jaywalker.xml.UnresolvedClassNameDependencyTag;
 
 public class DependencyReportConfiguration implements Configuration {
 	private final ReportSetupMap dependencyReportTagMap;

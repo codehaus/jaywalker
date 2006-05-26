@@ -5,9 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.Properties;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
@@ -30,9 +28,6 @@ public class XsltTransformer implements Outputter {
 			+ File.separator;
 
 	private final Transformer transformer;
-
-	private static final DocumentBuilderFactory FACTORY = DocumentBuilderFactory
-			.newInstance();
 
 	public XsltTransformer(String filename) {
 		try {

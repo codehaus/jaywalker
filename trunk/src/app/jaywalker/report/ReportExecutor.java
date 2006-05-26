@@ -28,7 +28,7 @@ import jaywalker.classlist.ClasslistElementVisitor;
 import jaywalker.util.Clock;
 import jaywalker.util.FileSystem;
 import jaywalker.util.ResourceLocator;
-import jaywalker.util.StringHelper;
+import jaywalker.util.Shell;
 
 public class ReportExecutor {
 
@@ -37,42 +37,50 @@ public class ReportExecutor {
 	private ClasslistElementFactory factory = new ClasslistElementFactory();
 
 	public ReportExecutor() {
-		String key = "javax.xml.transform.TransformerFactory";
-		String value = "org.apache.xalan.xsltc.trax.TransformerFactoryImpl";
-		Properties props = System.getProperties();
-		props.put(key, value);
-		System.setProperties(props);
 		ResourceLocator.instance().register("clock", new Clock());
 	}
 
-	public void execute(final String classlist, Properties properties,
+	private void setReportXmlResource(final File output) {
+		ResourceLocator.instance().register("report.xml", output);
+	}
+	
+	public void execute(String classlist, Properties properties,
 			File outDir) throws IOException {
-		System.out.print("Walking the classlist:\n");
-		System.out.println(classlist.replace(File.pathSeparatorChar,'\n'));
-		System.out.println();
+		printClasslist(classlist);
 		System.out.println("Creating the JayWalker report . . .");
-		Clock clock = (Clock) ResourceLocator.instance().lookup("clock");
+		Clock clock = getClockResource();
 		final String clockType = "Total time to create the JayWalker report";
 		clock.start(clockType);
 		try {
 			initOutDir(outDir);
+			System.out.println(Shell.usedMemory());
 			final Report[] reports = configurationSetup.toReports(properties);
 			final File output = new File(outDir, "report.xml");
-			ResourceLocator.instance().register("report.xml", output);
+			setReportXmlResource(output);
+			System.out.println(Shell.usedMemory());
 			AggregateReport report = execute(classlist, reports, output);
+			System.out.println(Shell.usedMemory());
 			outputHtml(outDir, report, classlist);
 		} finally {
 			clock.stop(clockType);
 			System.out.println(clock.toString(clockType));
+			System.out.println(ResourceLocator.instance());
 		}
 
+	}
+
+
+	private void printClasslist(final String classlist) {
+		System.out.print("Walking the classlist:\n");
+		System.out.println(classlist.replace(File.pathSeparatorChar, '\n'));
+		System.out.println();
 	}
 
 	// TODO: smells like an aspect
 	private void outputHtml(File outDir, AggregateReport report,
 			String classlist) throws IOException {
 		System.out.println("  Creating HTML report . . .");
-		Clock clock = (Clock) ResourceLocator.instance().lookup("clock");
+		Clock clock = getClockResource();
 		final String clockType = "    Time to create HTML report";
 		clock.start(clockType);
 		try {
@@ -103,12 +111,13 @@ public class ReportExecutor {
 	private AggregateReport execute(String classlist, Report[] reports,
 			File file) throws IOException {
 		System.out.println("  Creating XML report . . .");
-		Clock clock = (Clock) ResourceLocator.instance().lookup("clock");
+		Clock clock = getClockResource();
 		final String clockType = "    Total time to create XML report";
 		clock.start(clockType);
 		try {
 			final ClasslistElement[] elements = factory.create(classlist);
 			initReportModels(reports, elements);
+			System.out.println(Shell.usedMemory());
 			return createAggregateReport(reports, elements, file);
 		} finally {
 			clock.stop(clockType);
@@ -120,16 +129,18 @@ public class ReportExecutor {
 			final ClasslistElement[] elements, final File file)
 			throws IOException {
 		System.out.println("    Aggregating report elements . . .");
-		Clock clock = (Clock) ResourceLocator.instance().lookup("clock");
+		Clock clock = getClockResource();
 		final String clockType = "      Time to aggregate report elements";
 		clock.start(clockType);
 		try {
 			ClasslistElementVisitor visitor = new ClasslistElementVisitor(
 					elements);
 			FileWriter writer = new FileWriter(file);
+			
 			AggregateReport report = new AggregateReport(reports, writer);
 			visitor.addListener(report);
 			visitor.accept();
+		
 			writer.close();
 			return report;
 		} finally {
@@ -138,11 +149,15 @@ public class ReportExecutor {
 		}
 	}
 
+	private Clock getClockResource() {
+		return (Clock) ResourceLocator.instance().lookup("clock");
+	}
+
 	// TODO: smells like an aspect
 	private void initReportModels(Report[] reports,
 			final ClasslistElement[] elements) throws IOException {
 		System.out.println("    Initializing the report . . .");
-		Clock clock = (Clock) ResourceLocator.instance().lookup("clock");
+		Clock clock = getClockResource();
 		final String clockType = "      Time to initialize the report";
 		clock.start(clockType);
 		try {

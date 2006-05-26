@@ -4,7 +4,6 @@ import java.util.Properties;
 
 import jaywalker.classlist.ClasslistElementListener;
 import jaywalker.util.Outputter;
-import jaywalker.xml.Tag;
 
 public interface Configuration {
 	public Tag[] toReportTags(Properties properties);

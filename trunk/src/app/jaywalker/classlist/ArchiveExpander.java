@@ -30,7 +30,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import jaywalker.util.FileSystem;
-import jaywalker.util.ThreadHelper;
 import jaywalker.util.URLHelper;
 import jaywalker.util.ZipFileVisitor;
 import jaywalker.util.ZipFileVisitor.ZipEntryListener;
@@ -44,26 +43,7 @@ public class ArchiveExpander {
 		}
 		if (cache.isMissing()) {
 			create(cache);
-			//createAsynchronously(cache);
 		}
-	}
-
-	private void createAsynchronously(final ArchiveCache cache) {
-		Runnable runnable = createRunnable(cache);
-		new ThreadHelper().start(runnable, cache.getURL());
-	}
-
-	private Runnable createRunnable(final ArchiveCache cache) {
-		Runnable runnable = new Runnable() {
-			public void run() {
-				try {
-					create(cache);
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-			}
-		};
-		return runnable;
 	}
 
 	private void create(final ArchiveCache cache) throws IOException {
@@ -113,6 +93,7 @@ public class ArchiveExpander {
 			final FileChannel outputChannel) {
 		return new ZipEntryListener() {
 			private long offset;
+			private URLHelper urlHelper = new URLHelper();
 
 			public void visit(ZipFile zipFile, ZipEntry zipEntry)
 					throws IOException {
@@ -121,7 +102,7 @@ public class ArchiveExpander {
 				final long size = zipEntry.getSize();
 				if (!zipEntry.isDirectory()) {
 
-					if (new URLHelper().isLegalArchiveExtension(zipEntry
+					if (urlHelper.isLegalArchiveExtension(zipEntry
 							.getName())) {
 						File cachedFile = cache.createFile(filename);
 						FileSystem.writeInputStreamToFile(zipFile

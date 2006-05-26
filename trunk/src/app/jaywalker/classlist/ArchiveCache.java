@@ -9,14 +9,11 @@ import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.ByteBuffer;
-import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
-import java.nio.channels.FileChannel.MapMode;
 import java.util.Properties;
 
 import jaywalker.util.FileSystem;
 import jaywalker.util.HashCode;
-import jaywalker.util.ResourceLocator;
 import jaywalker.util.URLHelper;
 
 import org.apache.bcel.classfile.ClassParser;
@@ -89,22 +86,31 @@ public class ArchiveCache {
 		return url;
 	}
 
-	public static class ByteBufferInputStream extends InputStream {
+	public static class FileChannelInputStream extends InputStream {
 
-		private final ByteBuffer buffer;
+		private final FileChannel channel;
+
+		private final ByteBuffer buffer = ByteBuffer.allocateDirect(1);
 
 		private long index;
 
 		private long limit;
 
-		public ByteBufferInputStream(ByteBuffer buffer, long offset, long size) {
-			this.buffer = buffer;
+		public FileChannelInputStream(FileChannel channel, long offset,
+				long size) {
+			this.channel = channel;
 			this.index = offset;
 			this.limit = offset + size;
 		}
 
 		public int read() throws IOException {
-			return (index < limit) ? buffer.get((int) index++) & 0xff : -1;
+			if (index < limit) {
+				buffer.rewind();
+				channel.read(buffer, index++);
+				buffer.rewind();
+				return buffer.get() & 0xff;
+			}
+			return -1;
 		}
 
 	}
@@ -137,9 +143,9 @@ public class ArchiveCache {
 	protected JavaClass toJavaClass(String fileName, FileChannel channel,
 			long index, long size) {
 		try {
-			ByteBuffer buffer = lookupBuffer(channel);
-			InputStream inputStream = new ByteBufferInputStream(buffer, index,
-					size);
+			InputStream inputStream = new FileChannelInputStream(channel,
+					index, size);
+
 			JavaClass javaClass = new ClassParser(inputStream, fileName)
 					.parse();
 			return javaClass;
@@ -147,19 +153,6 @@ public class ArchiveCache {
 			throw new ArchiveCacheException(
 					"IOException thrown while interacting with file channel", e);
 		}
-	}
-
-	private ByteBuffer lookupBuffer(FileChannel channel) throws IOException {
-		ResourceLocator locator = ResourceLocator.instance();
-		String path = archiveFile.getAbsolutePath();
-		if (!locator.contains(path)) {
-			MappedByteBuffer buffer = channel.map(MapMode.READ_ONLY, 0, channel
-					.size());
-			buffer.load();
-			locator.register(path, buffer);
-		}
-		ByteBuffer buffer = (ByteBuffer) locator.lookup(path);
-		return buffer;
 	}
 
 	private Properties loadIdxPropertiesFromUrl(URL url) {

@@ -15,28 +15,17 @@
  */
 package jaywalker.report;
 
-import jaywalker.classlist.ClasslistElementListener;
-import jaywalker.classlist.JayWalkerTestCase;
-import jaywalker.testutil.Path;
-import jaywalker.util.Outputter;
-import jaywalker.xml.CollisionTag;
-import jaywalker.xml.ContainerCyclicDependencyTag;
-import jaywalker.xml.ContainerDependencyTag;
-import jaywalker.xml.ElementCyclicDependencyTag;
-import jaywalker.xml.NestedTag;
-import jaywalker.xml.PackageCyclicDependencyTag;
-import jaywalker.xml.SerialVersionUidConflictTag;
-import jaywalker.xml.Tag;
-import jaywalker.xml.UnresolvedClassNameDependencyTag;
-
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
+
+import jaywalker.classlist.ClasslistElementListener;
+import jaywalker.classlist.JayWalkerTestCase;
+import jaywalker.testutil.Path;
+import jaywalker.util.Outputter;
 
 public class AggregateReportTest extends JayWalkerTestCase {
 	
