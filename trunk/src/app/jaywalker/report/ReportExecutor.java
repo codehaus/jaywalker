@@ -113,7 +113,6 @@ public class ReportExecutor {
 		try {
 			final ClasslistElement[] elements = factory.create(classlist);
 			initReportModels(reports, elements);
-			System.out.println(Shell.usedMemory());
 			return createAggregateReport(reports, elements, file);
 		} finally {
 			clock.stop(clockType);
