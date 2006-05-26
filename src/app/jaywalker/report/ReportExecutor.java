@@ -53,18 +53,14 @@ public class ReportExecutor {
 		clock.start(clockType);
 		try {
 			initOutDir(outDir);
-			System.out.println(Shell.usedMemory());
 			final Report[] reports = configurationSetup.toReports(properties);
 			final File output = new File(outDir, "report.xml");
 			setReportXmlResource(output);
-			System.out.println(Shell.usedMemory());
 			AggregateReport report = execute(classlist, reports, output);
-			System.out.println(Shell.usedMemory());
 			outputHtml(outDir, report, classlist);
 		} finally {
 			clock.stop(clockType);
 			System.out.println(clock.toString(clockType));
-			System.out.println(ResourceLocator.instance());
 		}
 
 	}
