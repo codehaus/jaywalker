@@ -95,4 +95,24 @@ public class StringHelper {
 		}
 		return str.substring(0, idx);
 	}
+
+	public String spaceAndReplace(String value, int spaceCnt, String delimiter,
+			String newDelimiter) {
+		StringBuffer sb = new StringBuffer();
+		String[] values = value.split(delimiter);
+		for (int i = 0; i < values.length; i++) {
+			sb.append(toSpaces(spaceCnt));
+			sb.append(values[i]);
+			sb.append(newDelimiter);
+		}
+		return sb.toString();
+	}
+
+	private String toSpaces(int cnt) {
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < cnt; i++) {
+			sb.append(' ');
+		}
+		return sb.toString();
+	}
 }
