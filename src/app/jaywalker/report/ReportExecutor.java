@@ -28,6 +28,7 @@ import jaywalker.classlist.ClasslistElementVisitor;
 import jaywalker.util.Clock;
 import jaywalker.util.FileSystem;
 import jaywalker.util.ResourceLocator;
+import jaywalker.util.StringHelper;
 
 public class ReportExecutor {
 
@@ -42,9 +43,9 @@ public class ReportExecutor {
 	private void setReportXmlResource(final File output) {
 		ResourceLocator.instance().register("report.xml", output);
 	}
-	
-	public void execute(String classlist, Properties properties,
-			File outDir) throws IOException {
+
+	public void execute(String classlist, Properties properties, File outDir)
+			throws IOException {
 		printClasslist(classlist);
 		System.out.println("Creating the JayWalker report . . .");
 		Clock clock = getClockResource();
@@ -64,10 +65,10 @@ public class ReportExecutor {
 
 	}
 
-
 	private void printClasslist(final String classlist) {
 		System.out.print("Walking the classlist:\n");
-		System.out.println(classlist.replace(File.pathSeparatorChar, '\n'));
+		System.out.println(new StringHelper().spaceAndReplace(classlist, 2,
+				File.pathSeparator, "\n"));
 		System.out.println();
 	}
 
@@ -130,11 +131,11 @@ public class ReportExecutor {
 			ClasslistElementVisitor visitor = new ClasslistElementVisitor(
 					elements);
 			FileWriter writer = new FileWriter(file);
-			
+
 			AggregateReport report = new AggregateReport(reports, writer);
 			visitor.addListener(report);
 			visitor.accept();
-		
+
 			writer.close();
 			return report;
 		} finally {
