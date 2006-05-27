@@ -1,220 +1,230 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <project name="jaywalker" default="all">
 
-    <property file="build.properties"/>
+	<property file="build.properties" />
 
-    <!-- directory that contains emma.jar and emma_ant.jar: -->
-    <property name="emma.dir" value="${basedir}/tools/emma"/>
+	<!-- MANIFEST.MF properties -->
+	<property name="implementation.title" value="${ant.project.name}" />
+	<property name="implementation.version" value="${project.version}" />
+	<property name="implementation.url" value="${project.url}" />
 
-    <!-- path element used by EMMA taskdef below: -->
-    <path id="emma.lib">
-        <pathelement location="${emma.dir}/emma-2.0.4217.jar"/>
-        <pathelement location="${emma.dir}/emma-ant-2.0.4217.jar"/>
-    </path>
+	<import file="emma.xml" />
 
-    <!-- this loads <emma> and <emmajava> custom tasks: -->
-    <taskdef resource="emma_ant.properties" classpathref="emma.lib"/>
+	<path id="path.run.app">
+		<pathelement location="build/classes" />
+	</path>
 
-    <path id="path.run.app">
-        <pathelement location="build/classes"/>
-    </path>
+	<path id="path.compile.app">
+		<pathelement path="tools/ant/ant-1.6.3.jar" />
+		<pathelement path="tools/ant/ant-apache-bcel.jar" />
+		<pathelement path="tools/bcel/bcel-5.1.jar" />
+		<pathelement path="tools/log4j/log4j-1.2.9.jar" />
+	</path>
 
-    <path id="path.compile.app">
-        <pathelement path="tools/commons-lang/commons-lang-2.0.jar"/>
-        <pathelement path="tools/ant/ant-1.6.3.jar"/>
-        <pathelement path="tools/ant/ant-apache-bcel.jar"/>
-        <pathelement path="tools/bcel/bcel-5.1.jar"/>
-        <pathelement path="tools/log4j/log4j-1.2.9.jar"/>
-    </path>
+	<path id="path.compile.test">
+		<pathelement location="build/classes" />
+		<pathelement location="build/classes-test" />
+		<path refid="path.compile.app" />
+		<pathelement path="tools/junit/junit-3.8.1.jar" />
+		<pathelement path="tools/ant/ant-testutil-1.6.3.jar" />
+	</path>
 
-    <path id="path.compile.test">
-        <pathelement location="build/classes"/>
-        <pathelement location="build/classes-test"/>
-        <path refid="path.compile.app"/>
-        <pathelement path="tools/junit/junit-3.8.1.jar"/>
-        <pathelement path="tools/ant/ant-testutil-1.6.3.jar"/>
-        <pathelement path="tools/log4j/log4j-1.2.9.jar"/>
-        <pathelement path="tools/xalan/xalan-2.7.0.jar"/>
-        <pathelement path="tools/xalan/serializer.jar"/>
-    </path>
+	<target name="all" depends="clean, test" description="build all" />
 
-    <target name="all" depends="clean, test" description="build all"/>
+	<target name="clean" description="cleanup all">
+		<delete>
+			<fileset dir="." includes="junit*.properties" />
+		</delete>
+		<delete dir="build" />
+	</target>
 
-    <target name="clean" description="cleanup all">
-        <delete>
-            <fileset dir="." includes="junit*.properties"/>
-        </delete>
-        <delete dir="build"/>
-    </target>
+	<target name="compile-app" description="compiles the application">
+		<mkdir dir="build/classes" />
+		<javac debug="on" srcdir="src/app" destdir="build/classes" classpathref="path.compile.app" />
+	</target>
 
-    <target name="compile-app" description="compiles the application">
-        <mkdir dir="build/classes"/>
-        <javac debug="on" srcdir="src/app" destdir="build/classes" classpathref="path.compile.app"/>
-    </target>
+	<target name="compile-test" description="compiles the tests">
+		<mkdir dir="build/classes-test" />
+		<javac debug="on" srcdir="src/test" destdir="build/classes-test" classpathref="path.compile.test" />
+	</target>
 
-    <target name="compile-test" description="compiles the tests">
-        <mkdir dir="build/classes-test"/>
-        <javac debug="on" srcdir="src/test" destdir="build/classes-test" classpathref="path.compile.test"/>
-    </target>
+	<target name="compile-test1" description="compiles test2">
+		<mkdir dir="build/classes-test/test1" />
+		<javac debug="on" srcdir="src/test1" destdir="build/classes-test/test1">
+		</javac>
+	</target>
 
-    <target name="compile-test1" description="compiles test2">
-        <mkdir dir="build/classes-test/test1"/>
-        <javac debug="on" srcdir="src/test1" destdir="build/classes-test/test1"></javac>
-    </target>
+	<target name="compile-test2" description="compiles test2">
+		<mkdir dir="build/classes-test/test2" />
+		<javac debug="on" srcdir="src/test2" destdir="build/classes-test/test2">
+		</javac>
+	</target>
 
-    <target name="compile-test2" description="compiles test2">
-        <mkdir dir="build/classes-test/test2"/>
-        <javac debug="on" srcdir="src/test2" destdir="build/classes-test/test2"></javac>
-    </target>
+	<target name="compile-test5" description="compiles test5">
+		<mkdir dir="build/classes-test/test5" />
+		<javac debug="on" srcdir="src/test5" destdir="build/classes-test/test5">
+		</javac>
+	</target>
 
-    <target name="compile-test5" description="compiles test5">
-        <mkdir dir="build/classes-test/test5"/>
-        <javac debug="on" srcdir="src/test5" destdir="build/classes-test/test5"></javac>
-    </target>
+	<target name="dist-test" depends="compile-test1, compile-test2, compile-test5">
+		<!-- Jar test harness -->
+		<mkdir dir="build/dist" />
+		<jar destfile="build/dist/${ant.project.name}-test.jar">
+			<fileset dir="build/classes-test">
+				<include name="**/test*/**" />
+				<include name="**/*.class" />
+				<exclude name="test1/**" />
+				<exclude name="test2/**" />
+				<exclude name="test5/**" />
+			</fileset>
+		</jar>
+		<jar basedir="build/classes-test/test1" destfile="build/dist/${ant.project.name}-test1.jar" />
+		<jar destfile="build/dist/${ant.project.name}-test2.jar">
+			<fileset dir="build/classes-test/test2">
+				<exclude name="bogus/**" />
+			</fileset>
+		</jar>
+		<jar destfile="build/dist/${ant.project.name}-test3.jar">
+			<fileset dir="build/dist">
+				<include name="${ant.project.name}-test1.jar" />
+				<include name="${ant.project.name}-test2.jar" />
+			</fileset>
+		</jar>
+		<jar destfile="build/dist/${ant.project.name}-test4.jar">
+			<fileset dir="build/dist">
+				<include name="${ant.project.name}-test1.jar" />
+				<include name="${ant.project.name}-test2.jar" />
+				<include name="${ant.project.name}-test3.jar" />
+			</fileset>
+		</jar>
+		<ear destfile="build/dist/${ant.project.name}-test.ear" appxml="src/metadata/application.xml">
+			<zipfileset dir="build/dist" includes="*.jar" prefix="APP-INF/lib" />
+		</ear>
+		<jar basedir="build/classes-test/test5" destfile="build/dist/${ant.project.name}-test5.jar" />
+		<jar basedir="build/classes-test/test2" destfile="build/dist/${ant.project.name}-cycle-part1.jar" includes="cycle1/Node1.class,cycle2/Node2.class" />
+		<jar basedir="build/classes-test/test2" destfile="build/dist/${ant.project.name}-cycle-part2.jar" includes="cycle3/Node3.class" />
+	</target>
 
-    <target name="dist-test" depends="compile-test1, compile-test2, compile-test5">
-        <!-- Jar test harness -->
-        <mkdir dir="build/dist"/>
-        <jar destfile="build/dist/${ant.project.name}-test.jar">
-            <fileset dir="build/classes-test">
-                <include name="**/test*/**"/>
-                <include name="**/*.class"/>
-                <exclude name="test1/**"/>
-                <exclude name="test2/**"/>
-                <exclude name="test5/**"/>
-            </fileset>
-        </jar>
-        <jar basedir="build/classes-test/test1" destfile="build/dist/${ant.project.name}-test1.jar"/>
-        <jar destfile="build/dist/${ant.project.name}-test2.jar">
-            <fileset dir="build/classes-test/test2">
-                <exclude name="bogus/**"/>
-            </fileset>
-        </jar>
-        <jar destfile="build/dist/${ant.project.name}-test3.jar">
-            <fileset dir="build/dist">
-                <include name="${ant.project.name}-test1.jar"/>
-                <include name="${ant.project.name}-test2.jar"/>
-            </fileset>
-        </jar>
-        <jar destfile="build/dist/${ant.project.name}-test4.jar">
-            <fileset dir="build/dist">
-                <include name="${ant.project.name}-test1.jar"/>
-                <include name="${ant.project.name}-test2.jar"/>
-                <include name="${ant.project.name}-test3.jar"/>
-            </fileset>
-        </jar>
-        <ear destfile="build/dist/${ant.project.name}-test.ear" appxml="src/metadata/application.xml">
-            <zipfileset dir="build/dist" includes="*.jar" prefix="APP-INF/lib"/>
-        </ear>
-        <jar basedir="build/classes-test/test5" destfile="build/dist/${ant.project.name}-test5.jar"/>
-        <jar basedir="build/classes-test/test2" destfile="build/dist/${ant.project.name}-cycle-part1.jar" includes="cycle1/Node1.class,cycle2/Node2.class"/>
-        <jar basedir="build/classes-test/test2" destfile="build/dist/${ant.project.name}-cycle-part2.jar" includes="cycle3/Node3.class"/>
-    </target>
+	<target name="test" depends="dist, compile-test, dist-test">
 
-    <target name="test" depends="dist, compile-test, dist-test">
+		<mkdir dir="build/classes-instr" />
+		<mkdir dir="build/doc/emma" />
 
-        <mkdir dir="build/classes-instr"/>
-        <mkdir dir="build/doc/emma"/>
+		<emma>
+			<instr instrpathref="path.run.app" destdir="build/classes-instr" metadatafile="build/doc/emma/metadata.emma" merge="true">
+			</instr>
+		</emma>
 
-        <emma>
-            <instr instrpathref="path.run.app"
-                   destdir="build/classes-instr"
-                   metadatafile="build/doc/emma/metadata.emma"
-                   merge="true">
-            </instr>
-        </emma>
+		<mkdir dir="build/doc/junit" />
+		<delete file="build/doc/emma/coverage.emma" />
 
-        <mkdir dir="build/doc/junit"/>
-        <delete file="build/doc/emma/coverage.emma"/>
+		<junit printsummary="on" failureproperty="junit-failure">
+			<classpath>
+				<pathelement location="build/classes-instr" />
+				<pathelement location="build/classes-test" />
+				<path refid="path.compile.test" />
+				<path refid="emma.lib" />
+				<path location="build/dist/${ant.project.name}-bin-${project.version}.jar" />
+			</classpath>
 
-        <junit printsummary="on" failureproperty="junit-failure">
-            <classpath>
-                <pathelement location="build/classes-instr"/>
-                <pathelement location="build/classes-test"/>
-                <path refid="path.compile.test"/>
-                <path refid="emma.lib"/>
-                <path location="build/dist/${ant.project.name}-${project.version}.jar"/>
-            </classpath>
+			<batchtest fork="true" todir="build/doc/junit">
+				<formatter type="xml" />
+				<fileset dir="src/test">
+					<include name="**/*Test.java" />
+					<exclude name="**/Abstract*Test.java" />
+				</fileset>
+			</batchtest>
 
-            <batchtest fork="true" todir="build/doc/junit">
-                <formatter type="xml"/>
-                <fileset dir="src/test">
-                    <include name="**/*Test.java"/>
-                    <exclude name="**/Abstract*Test.java"/>
-                </fileset>
-            </batchtest>
+			<jvmarg value="-Demma.coverage.out.file=${basedir}/build/doc/emma/coverage.emma" />
+			<jvmarg value="-Demma.coverage.out.merge=true" />
 
-            <jvmarg value="-Demma.coverage.out.file=${basedir}/build/doc/emma/coverage.emma"/>
-            <jvmarg value="-Demma.coverage.out.merge=true"/>
+		</junit>
 
-        </junit>
+		<emma>
+			<report sourcepath="src/app" sort="+block,+name,+method,+class" metrics="method:70,block:80,line:80,class:100">
+				<fileset dir="build/doc/emma">
+					<include name="*.emma" />
+				</fileset>
 
-        <emma>
-            <report sourcepath="src/app"
-                    sort="+block,+name,+method,+class"
-                    metrics="method:70,block:80,line:80,class:100">
-                <fileset dir="build/doc/emma">
-                    <include name="*.emma"/>
-                </fileset>
+				<txt outfile="build/doc/emma/coverage.txt" depth="package" columns="class,method,block,line,name" />
+				<xml outfile="build/doc/emma/coverage.xml" depth="package" />
+				<html outfile="build/doc/emma/coverage.html" depth="method" columns="name,class,method,block,line" />
+			</report>
+		</emma>
 
-                <txt outfile="build/doc/emma/coverage.txt"
-                     depth="package"
-                     columns="class,method,block,line,name"/>
-                <xml outfile="build/doc/emma/coverage.xml"
-                     depth="package"/>
-                <html outfile="build/doc/emma/coverage.html"
-                      depth="method"
-                      columns="name,class,method,block,line"/>
-            </report>
-        </emma>
+		<mkdir dir="build/doc/junit-reports" />
 
-        <mkdir dir="build/doc/junit-reports"/>
+		<junitreport todir="build/doc/junit-reports">
+			<fileset dir="build/doc/junit">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report format="frames" todir="build/doc/junit-reports/html" />
+		</junitreport>
 
-        <junitreport todir="build/doc/junit-reports">
-            <fileset dir="build/doc/junit">
-                <include name="TEST-*.xml"/>
-            </fileset>
-            <report format="frames" todir="build/doc/junit-reports/html"/>
-        </junitreport>
-        
-        <fail message="JUnit test(s) failed" if="junit-failure"/>
+		<fail message="JUnit test(s) failed" if="junit-failure" />
 
-    </target>
+	</target>
 
-    <target name="dist" depends="compile-app">
-        <mkdir dir="build/dist"/>
-        <jar destfile="build/dist/${ant.project.name}-${project.version}.jar">
-            <fileset dir="build/classes">
-                <exclude name="**/test*/**"/>
-                <exclude name="**/*Test.class"/>
-                <exclude name="test1/**"/>
-                <exclude name="test2/**"/>
-                <exclude name="**/JayWalkerTask*.class"/>
-                <exclude name="**/ant/"/>
-            </fileset>
-            <zipfileset dir="src/metadata/xslt" prefix="META-INF/xslt"/>
-        </jar>
-        <jar destfile="build/dist/${ant.project.name}-ant-${project.version}.jar">
-            <fileset dir="build/classes">
-                <include name="**/JayWalkerTask*.class"/>
-                <include name="**/ant/"/>
-            </fileset>
-        </jar>
-        <zip destfile="${ant.project.name}-${project.version}-bin.zip">
-            <fileset file="build/dist/${ant.project.name}-${project.version}.jar"/>
-            <fileset file="build/dist/${ant.project.name}-ant-${project.version}.jar"/>
-            <fileset file="tools/bcel/bcel-5.1.jar"/>
-        </zip>
-        <zip destfile="${ant.project.name}-${project.version}-src.zip">
-            <fileset dir=".">
-                <include name="src/**"/>
-                <include name="tools/**"/>
-                <include name="*"/>
-                <exclude name="*.zip"/>
-                <exclude name="*.iws"/>
-                <exclude name="junit*.properties"/>
-            </fileset>
-        </zip>
-    </target>
+	<target name="dist" depends="compile-app">
+		<mkdir dir="build/meta-inf" />
+		<copy todir="build/meta-inf">
+			<fileset dir="src/metadata/meta-inf" />
+			<filterset>
+				<filter token="implementation.title" value="${implementation.title}" />
+				<filter token="implementation.version" value="${implementation.version}" />
+				<filter token="implementation.url" value="${implementation.url}" />
+			</filterset>
+		</copy>
+		<mkdir dir="build/dist" />
+		<jar destfile="build/dist/${ant.project.name}-bin-${project.version}.jar" manifest="build/meta-inf/main-manifest.mf">
+			<fileset dir="build/classes">
+				<exclude name="**/test*/**" />
+				<exclude name="**/*Test.class" />
+				<exclude name="test1/**" />
+				<exclude name="test2/**" />
+				<exclude name="**/JayWalkerTask*.class" />
+				<exclude name="**/ant/" />
+			</fileset>
+			<zipfileset dir="src/metadata/xslt" prefix="META-INF/xslt" />
+		</jar>
+		<jar destfile="build/dist/${ant.project.name}-ant-${project.version}.jar">
+			<fileset dir="build/classes">
+				<include name="**/JayWalkerTask*.class" />
+				<include name="**/ant/" />
+			</fileset>
+		</jar>
+		<zip destfile="${ant.project.name}-${project.version}-src.zip">
+			<fileset dir=".">
+				<include name="src/**" />
+				<include name="tools/**" />
+				<include name="*" />
+				<exclude name="*.zip" />
+				<exclude name="*.jar" />
+				<exclude name="*.iws" />
+				<exclude name="junit*.properties" />
+			</fileset>
+		</zip>
+		<mkdir dir="build/one-jar-boot" />
+		<unjar src="tools/one-jar/one-jar-boot-0.95.jar" dest="build/one-jar-boot" />
+		<jar destfile="${ant.project.name}-${project.version}.jar" manifest="build/meta-inf/boot-manifest.mf">
+			<zipfileset dir="build/dist" prefix="main">
+				<include name="${ant.project.name}-bin-${project.version}.jar" />
+			</zipfileset>
+			<zipfileset dir="build/dist" prefix="lib">
+				<include name="${ant.project.name}-ant-${project.version}.jar" />
+			</zipfileset>
+			<zipfileset dir="." prefix="src">
+				<include name="${ant.project.name}-${project.version}-src.zip" />
+			</zipfileset>
+			<zipfileset dir="tools/bcel" includes="bcel-5.1.jar" prefix="lib" />
+			<zipfileset dir="build/one-jar-boot">
+				<include name="com/simontuffs/onejar/Boot.class" />
+				<include name="com/simontuffs/onejar/Handler$1.class" />
+				<include name="com/simontuffs/onejar/Handler.class" />
+				<include name="com/simontuffs/onejar/JarClassLoader$ByteCode.class" />
+				<include name="com/simontuffs/onejar/JarClassLoader.class" />
+			</zipfileset>
+		</jar>
+	</target>
 
 </project>
