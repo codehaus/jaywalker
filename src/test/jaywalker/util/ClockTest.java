@@ -46,7 +46,7 @@ public class ClockTest extends TestCase {
 
 	private synchronized void doSomethingThatTakesTime()
 			throws InterruptedException {
-		wait(1);
+		wait(2);
 	}
 
 	private void assertToStringEquals(String patternString, final String value,
