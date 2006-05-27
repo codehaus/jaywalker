@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project>
+
+	<!-- directory that contains emma.jar and emma_ant.jar: -->
+	<property name="emma.dir" value="${basedir}/tools/emma" />
+
+	<!-- path element used by EMMA taskdef below: -->
+	<path id="emma.lib">
+		<pathelement location="${emma.dir}/emma-2.0.4217.jar" />
+		<pathelement location="${emma.dir}/emma-ant-2.0.4217.jar" />
+	</path>
+
+	<!-- this loads <emma> and <emmajava> custom tasks: -->
+	<taskdef resource="emma_ant.properties" classpathref="emma.lib" />
+
+</project>

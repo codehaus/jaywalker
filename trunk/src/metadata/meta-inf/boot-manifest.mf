@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Main-Class: com.simontuffs.onejar.Boot
+Implementation-Title: @implementation.title@
+Implementation-Version: @implementation.version@
+Implementation-URL: @implementation.url@

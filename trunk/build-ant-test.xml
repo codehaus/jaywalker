@@ -5,16 +5,15 @@
     <target name="all"/>
 
     <path id="path.jaywalker">
-        <pathelement location="build/dist/jaywalker-${project.version}.jar"/>
+        <pathelement location="build/dist/jaywalker-bin-${project.version}.jar"/>
         <pathelement location="build/dist/jaywalker-ant-${project.version}.jar"/>
         <pathelement location="tools/bcel/bcel-5.1.jar"/>
         <pathelement location="tools/ant/ant-testutil-1.6.3.jar"/>
-        <pathelement location="tools/xalan/xalan-2.7.0.jar"/>
-        <pathelement location="tools/xalan/serializer.jar"/>
     </path>
 
     <target name="init">
-        <mkdir dir="build/temp"/>
+        <mkdir dir="build/temp/ant"/>
+        <mkdir dir="build/temp/cmdline"/>
         <taskdef name="jaywalker" classname="jaywalker.ant.JayWalkerTask" classpathref="path.jaywalker"/>
     </target>
 
@@ -27,7 +26,7 @@
     </target>
 
     <target name="testUnifiedReportForClassElement" depends="init">
-        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForClassElement" tempDir="build/temp">
+        <jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForClassElement" tempDir="build/temp">
             <classlist file="build/classes/jaywalker/classlist/ClasslistElementFactory.class"/>
             <option name="dependency" value="archive,package,class"/>
             <option name="cycle" value="archive,package,class"/>
@@ -37,25 +36,25 @@
     </target>
 
     <target name="testUnifiedReportForClassesDirectory" depends="init">
-        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForClassesDirectory" tempDir="build/temp">
+        <jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForClassesDirectory" tempDir="build/temp">
             <classlist file="build/classes"/>
         </jaywalker>
     </target>
 
     <target name="testUnifiedReportForTest1Archive" depends="init">
-        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForTest1Archive" tempDir="build/temp">
+        <jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForTest1Archive" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-test1.jar"/>
         </jaywalker>
     </target>
 
     <target name="testUnifiedReportForTest2Archive" depends="init">
-        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForTest2Archive" tempDir="build/temp">
+        <jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForTest2Archive" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-test2.jar"/>
         </jaywalker>
     </target>
 
     <target name="testUnifiedReportForTest1Test2Archive" depends="init">
-        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForTest1Test2Archive" tempDir="build/temp">
+        <jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForTest1Test2Archive" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-test1.jar"/>
             <classlist file="build/dist/jaywalker-test2.jar"/>
         </jaywalker>
@@ -63,26 +62,26 @@
     
 
     <target name="testUnifiedReportForTest4Archive" depends="init">
-        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForTest4Archive" tempDir="build/temp">
+        <jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForTest4Archive" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-test4.jar"/>
         </jaywalker>
     </target>
 
     <target name="testUnifiedReportForEarArchive" depends="init">
-        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForEarArchive" tempDir="build/temp">
+        <jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForEarArchive" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-test.ear"/>
         </jaywalker>
     </target>
 
     <target name="testUnifiedReportForBuiltArchives" depends="init">
-        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForBuiltArchives" tempDir="build/temp">
+        <jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForBuiltArchives" tempDir="build/temp">
             <classlist file="build/dist"/>
             <classlist file="tools/ant/ant-testutil-1.6.3.jar"/>
         </jaywalker>
     </target>
 
     <target name="testUnifiedReportForCycle1AndCycle2Archive" depends="init">
-        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForCycle1AndCycle2Archive" tempDir="build/temp">
+        <jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForCycle1AndCycle2Archive" tempDir="build/temp">
             <classlist file="build/dist/jaywalker-cycle-part1.jar"/>
             <classlist file="build/dist/jaywalker-cycle-part2.jar"/>
             <option name="cycle" value="archive,package,class"/>
@@ -90,7 +89,7 @@
     </target>
 
     <target name="testUnifiedReportForWeblogic" depends="init">
-        <jaywalker outDir="build/temp/JayWalkerTaskTest.testUnifiedReportForWeblogic" tempDir="c:\temp\weblogic-temp">
+        <jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForWeblogic" tempDir="c:\temp\weblogic-temp">
             <classlist file="c:\temp\weblogic"/>
         </jaywalker>
     </target>
