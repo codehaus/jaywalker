@@ -19,12 +19,8 @@ import java.io.IOException;
 import java.net.URL;
 
 import jaywalker.util.ResourceLocator;
-import jaywalker.util.Shell;
-import jaywalker.util.URLHelper;
 
 public class ClasslistElementVisitor {
-
-	private final static URLHelper HELPER_URL = new URLHelper();
 
 	private final static int DEFAULT_CAPACITY = 5;
 

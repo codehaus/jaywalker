@@ -12,7 +12,5 @@
 	<classpathentry kind="lib" path="tools/emma/emma-2.0.4217.jar"/>
 	<classpathentry kind="lib" path="tools/emma/emma-ant-2.0.4217.jar"/>
 	<classpathentry kind="lib" path="tools/junit/junit-3.8.1.jar"/>
-	<classpathentry kind="lib" path="tools/xalan/xalan-2.7.0.jar"/>
-	<classpathentry kind="lib" path="tools/xalan/serializer.jar"/>
 	<classpathentry kind="output" path="classes-ide"/>
 </classpath>

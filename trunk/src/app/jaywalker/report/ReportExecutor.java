@@ -28,7 +28,6 @@ import jaywalker.classlist.ClasslistElementVisitor;
 import jaywalker.util.Clock;
 import jaywalker.util.FileSystem;
 import jaywalker.util.ResourceLocator;
-import jaywalker.util.Shell;
 
 public class ReportExecutor {
 
