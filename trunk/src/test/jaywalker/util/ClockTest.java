@@ -16,7 +16,7 @@ public class ClockTest extends TestCase {
 		doSomethingThatTakesTime();
 		long secondCall = clock.check("test");
 		assertTrue("firstCall: " + firstCall + ", secondCall: " + secondCall,
-				firstCall < secondCall);
+				firstCall <= secondCall);
 
 	}
 
