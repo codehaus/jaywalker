@@ -44,7 +44,7 @@ public class JayWalkerTaskTest extends BuildFileTest {
 	private void assertXMLEquals(String testCase) throws FileNotFoundException,
 			SAXException, IOException, ParserConfigurationException {
 		ReportFile antReportFile = (ReportFile) ResourceLocator.instance()
-				.lookup("antReportFile");
+				.lookup("antReportFile-report.xml");
 
 		new XMLTestCase().assertXMLEqual(
 				"Output for Ant and Command line should be the same",

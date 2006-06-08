@@ -18,6 +18,7 @@ package jaywalker.report;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.Writer;
 import java.util.Properties;
 
@@ -29,6 +30,7 @@ import jaywalker.util.Clock;
 import jaywalker.util.FileSystem;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.StringHelper;
+import jaywalker.util.WriterOutputStream;
 
 public class ReportExecutor {
 
@@ -41,8 +43,7 @@ public class ReportExecutor {
 	}
 
 	private void setReportXmlResource(final ReportFile reportFile) {
-		ResourceLocator.instance().register("report.xml",
-				reportFile);
+		ResourceLocator.instance().register("report.xml", reportFile);
 	}
 
 	public void execute(String classlist, Properties properties, File outDir)
@@ -56,7 +57,8 @@ public class ReportExecutor {
 		try {
 			initOutDir(outDir);
 			final Report[] reports = configurationSetup.toReports(properties);
-			ReportFile reportFile = new ReportFileFactory().create();
+			ReportFile reportFile = new ReportFileFactory()
+					.create("report.xml");
 			setReportXmlResource(reportFile);
 			System.out.println("  Outputting report to "
 					+ reportFile.getParentAbsolutePath());
@@ -97,11 +99,12 @@ public class ReportExecutor {
 		final String clockType = "    Time to create HTML report";
 		clock.start(clockType);
 		try {
-			File output = new File(outDir, "report.html");
-			FileOutputStream fos = new FileOutputStream(output);
-			fos.write(formatClasslist(classlist));
-			report.transform(fos);
-			fos.close();
+			ReportFile reportFile = new ReportFileFactory()
+					.create("report.html");
+			OutputStream os = new WriterOutputStream(reportFile.getWriter());
+			os.write(formatClasslist(classlist));
+			report.transform(os);
+			os.close();
 		} finally {
 			clock.stop(clockType);
 			System.out.println(clock.toString(clockType));

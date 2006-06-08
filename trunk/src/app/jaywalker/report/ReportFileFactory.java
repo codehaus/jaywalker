@@ -6,13 +6,13 @@ import jaywalker.util.ResourceLocator;
 
 public class ReportFileFactory {
 
-	public ReportFile create() {
+	public ReportFile create(String filename) {
 		String value = System.getProperty("ReportFile");
 		if (InMemoryReportFile.class.getName().equals(value)) {
-			return new InMemoryReportFile();
+			return new InMemoryReportFile(filename);
 		}
 		File outDir = (File) ResourceLocator.instance().lookup("outDir");
-		return new DefaultReportFile(new File(outDir, "report.xml"));
+		return new DefaultReportFile(new File(outDir, filename));
 	}
 
 }

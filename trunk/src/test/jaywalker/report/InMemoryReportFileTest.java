@@ -7,7 +7,7 @@ public class InMemoryReportFileTest extends ReportFileTestCase {
 	public void setUp() throws Exception {
 		super.setUp();
 		ResourceLocator.instance().register("client", "ant");
-		reportFile = new InMemoryReportFile();
+		reportFile = new InMemoryReportFile("report.xml");
 	}
 
 	public void tearDown() throws Exception {
@@ -16,7 +16,6 @@ public class InMemoryReportFileTest extends ReportFileTestCase {
 	}
 
 	public void testShouldReturnReportLocationConstant() {
-
 		assertEquals("IN MEMORY", reportFile.getParentAbsolutePath());
 	}
 

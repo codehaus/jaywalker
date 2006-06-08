@@ -21,7 +21,7 @@ public class ReportFileFactoryTest extends TestCase {
 
 	public void testShouldCreateInMemoryReportFile() {
 		System.setProperty("ReportFile", "jaywalker.report.InMemoryReportFile");
-		ReportFile reportFile = new ReportFileFactory().create();
+		ReportFile reportFile = new ReportFileFactory().create("report.xml");
 		assertEquals(InMemoryReportFile.class, reportFile.getClass());
 	}
 
@@ -29,21 +29,21 @@ public class ReportFileFactoryTest extends TestCase {
 		System.setProperty("ReportFile", "jaywalker.report.DefaultReportFile");
 		ResourceLocator.instance().register("outDir", Path.DIR_TEMP);
 		assertFileDoesNotExist(Path.DIR_TEMP, "report.xml");
-		ReportFile reportFile = new ReportFileFactory().create();
+		ReportFile reportFile = new ReportFileFactory().create("report.xml");
 		assertEquals(DefaultReportFile.class, reportFile.getClass());
 	}
 
 	public void testShouldCreateDefaultReportFileOnMissingSystemProperty() {
 		ResourceLocator.instance().register("outDir", Path.DIR_TEMP);
 		assertFileDoesNotExist(Path.DIR_TEMP, "report.xml");
-		ReportFile reportFile = new ReportFileFactory().create();
+		ReportFile reportFile = new ReportFileFactory().create("report.xml");
 		assertEquals(DefaultReportFile.class, reportFile.getClass());
 	}
 
 	public void testShouldThrowExceptionWhenOutDirIsMissing() {
 		try {
 			assertFileDoesNotExist(Path.DIR_TEMP, "report.xml");
-			ReportFile reportFile = new ReportFileFactory().create();
+			ReportFile reportFile = new ReportFileFactory().create("report.xml");
 			fail("ResourceNotFoundException should have been thrown");
 		} catch (ResourceNotFoundException e) {
 		}
