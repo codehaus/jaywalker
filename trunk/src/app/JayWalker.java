@@ -25,6 +25,10 @@ public class JayWalker {
 
 	private static ReportExecutor executor = new ReportExecutor();
 
+	public JayWalker() {
+		ResourceLocator.instance().register("client", "cmdline");
+	}
+
 	protected Properties toProperties(String[] args) {
 		final Properties properties = new Properties();
 		for (int i = 0; i < args.length; i++) {
@@ -87,7 +91,7 @@ public class JayWalker {
 
 	public void execute(String[] args) throws IOException {
 		Properties properties = toProperties(args);
-		String classlist = removeRequired("classlist", properties);
+		String classlist = expand(removeRequired("classlist", properties));
 		String tempDir = removeOptional("tempDir", properties);
 		File outDir = new File(removeRequired("outDir", properties));
 
@@ -95,6 +99,18 @@ public class JayWalker {
 				Shell.toWorkingDir(tempDir));
 
 		executor.execute(classlist, properties, outDir);
+	}
+
+	private String expand(String classlist) {
+		String[] classlistElements = classlist.split(File.pathSeparator);
+		StringBuffer sb = new StringBuffer();
+		for (int i = 0; i < classlistElements.length; i++) {
+			sb.append(new File(classlistElements[i]).getAbsolutePath());
+			if (i + 1 < classlistElements.length) {
+				sb.append(File.pathSeparator);
+			}
+		}
+		return sb.toString();
 	}
 
 	private String removeOptional(String key, Properties properties) {
@@ -110,7 +126,7 @@ public class JayWalker {
 	}
 
 	private static void fail(String message) {
-		System.out.println(message);
+		System.out.println("ERROR: " + message);
 		printUsage();
 		System.exit(-1);
 	}
@@ -120,6 +136,7 @@ public class JayWalker {
 			JayWalker jayWalker = new JayWalker();
 			jayWalker.execute(args);
 		} catch (Exception e) {
+			e.printStackTrace();
 			fail(e.getMessage());
 		}
 	}

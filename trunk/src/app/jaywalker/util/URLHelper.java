@@ -76,20 +76,21 @@ public class URLHelper {
 			urlString = stripProtocolIfTopLevelArchive(urlString);
 			return new URL(urlString);
 		} catch (MalformedURLException e) {
-			e.printStackTrace();
-			return null;
+			throw new RuntimeException("MalformedURLException thrown for \""
+					+ urlString + "\" (" + url + ")", e);
 		}
 	}
 
-	public String stripProtocolIfTopLevelArchive(String directoryName) {
-		int lastIdx = directoryName.lastIndexOf("!/");
-		if (lastIdx != directoryName.length() - "!/".length())
-			return directoryName;
-		int nextToLastIdx = directoryName.lastIndexOf("!/", lastIdx - 1);
+	public String stripProtocolIfTopLevelArchive(String urlString) {
+		int lastIdx = urlString.lastIndexOf("!/");
+		if (lastIdx != urlString.length() - "!/".length())
+			return urlString;
+		int nextToLastIdx = urlString.lastIndexOf("!/", lastIdx - 1);
 		if (lastIdx != -1 && nextToLastIdx == -1) {
-			return directoryName.substring("jar:".length(), lastIdx);
+			int idx = urlString.indexOf(":");
+			return urlString.substring(idx + 1, lastIdx);
 		} else {
-			return directoryName.substring(0, lastIdx);
+			return urlString.substring(0, lastIdx);
 		}
 	}
 
@@ -238,7 +239,7 @@ public class URLHelper {
 		return new File(toArchiveDir(baseUrl), toArchiveFile(baseUrl).getName()
 				+ ".cls");
 	}
-	
+
 	public File toArchiveCch(URL baseUrl) throws MalformedURLException {
 		return new File(toArchiveDir(baseUrl), toArchiveFile(baseUrl).getName()
 				+ ".cch");

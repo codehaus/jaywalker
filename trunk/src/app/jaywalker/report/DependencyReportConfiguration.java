@@ -20,6 +20,7 @@ import java.util.Properties;
 import jaywalker.classlist.ClasslistElementListener;
 import jaywalker.util.ChainedOutputter;
 import jaywalker.util.DotOutputter;
+import jaywalker.util.DotOutputterFactory;
 import jaywalker.util.Outputter;
 import jaywalker.util.XsltTransformer;
 
@@ -41,7 +42,8 @@ public class DependencyReportConfiguration implements Configuration {
 				new ChainedOutputter(new Outputter[] {
 						new XsltTransformer(
 								"archive-dependencies-resolved-dot.xslt"),
-						new DotOutputter("archive.resolved.dot") }) };
+						new DotOutputterFactory()
+								.create("archive.resolved.dot") }) };
 
 		dependencyReportTagMap.put("dependency", "archive",
 				new ContainerDependencyTag(dependencyModel),
@@ -52,7 +54,8 @@ public class DependencyReportConfiguration implements Configuration {
 				new ChainedOutputter(new Outputter[] {
 						new XsltTransformer(
 								"package-dependencies-resolved-dot.xslt"),
-						new DotOutputter("package.dependency.dot") }) };
+						new DotOutputterFactory()
+								.create("package.dependency.dot") }) };
 
 		dependencyReportTagMap.put("dependency", "package",
 				new PackageDependencyTag(dependencyModel),
@@ -66,7 +69,7 @@ public class DependencyReportConfiguration implements Configuration {
 				new ChainedOutputter(new Outputter[] {
 						new XsltTransformer(
 								"archive-dependencies-cycle-dot.xslt"),
-						new DotOutputter("archive.cycle.dot") }) };
+						new DotOutputterFactory().create("archive.cycle.dot") }) };
 
 		dependencyReportTagMap.put("cycle", "archive",
 				new ContainerCyclicDependencyTag(dependencyModel),

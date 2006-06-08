@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -12,6 +13,8 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
+
+import jaywalker.report.ReportFile;
 
 public class XsltTransformer implements Outputter {
 
@@ -61,15 +64,10 @@ public class XsltTransformer implements Outputter {
 	}
 
 	public void write(OutputStream outputStream) {
-
-		try {
-			File report = (File) locator.lookup("report.xml");
-			InputStream inputStream = new FileInputStream(report);
-			transform(inputStream, outputStream);
-		} catch (FileNotFoundException e) {
-			throw new OutputterException(
-					"FileNotFoundException thrown while reading in XML file", e);
-		}
+		ReportFile reportFile = (ReportFile) locator.lookup("report.xml");
+		Reader reader = reportFile.getReader();
+		InputStream inputStream = new ReaderInputStream(reader);
+		transform(inputStream, outputStream);
 	}
 
 	public static Outputter[] valueOf(String[] filenames) {

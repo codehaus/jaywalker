@@ -12,5 +12,7 @@
 	<classpathentry kind="lib" path="tools/emma/emma-2.0.4217.jar"/>
 	<classpathentry kind="lib" path="tools/emma/emma-ant-2.0.4217.jar"/>
 	<classpathentry kind="lib" path="tools/junit/junit-3.8.1.jar"/>
+	<classpathentry kind="lib" path="tools/xmlunit/xmlunit1.0.jar"/>
+	<classpathentry sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.source_3.1.1/src/org.junit_3.8.1/junitsrc.zip" kind="var" path="JUNIT_HOME/junit.jar"/>
 	<classpathentry kind="output" path="classes-ide"/>
 </classpath>

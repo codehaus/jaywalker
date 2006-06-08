@@ -170,8 +170,8 @@ public class SerialVersionUidHelper {
 
 		JavaClass javaClass = Repository.lookupClass(className);
 		if (javaClass == null) {
-			throw new IllegalStateException(
-					"Could not find class file for class name: " + className);
+			isClassNameSerializableMap.put(className, SERIALIZABLE_NO);
+			return false;
 		}
 		return isSerializable(javaClass);
 	}
@@ -239,9 +239,13 @@ public class SerialVersionUidHelper {
 		try {
 			return computeSerialVersionUID(classElement.getJavaClass());
 		} catch (IOException e) {
-			return 0;
+			throw new RuntimeException(
+					"IOException thrown while computing serial version uid for "
+							+ classElement.getName(), e);
 		} catch (NoSuchAlgorithmException e) {
-			return 0;
+			throw new RuntimeException(
+					"NoSuchAlgorithmException thrown while computing serial version uid for "
+							+ classElement.getName(), e);
 		}
 	}
 

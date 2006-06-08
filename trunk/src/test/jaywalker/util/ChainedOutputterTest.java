@@ -2,7 +2,10 @@ package jaywalker.util;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 
+import jaywalker.report.DefaultReportFile;
 import jaywalker.testutil.Path;
 
 import org.apache.tools.ant.BuildFileTest;
@@ -34,7 +37,8 @@ public class ChainedOutputterTest extends BuildFileTest {
 			executeTarget("testUnifiedReportForTest1Test2Archive");
 		}
 		assertTrue(file.exists());
-		ResourceLocator.instance().register("report.xml", file);
+		ResourceLocator.instance().register("outDir", file.getParentFile());
+		ResourceLocator.instance().register("report.xml", new DefaultReportFile(file));
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ChainedOutputter outputter = new ChainedOutputter(outputters);

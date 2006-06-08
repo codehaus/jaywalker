@@ -17,8 +17,8 @@ package jaywalker.report;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 import java.util.Properties;
 
 import jaywalker.classlist.ClasslistElement;
@@ -40,12 +40,14 @@ public class ReportExecutor {
 		ResourceLocator.instance().register("clock", new Clock());
 	}
 
-	private void setReportXmlResource(final File output) {
-		ResourceLocator.instance().register("report.xml", output);
+	private void setReportXmlResource(final ReportFile reportFile) {
+		ResourceLocator.instance().register("report.xml",
+				reportFile);
 	}
 
 	public void execute(String classlist, Properties properties, File outDir)
 			throws IOException {
+		initializeDefaults(properties);
 		printClasslist(classlist);
 		System.out.println("Creating the JayWalker report . . .");
 		Clock clock = getClockResource();
@@ -54,15 +56,30 @@ public class ReportExecutor {
 		try {
 			initOutDir(outDir);
 			final Report[] reports = configurationSetup.toReports(properties);
-			final File output = new File(outDir, "report.xml");
-			setReportXmlResource(output);
-			AggregateReport report = execute(classlist, reports, output);
+			ReportFile reportFile = new ReportFileFactory().create();
+			setReportXmlResource(reportFile);
+			System.out.println("  Outputting report to "
+					+ reportFile.getParentAbsolutePath());
+			AggregateReport report = execute(classlist, reports, reportFile);
 			outputHtml(outDir, report, classlist);
 		} finally {
 			clock.stop(clockType);
 			System.out.println(clock.toString(clockType));
 		}
 
+	}
+
+	private void initializeDefaults(Properties properties) {
+		setDefaultProperty(properties, "dependency", "archive,package,class");
+		setDefaultProperty(properties, "collision", "class");
+		setDefaultProperty(properties, "conflict", "class");
+	}
+
+	private void setDefaultProperty(Properties properties, String reportType,
+			String defaultValue) {
+		if (properties.getProperty(reportType) == null) {
+			properties.setProperty(reportType, defaultValue);
+		}
 	}
 
 	private void printClasslist(final String classlist) {
@@ -101,11 +118,12 @@ public class ReportExecutor {
 			FileSystem.delete(outDir);
 		}
 		outDir.mkdir();
+		ResourceLocator.instance().register("outDir", outDir);
 	}
 
 	// TODO: smells like an aspect
 	private AggregateReport execute(String classlist, Report[] reports,
-			File file) throws IOException {
+			ReportFile reportFile) throws IOException {
 		System.out.println("  Creating XML report . . .");
 		Clock clock = getClockResource();
 		final String clockType = "    Total time to create XML report";
@@ -113,7 +131,7 @@ public class ReportExecutor {
 		try {
 			final ClasslistElement[] elements = factory.create(classlist);
 			initReportModels(reports, elements);
-			return createAggregateReport(reports, elements, file);
+			return createAggregateReport(reports, elements, reportFile);
 		} finally {
 			clock.stop(clockType);
 			System.out.println(clock.toString(clockType));
@@ -121,7 +139,7 @@ public class ReportExecutor {
 	}
 
 	private AggregateReport createAggregateReport(Report[] reports,
-			final ClasslistElement[] elements, final File file)
+			final ClasslistElement[] elements, final ReportFile reportFile)
 			throws IOException {
 		System.out.println("    Aggregating report elements . . .");
 		Clock clock = getClockResource();
@@ -130,7 +148,7 @@ public class ReportExecutor {
 		try {
 			ClasslistElementVisitor visitor = new ClasslistElementVisitor(
 					elements);
-			FileWriter writer = new FileWriter(file);
+			Writer writer = reportFile.getWriter();
 
 			AggregateReport report = new AggregateReport(reports, writer);
 			visitor.addListener(report);
