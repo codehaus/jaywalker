@@ -45,6 +45,7 @@ public class JayWalkerTask extends Task {
 
 	public JayWalkerTask() {
 		super();
+		ResourceLocator.instance().register("client", "ant");
 	}
 
 	protected void validate() {
@@ -58,7 +59,6 @@ public class JayWalkerTask extends Task {
 
 	public void execute() {
 		validate();
-		initializeDefaults();
 
 		try {
 			String classlist = createClasslist();
@@ -79,7 +79,7 @@ public class JayWalkerTask extends Task {
 		}
 
 	}
-
+	
 	private void registerClasslist(String classlist) {
 		getProject().setNewProperty("classlist", classlist);
 	}
@@ -88,14 +88,6 @@ public class JayWalkerTask extends Task {
 		File workingDir = Shell.toWorkingDir(tempPath);
 		ResourceLocator.instance().register("tempDir", workingDir);
 		log("tempDir: " + workingDir.getAbsolutePath(), Project.MSG_DEBUG);
-	}
-
-	private void initializeDefaults() {
-		if (optionSet.size() == 0) {
-			optionSet.add(new Option("dependency", "archive,package,class"));
-			optionSet.add(new Option("collision", "class"));
-			optionSet.add(new Option("conflict", "class"));
-		}
 	}
 
 	public void setTempDir(File tempDir) {

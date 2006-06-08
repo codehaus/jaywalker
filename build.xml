@@ -27,6 +27,7 @@
 		<path refid="path.compile.app" />
 		<pathelement path="tools/junit/junit-3.8.1.jar" />
 		<pathelement path="tools/ant/ant-testutil-1.6.3.jar" />
+		<pathelement path="tools/xmlunit/xmlunit1.0.jar" />
 	</path>
 
 	<target name="all" depends="clean, test" description="build all" />

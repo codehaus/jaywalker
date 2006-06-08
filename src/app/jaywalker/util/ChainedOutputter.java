@@ -7,6 +7,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Reader;
+
+import jaywalker.report.ReportFile;
 
 public class ChainedOutputter implements Outputter {
 
@@ -23,20 +26,17 @@ public class ChainedOutputter implements Outputter {
 	}
 
 	public void write(OutputStream outputStream) {
-		try {
-			File report = (File) locator.lookup("report.xml");
-			InputStream is = new FileInputStream(report);
-			for (int i = 0; i < outputters.length; i++) {
-				if (i + 1 < outputters.length) {
-					ByteArrayOutputStream baos = new ByteArrayOutputStream();
-					outputters[i].transform(is, baos);
-					is = new ByteArrayInputStream(baos.toByteArray());
-				} else {
-					outputters[i].transform(is, outputStream);
-				}
+		ReportFile reportFile = (ReportFile) locator.lookup("report.xml");
+		Reader reader = reportFile.getReader();
+		InputStream is = new ReaderInputStream(reader);
+		for (int i = 0; i < outputters.length; i++) {
+			if (i + 1 < outputters.length) {
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				outputters[i].transform(is, baos);
+				is = new ByteArrayInputStream(baos.toByteArray());
+			} else {
+				outputters[i].transform(is, outputStream);
 			}
-		} catch (IOException e) {
-			throw new OutputterException("IOException while writing report.", e);
 		}
 	}
 

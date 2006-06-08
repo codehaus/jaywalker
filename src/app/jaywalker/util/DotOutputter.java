@@ -20,7 +20,7 @@ public class DotOutputter implements Outputter {
 	}
 
 	public void transform(InputStream is, OutputStream os) {
-		File parentFile = ((File) locator.lookup("report.xml")).getParentFile();
+		File parentFile = (File) locator.lookup("outDir");
 		File file = new File(parentFile, filename);
 		try {
 			file.delete();

@@ -61,11 +61,11 @@ public class DependencyHelper {
 		final Set keySet = unresolvedUrlByClassNameMap.keySet();
 		final String[] classNames = (String[]) keySet.toArray(new String[keySet
 				.size()]);
+		ClassLoader cl = getClass().getClassLoader().getParent();
 		for (int i = 0; i < classNames.length; i++) {
 			String className = classNames[i];
-			URL url = DependencyHelper.class
-					.getResource(asResourceName(className));
-			if (url != null) {
+			URL url = cl.getResource(asResourceName(className));
+			if (url != null && !url.getProtocol().equals("onejar")) {
 				markAsResolved(url, className);
 			}
 		}
@@ -85,8 +85,8 @@ public class DependencyHelper {
 	public void markAsResolved(URL url, String className) {
 		Set urlSet = (Set) unresolvedUrlByClassNameMap.remove(className);
 		addToDependencyMap(className, url, resolvedUrlByClassNameMap);
-		addToDependencyMap(toPackageName(className),
-				HELPER_URL.toParentURL(url), resolvedUrlByPackageNameMap);
+		addToDependencyMap(toPackageName(className), HELPER_URL
+				.toParentURL(url), resolvedUrlByPackageNameMap);
 
 		if (urlSet != null) {
 			for (Iterator it = urlSet.iterator(); it.hasNext();) {
