@@ -60,6 +60,8 @@ public class JayWalkerTaskTest extends BuildFileTest {
 		System.setProperty("ReportFile", "jaywalker.report.InMemoryReportFile");
 		System.setProperty("DotOutputter", "jaywalker.util.StubOutputter");
 		executeTarget(testCase);
+		System.setProperty("ReportFile", "");
+		System.setProperty("DotOutputter", "");
 		assertXMLEquals(testCase);
 	}
 
