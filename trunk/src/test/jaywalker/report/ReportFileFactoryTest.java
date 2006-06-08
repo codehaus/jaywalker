@@ -9,6 +9,12 @@ import junit.framework.TestCase;
 
 public class ReportFileFactoryTest extends TestCase {
 	
+	
+	public void setUp() throws Exception {
+		super.setUp();
+		ResourceLocator.instance().register("client", "ant");
+	}
+
 	public void tearDown() {
 		ResourceLocator.instance().clear();
 	}
