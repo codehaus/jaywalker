@@ -19,7 +19,6 @@ import java.util.Properties;
 
 import jaywalker.report.ReportExecutor;
 import jaywalker.util.ResourceLocator;
-import jaywalker.util.Shell;
 
 public class JayWalker {
 
@@ -95,10 +94,7 @@ public class JayWalker {
 		String tempDir = removeOptional("tempDir", properties);
 		File outDir = new File(removeRequired("outDir", properties));
 
-		ResourceLocator.instance().register("tempDir",
-				Shell.toWorkingDir(tempDir));
-
-		executor.execute(classlist, properties, outDir);
+		executor.execute(classlist, properties, outDir, tempDir);
 	}
 
 	private String expand(String classlist) {

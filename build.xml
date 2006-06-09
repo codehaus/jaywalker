@@ -19,6 +19,7 @@
 		<pathelement path="tools/ant/ant-apache-bcel.jar" />
 		<pathelement path="tools/bcel/bcel-5.1.jar" />
 		<pathelement path="tools/log4j/log4j-1.2.9.jar" />
+		<pathelement path="tools/one-jar/one-jar-boot-0.95.jar" />
 	</path>
 
 	<path id="path.compile.test">
@@ -224,6 +225,10 @@
 				<include name="com/simontuffs/onejar/Handler.class" />
 				<include name="com/simontuffs/onejar/JarClassLoader$ByteCode.class" />
 				<include name="com/simontuffs/onejar/JarClassLoader.class" />
+			</zipfileset>
+			<zipfileset dir="build/classes">
+				<include name="**/JayWalkerTask*.class" />
+				<include name="**/ant/" />
 			</zipfileset>
 		</jar>
 	</target>

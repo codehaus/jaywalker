@@ -16,22 +16,24 @@
 package jaywalker.ant;
 
 import java.io.File;
-import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 import java.util.Vector;
 
-import jaywalker.report.ReportExecutor;
-import jaywalker.util.ResourceLocator;
-import jaywalker.util.Shell;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
-import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileSet;
+
+import com.simontuffs.onejar.JarClassLoader;
 
 public class JayWalkerTask extends Task {
 
@@ -45,7 +47,6 @@ public class JayWalkerTask extends Task {
 
 	public JayWalkerTask() {
 		super();
-		ResourceLocator.instance().register("client", "ant");
 	}
 
 	protected void validate() {
@@ -65,29 +66,82 @@ public class JayWalkerTask extends Task {
 			registerClasslist(classlist);
 			String tempPath = (tempDir != null) ? tempDir.getAbsolutePath()
 					: "";
-			registerWorkingDir(tempPath);
 
 			Option[] options = (Option[]) optionSet
 					.toArray(new Option[optionSet.size()]);
 			Properties properties = Option.toProperties(options);
 
-			new ReportExecutor().execute(classlist, properties, outDir);
+			executeReport(classlist, tempPath, properties);
 
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new BuildException(e);
+		} finally {
 		}
 
 	}
+
+	private void executeReport(String classlist, String tempPath,
+			Properties properties) throws ClassNotFoundException,
+			NoSuchMethodException, InstantiationException,
+			IllegalAccessException, InvocationTargetException,
+			MalformedURLException {
+
+		JarClassLoader loader = new JarClassLoader(JayWalkerTask.class
+				.getClassLoader());
+		Thread.currentThread().setContextClassLoader(loader);
+
+		File file = toClasspathRootFile(JayWalkerTask.class);
+		String absolutePath = file.getAbsolutePath();
+		String className = loader.load("jaywalker.report.ReportExecutor",
+				absolutePath);
+		Class clazz = loader.loadClass(className);
+		Object reportExecutor = clazz.newInstance();
+		Method execute = clazz.getMethod("execute", new Class[] { String.class,
+				Properties.class, File.class, String.class });
+		execute.invoke(reportExecutor, new Object[] { classlist, properties,
+				outDir, tempPath });
+
+	}
 	
-	private void registerClasslist(String classlist) {
-		getProject().setNewProperty("classlist", classlist);
+	protected File toClasspathRootFile(Class clazz) {
+		String resourceName = asResourceName(clazz.getName());
+		URL url = JayWalkerTask.class.getResource(resourceName);
+		String urlString = url.toString();
+		String uriString = urlString.substring(0, urlString.length()
+				- resourceName.length() + 1);
+		uriString = stripProtocolIfTopLevelArchive(uriString);
+		try {
+			return new File(new URI(uriString));
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	protected String stripProtocolIfTopLevelArchive(String urlString) {
+		int lastIdx = urlString.lastIndexOf("!/");
+		if (lastIdx != urlString.length() - "!/".length())
+			return urlString;
+		int nextToLastIdx = urlString.lastIndexOf("!/", lastIdx - 1);
+		if (lastIdx != -1 && nextToLastIdx == -1) {
+			int idx = urlString.indexOf(":");
+			return urlString.substring(idx + 1, lastIdx);
+		} else {
+			return urlString.substring(0, lastIdx);
+		}
 	}
 
-	private void registerWorkingDir(String tempPath) throws IOException {
-		File workingDir = Shell.toWorkingDir(tempPath);
-		ResourceLocator.instance().register("tempDir", workingDir);
-		log("tempDir: " + workingDir.getAbsolutePath(), Project.MSG_DEBUG);
+	protected String asResourceName(String resource) {
+		if (!resource.startsWith("/")) {
+			resource = "/" + resource;
+		}
+		resource = resource.replace('.', '/');
+		resource = resource + ".class";
+		return resource;
+	}
+
+	private void registerClasslist(String classlist) {
+		getProject().setNewProperty("classlist", classlist);
 	}
 
 	public void setTempDir(File tempDir) {
