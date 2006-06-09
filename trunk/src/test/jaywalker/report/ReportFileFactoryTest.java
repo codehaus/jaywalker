@@ -43,7 +43,7 @@ public class ReportFileFactoryTest extends TestCase {
 	public void testShouldThrowExceptionWhenOutDirIsMissing() {
 		try {
 			assertFileDoesNotExist(Path.DIR_TEMP, "report.xml");
-			ReportFile reportFile = new ReportFileFactory().create("report.xml");
+			new ReportFileFactory().create("report.xml");
 			fail("ResourceNotFoundException should have been thrown");
 		} catch (ResourceNotFoundException e) {
 		}

@@ -2,13 +2,20 @@
 
 	<property file="build.properties" />
 
-	<target name="all" />
+	<target name="all">
+		<antcall target="testUnifiedReportForClassElement"/>
+		<antcall target="testUnifiedReportForClassesDirectory"/>
+		<antcall target="testUnifiedReportForTest1Archive"/>
+		<antcall target="testUnifiedReportForTest2Archive"/>
+		<antcall target="testUnifiedReportForTest1Test2Archive"/>
+		<antcall target="testUnifiedReportForTest4Archive"/>
+		<antcall target="testUnifiedReportForEarArchive"/>
+		<antcall target="testUnifiedReportForBuiltArchives"/>
+		<antcall target="testUnifiedReportForCycle1AndCycle2Archive"/>
+	</target>
 
 	<path id="path.jaywalker">
-		<pathelement location="build/dist/jaywalker-bin-${project.version}.jar" />
-		<pathelement location="build/dist/jaywalker-ant-${project.version}.jar" />
-		<pathelement location="tools/bcel/bcel-5.1.jar" />
-		<pathelement location="tools/ant/ant-testutil-1.6.3.jar" />
+		<pathelement location="jaywalker-${project.version}.jar" />
 	</path>
 
 	<target name="init">

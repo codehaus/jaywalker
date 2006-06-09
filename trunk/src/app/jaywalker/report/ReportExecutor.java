@@ -16,7 +16,6 @@
 package jaywalker.report;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
@@ -29,6 +28,7 @@ import jaywalker.classlist.ClasslistElementVisitor;
 import jaywalker.util.Clock;
 import jaywalker.util.FileSystem;
 import jaywalker.util.ResourceLocator;
+import jaywalker.util.Shell;
 import jaywalker.util.StringHelper;
 import jaywalker.util.WriterOutputStream;
 
@@ -46,8 +46,14 @@ public class ReportExecutor {
 		ResourceLocator.instance().register("report.xml", reportFile);
 	}
 
-	public void execute(String classlist, Properties properties, File outDir)
-			throws IOException {
+	private void registerWorkingDir(String tempPath) throws IOException {
+		File workingDir = Shell.toWorkingDir(tempPath);
+		ResourceLocator.instance().register("tempDir", workingDir);
+	}
+
+	public void execute(String classlist, Properties properties, File outDir,
+			String tempPath) throws IOException {
+		registerWorkingDir(tempPath);
 		initializeDefaults(properties);
 		printClasslist(classlist);
 		System.out.println("Creating the JayWalker report . . .");

@@ -12,8 +12,17 @@ public class InMemoryReportFile implements ReportFile {
 	private StringBuffer sb;
 
 	public InMemoryReportFile(String filename) {
-		String client = (String) ResourceLocator.instance().lookup("client");
-		ResourceLocator.instance().register(client + "ReportFile-" + filename, this);
+		ResourceLocator locator = ResourceLocator.instance();
+		String client = lookupClient(locator);
+		locator.register(client + "ReportFile-" + filename, this);
+	}
+
+	private String lookupClient(ResourceLocator locator) {
+		if (locator.contains("client")) {
+			return (String) locator.lookup("client");
+		} else {
+			return "ant";
+		}
 	}
 
 	public Writer getWriter() {
