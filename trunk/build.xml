@@ -47,7 +47,8 @@
 
 	<target name="compile-test" description="compiles the tests">
 		<mkdir dir="build/classes-test" />
-		<javac debug="on" srcdir="src/test" destdir="build/classes-test" classpathref="path.compile.test" />
+		<javac debug="on" srcdir="src/utest" destdir="build/classes-test" classpathref="path.compile.test" />
+		<javac debug="on" srcdir="src/itest" destdir="build/classes-test" classpathref="path.compile.test" />
 	</target>
 
 	<target name="compile-test1" description="compiles test2">
@@ -131,7 +132,29 @@
 
 			<batchtest fork="true" todir="build/doc/junit">
 				<formatter type="xml" />
-				<fileset dir="src/test">
+				<fileset dir="src/utest">
+					<include name="**/*Test.java" />
+					<exclude name="**/Abstract*Test.java" />
+				</fileset>
+			</batchtest>
+
+			<jvmarg value="-Demma.coverage.out.file=${basedir}/build/doc/emma/coverage.emma" />
+			<jvmarg value="-Demma.coverage.out.merge=true" />
+
+		</junit>
+
+		<junit printsummary="on" failureproperty="junit-failure">
+			<classpath>
+				<path refid="emma.lib" />
+				<pathelement path="tools/ant/ant-testutil-1.6.3.jar" />
+				<path location="build/classes-test" />
+				<path location="build/dist/${ant.project.name}-${project.version}.jar" />
+				<pathelement path="tools/xmlunit/xmlunit1.0.jar" />
+			</classpath>
+
+			<batchtest fork="true" todir="build/doc/junit">
+				<formatter type="xml" />
+				<fileset dir="src/itest">
 					<include name="**/*Test.java" />
 					<exclude name="**/Abstract*Test.java" />
 				</fileset>
@@ -189,43 +212,17 @@
 			</fileset>
 			<zipfileset dir="src/metadata/xslt" prefix="META-INF/xslt" />
 		</jar>
-		<jar destfile="build/dist/${ant.project.name}-ant-${project.version}.jar">
-			<fileset dir="build/classes">
-				<include name="**/JayWalkerTask*.class" />
-				<include name="**/ant/" />
-			</fileset>
-		</jar>
-		<zip destfile="${ant.project.name}-${project.version}-src.zip">
-			<fileset dir=".">
-				<include name="src/**" />
-				<include name="tools/**" />
-				<include name="*" />
-				<exclude name="*.zip" />
-				<exclude name="*.jar" />
-				<exclude name="*.iws" />
-				<exclude name="junit*.properties" />
-			</fileset>
-		</zip>
 		<mkdir dir="build/one-jar-boot" />
 		<unjar src="tools/one-jar/one-jar-boot-0.95.jar" dest="build/one-jar-boot" />
 		<jar destfile="${ant.project.name}-${project.version}.jar" manifest="build/meta-inf/boot-manifest.mf">
 			<zipfileset dir="build/dist" prefix="main">
 				<include name="${ant.project.name}-bin-${project.version}.jar" />
 			</zipfileset>
-			<zipfileset dir="build/dist" prefix="lib">
-				<include name="${ant.project.name}-ant-${project.version}.jar" />
-			</zipfileset>
-			<zipfileset dir="." prefix="src">
-				<include name="${ant.project.name}-${project.version}-src.zip" />
-			</zipfileset>
 			<zipfileset dir="tools/bcel" includes="bcel-5.1.jar" prefix="lib" />
 			<zipfileset dir="build/one-jar-boot">
-				<include name="com/simontuffs/onejar/Boot.class" />
-				<include name="com/simontuffs/onejar/Handler$1.class" />
-				<include name="com/simontuffs/onejar/Handler.class" />
-				<include name="com/simontuffs/onejar/JarClassLoader$ByteCode.class" />
-				<include name="com/simontuffs/onejar/JarClassLoader.class" />
+				<include name="com/simontuffs/onejar/*.class" />
 			</zipfileset>
+			<zipfileset dir="src/metadata/ant" />
 			<zipfileset dir="build/classes">
 				<include name="**/JayWalkerTask*.class" />
 				<include name="**/ant/" />

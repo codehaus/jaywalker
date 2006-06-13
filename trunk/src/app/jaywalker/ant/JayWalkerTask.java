@@ -16,12 +16,12 @@
 package jaywalker.ant;
 
 import java.io.File;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Properties;
@@ -30,20 +30,22 @@ import java.util.Vector;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
+import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
+import org.apache.tools.ant.taskdefs.Execute;
+import org.apache.tools.ant.taskdefs.LogStreamHandler;
+import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.FileSet;
 
-import com.simontuffs.onejar.JarClassLoader;
-
 public class JayWalkerTask extends Task {
-
-	private File tempDir;
 
 	protected Vector classlists = new Vector();
 
 	private Set optionSet = new HashSet();
 
 	private File outDir;
+
+	private CommandlineJava commandline;
 
 	public JayWalkerTask() {
 		super();
@@ -64,70 +66,35 @@ public class JayWalkerTask extends Task {
 		try {
 			String classlist = createClasslist();
 			registerClasslist(classlist);
-			String tempPath = (tempDir != null) ? tempDir.getAbsolutePath()
-					: "";
+			createClasslistArgument(classlist);
+			createOptionArguments();
 
-			Option[] options = (Option[]) optionSet
-					.toArray(new Option[optionSet.size()]);
-			Properties properties = Option.toProperties(options);
-
-			executeReport(classlist, tempPath, properties);
+			executeAsForked();
 
 		} catch (Exception e) {
-			e.printStackTrace();
 			throw new BuildException(e);
-		} finally {
 		}
 
 	}
 
-	private void executeReport(String classlist, String tempPath,
-			Properties properties) throws ClassNotFoundException,
-			NoSuchMethodException, InstantiationException,
-			IllegalAccessException, InvocationTargetException,
-			MalformedURLException {
-
-		JarClassLoader loader = new JarClassLoader(JayWalkerTask.class
-				.getClassLoader());
-		Thread.currentThread().setContextClassLoader(loader);
-
-		File file = toClasspathRootFile(JayWalkerTask.class);
-		String absolutePath = file.getAbsolutePath();
-		String className = loader.load("jaywalker.report.ReportExecutor",
-				absolutePath);
-		Class clazz = loader.loadClass(className);
-		Object reportExecutor = clazz.newInstance();
-		Method execute = clazz.getMethod("execute", new Class[] { String.class,
-				Properties.class, File.class, String.class });
-		execute.invoke(reportExecutor, new Object[] { classlist, properties,
-				outDir, tempPath });
-
+	private void createOptionArguments() {
+		Option[] options = (Option[]) optionSet.toArray(new Option[optionSet
+				.size()]);
+		Properties properties = Option.toProperties(options);
+		String[] arguments = toArguments(properties);
+		for (int i = 0; i < arguments.length; i++) {
+			getCommandline().createArgument().setValue(arguments[i]);
+		}
 	}
-	
-	protected File toClasspathRootFile(Class clazz) {
+
+	protected File toTopLevelJarUrl(Class clazz) {
 		String resourceName = asResourceName(clazz.getName());
 		URL url = JayWalkerTask.class.getResource(resourceName);
-		String urlString = url.toString();
-		String uriString = urlString.substring(0, urlString.length()
-				- resourceName.length() + 1);
-		uriString = stripProtocolIfTopLevelArchive(uriString);
+		URL jarUrl = toTopLevelJarUrl(url);
 		try {
-			return new File(new URI(uriString));
+			return new File(new URI(jarUrl.toString()));
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
-		}
-	}
-	
-	protected String stripProtocolIfTopLevelArchive(String urlString) {
-		int lastIdx = urlString.lastIndexOf("!/");
-		if (lastIdx != urlString.length() - "!/".length())
-			return urlString;
-		int nextToLastIdx = urlString.lastIndexOf("!/", lastIdx - 1);
-		if (lastIdx != -1 && nextToLastIdx == -1) {
-			int idx = urlString.indexOf(":");
-			return urlString.substring(idx + 1, lastIdx);
-		} else {
-			return urlString.substring(0, lastIdx);
 		}
 	}
 
@@ -145,7 +112,8 @@ public class JayWalkerTask extends Task {
 	}
 
 	public void setTempDir(File tempDir) {
-		this.tempDir = tempDir;
+		getCommandline().createArgument().setValue(
+				"-tempDir=" + tempDir.getAbsolutePath());
 	}
 
 	public void addClasslist(Classlist classlist) {
@@ -181,6 +149,63 @@ public class JayWalkerTask extends Task {
 
 	public void setOutDir(File outDir) {
 		this.outDir = outDir;
+		getCommandline().createArgument().setValue(
+				"-outDir=" + outDir.getAbsolutePath());
+	}
+
+	public CommandlineJava getCommandline() {
+		if (commandline == null) {
+			commandline = new CommandlineJava();
+		}
+		return commandline;
+	}
+
+	public void executeAsForked() {
+
+		commandline.setJar(toTopLevelJarUrl(JayWalkerTask.class)
+				.getAbsolutePath());
+
+		Execute execute = new Execute(new LogStreamHandler(this,
+				Project.MSG_INFO, Project.MSG_WARN));
+		execute.setCommandline(commandline.getCommandline());
+
+		log(commandline.describeCommand(), Project.MSG_VERBOSE);
+
+		try {
+			execute.execute();
+		} catch (IOException e) {
+			throw new BuildException("Process fork failed.", e, getLocation());
+		}
+	}
+
+	public void createClasslistArgument(String classlist) {
+		getCommandline().createArgument().setValue("-classlist=" + classlist);
+	}
+
+	public String[] toArguments(Properties properties) {
+		Set keySet = properties.keySet();
+		String[] keys = (String[]) keySet.toArray(new String[keySet.size()]);
+		Arrays.sort(keys);
+		String[] arguments = new String[keys.length];
+		for (int i = 0; i < keys.length; i++) {
+			arguments[i] = "-" + keys[i] + "="
+					+ properties.getProperty(keys[i]);
+		}
+		return arguments;
+	}
+
+	public URL toTopLevelJarUrl(URL url) {
+		String urlString = url.toString();
+		if (urlString.indexOf("jar:") == -1) {
+			return url;
+		}
+		int startIdx = "jar:".length();
+		int endIdx = urlString.indexOf("!/");
+		try {
+			return new URL(urlString.substring(startIdx, endIdx));
+		} catch (MalformedURLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 }
