@@ -66,7 +66,7 @@ public class ClassElementFile {
 				initializeWith(javaClass);
 			}
 		} catch (IOException e) {
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 

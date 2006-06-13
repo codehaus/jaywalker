@@ -1,0 +1,5 @@
+<antlib>
+  <typedef name="classlist" classname="jaywalker.ant.Classlist" /> 
+  <typedef name="option" classname="jaywalker.ant.Option" /> 
+  <taskdef name="jaywalker" classname="jaywalker.ant.JayWalkerTask" />
+</antlib>

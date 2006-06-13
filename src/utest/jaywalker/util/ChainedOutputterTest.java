@@ -12,7 +12,7 @@ public class ChainedOutputterTest extends BuildFileTest {
 
 	private final File file = new File(Path.DIR_TEMP.getAbsolutePath()
 			+ File.separator 
-			+ "ant"
+			+ "cmdline"
 			+ File.separator
 			+ "JayWalkerTaskTest.testUnifiedReportForTest1Test2Archive"
 			+ File.separator + "report.xml");

@@ -1,12 +1,23 @@
 package jaywalker.report;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.jar.Attributes;
+import java.util.jar.JarFile;
+import java.util.jar.Manifest;
 
+import com.simontuffs.onejar.JarClassLoader;
+
+import jaywalker.util.Shell;
 import jaywalker.util.StringHelper;
 import jaywalker.util.URLHelper;
 
@@ -29,6 +40,16 @@ public class DependencyHelper {
 	private final Map unresolvedClassNameByUrlMap = new HashMap();
 
 	private final Map unresolvedUrlByClassNameMap = new HashMap();
+
+	private String[] paths;
+
+	public DependencyHelper() {
+		try {
+			paths = Shell.getEnvironment("CLASSPATH").split(File.pathSeparator);
+		} catch (IOException e) {
+			paths = new String[0];
+		}
+	}
 
 	public boolean isResolved(String className) {
 		return resolvedUrlByClassNameMap.keySet().contains(className);
@@ -61,14 +82,46 @@ public class DependencyHelper {
 		final Set keySet = unresolvedUrlByClassNameMap.keySet();
 		final String[] classNames = (String[]) keySet.toArray(new String[keySet
 				.size()]);
-		ClassLoader cl = getClass().getClassLoader().getParent();
 		for (int i = 0; i < classNames.length; i++) {
 			String className = classNames[i];
-			URL url = cl.getResource(asResourceName(className));
-			if (url != null && !url.getProtocol().equals("onejar")) {
-				markAsResolved(url, className);
-			}
+			String resourceName = asResourceName(className);
+			URL url = Object.class.getResource(resourceName);
+			markAsResolved(url, className);
 		}
+	}
+
+	private boolean isUrlInRunningJar(URL url) {
+		if (url.getProtocol().equals("onejar")) {
+			return true;
+		}
+		String urlString = url.toString();
+		int idx = urlString.indexOf("!/");
+		if (idx == -1) {
+			return false;
+		}
+		String jarName = new URLHelper()
+				.stripProtocolIfTopLevelArchive(urlString.substring(0, idx));
+		if (jarName.startsWith("jar:")) {
+			jarName = jarName.substring("jar:".length());
+		}
+		try {
+			File file = new File(new URI(jarName));
+			JarFile jarFile = new JarFile(file);
+			Manifest manifest = jarFile.getManifest();
+			String value = manifest.getMainAttributes().getValue(
+					"Implementation-Title");
+			if (value == null) {
+				return false;
+			}
+			return value.equals("jaywalker");
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return false;
+		}
+
 	}
 
 	private String toPackageName(String className) {
@@ -83,6 +136,10 @@ public class DependencyHelper {
 	}
 
 	public void markAsResolved(URL url, String className) {
+		if (url == null
+				|| (isUrlInRunningJar(url) && !isUrlInShellClasspath(url) && !isUrlInJavaLibraries(url))) {
+			return;
+		}
 		Set urlSet = (Set) unresolvedUrlByClassNameMap.remove(className);
 		addToDependencyMap(className, url, resolvedUrlByClassNameMap);
 		addToDependencyMap(toPackageName(className), HELPER_URL
@@ -99,6 +156,20 @@ public class DependencyHelper {
 						unresolvedClassNameByUrlMap);
 			}
 		}
+	}
+
+	private boolean isUrlInJavaLibraries(URL url) {
+		return url.toString().indexOf("rt.jar") != -1;
+	}
+
+	private boolean isUrlInShellClasspath(URL url) {
+		String urlString = url.toString();
+		for (int i = 0; i < paths.length; i++) {
+			if (paths[i].indexOf(urlString) != -1) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private Map createContainerDependencyMap() {

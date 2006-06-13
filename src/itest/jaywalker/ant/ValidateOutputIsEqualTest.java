@@ -6,16 +6,13 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
-import jaywalker.report.ReportFile;
-import jaywalker.util.ResourceLocator;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildFileTest;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.xml.sax.SAXException;
 
-public class JayWalkerTaskTest extends BuildFileTest {
-	public JayWalkerTaskTest(String name) {
+public class ValidateOutputIsEqualTest extends BuildFileTest {
+	public ValidateOutputIsEqualTest(String name) {
 		super(name);
 	}
 
@@ -43,25 +40,18 @@ public class JayWalkerTaskTest extends BuildFileTest {
 
 	private void assertXMLEquals(String testCase) throws FileNotFoundException,
 			SAXException, IOException, ParserConfigurationException {
-		ReportFile antReportFile = (ReportFile) ResourceLocator.instance()
-				.lookup("antReportFile-report.xml");
-
 		new XMLTestCase().assertXMLEqual(
 				"Output for Ant and Command line should be the same",
-				antReportFile.getReader(), new FileReader(
+				new FileReader("build/temp/ant/JayWalkerTaskTest." + testCase
+						+ "/report.xml"), new FileReader(
 						"build/temp/cmdline/JayWalkerTaskTest." + testCase
 								+ "/report.xml"));
-
 	}
 
 	private void executeAndAssertXMLEquals(String testCase)
 			throws FileNotFoundException, SAXException, IOException,
 			ParserConfigurationException {
-		System.setProperty("ReportFile", "jaywalker.report.InMemoryReportFile");
-		System.setProperty("DotOutputter", "jaywalker.util.StubOutputter");
 		executeTarget(testCase);
-		System.setProperty("ReportFile", "");
-		System.setProperty("DotOutputter", "");
 		assertXMLEquals(testCase);
 	}
 
@@ -116,6 +106,12 @@ public class JayWalkerTaskTest extends BuildFileTest {
 			throws FileNotFoundException, SAXException, IOException,
 			ParserConfigurationException {
 		executeAndAssertXMLEquals("testUnifiedReportForCycle1AndCycle2Archive");
+	}
+
+	public void testUnifiedReportForJayWalkerProject()
+			throws FileNotFoundException, SAXException, IOException,
+			ParserConfigurationException {
+		executeAndAssertXMLEquals("testUnifiedReportForJayWalkerProject");
 	}
 
 }
