@@ -151,7 +151,7 @@
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForEarArchive" />
 			<arg value="-tempDir=build/temp" />
 			<classpath>
-				<pathelement path="tools/junit/junit-3.8.1.jar"/>
+				<pathelement path="tools/junit/junit-3.8.1.jar" />
 				<pathelement path="${java.class.path}" />
 			</classpath>
 		</java>
@@ -196,6 +196,9 @@
 	<target name="testUnifiedReportForJayWalkerProject" depends="init">
 		<jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForJayWalkerProject" tempDir="build/temp">
 			<classlist file="jaywalker-${project.version}.jar" />
+			<classpath>
+				<pathelement location="tools/ant/ant-1.6.3.jar" />
+			</classpath>
 			<option name="cycle" value="archive,package,class" />
 		</jaywalker>
 
@@ -204,6 +207,9 @@
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForJayWalkerProject" />
 			<arg value="-cycle=archive,package,class" />
 			<arg value="-tempDir=build/temp" />
+			<classpath>
+				<pathelement location="tools/ant/ant-1.6.3.jar" />
+			</classpath>
 		</java>
 	</target>
 
