@@ -33,9 +33,10 @@ import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Execute;
-import org.apache.tools.ant.taskdefs.LogStreamHandler;
 import org.apache.tools.ant.types.CommandlineJava;
 import org.apache.tools.ant.types.FileSet;
+import org.apache.tools.ant.types.Path;
+import org.apache.tools.ant.types.Reference;
 
 public class JayWalkerTask extends Task {
 
@@ -165,8 +166,7 @@ public class JayWalkerTask extends Task {
 		commandline.setJar(toTopLevelJarUrl(JayWalkerTask.class)
 				.getAbsolutePath());
 
-		Execute execute = new Execute(new LogStreamHandler(this,
-				Project.MSG_INFO, Project.MSG_WARN));
+		Execute execute = new Execute();
 		execute.setCommandline(commandline.getCommandline());
 
 		log(commandline.describeCommand(), Project.MSG_VERBOSE);
@@ -206,6 +206,18 @@ public class JayWalkerTask extends Task {
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
+	}
+
+	public void setClasspath(Path s) {
+		createClasspath().append(s);
+	}
+
+	public void setClasspathRef(Reference r) {
+		createClasspath().setRefid(r);
+	}
+
+	public Path createClasspath() {
+		return getCommandline().createClasspath(getProject()).createPath();
 	}
 
 }

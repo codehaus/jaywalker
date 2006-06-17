@@ -5,17 +5,13 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.jar.Attributes;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
-
-import com.simontuffs.onejar.JarClassLoader;
 
 import jaywalker.util.Shell;
 import jaywalker.util.StringHelper;
@@ -104,6 +100,11 @@ public class DependencyHelper {
 		if (jarName.startsWith("jar:")) {
 			jarName = jarName.substring("jar:".length());
 		}
+		return isJayWalkerJarFile(jarName);
+
+	}
+
+	private boolean isJayWalkerJarFile(String jarName) {
 		try {
 			File file = new File(new URI(jarName));
 			JarFile jarFile = new JarFile(file);
@@ -121,7 +122,6 @@ public class DependencyHelper {
 			e.printStackTrace();
 			return false;
 		}
-
 	}
 
 	private String toPackageName(String className) {

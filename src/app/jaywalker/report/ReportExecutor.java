@@ -109,6 +109,7 @@ public class ReportExecutor {
 					.create("report.html");
 			OutputStream os = new WriterOutputStream(reportFile.getWriter());
 			os.write(formatClasslist(classlist));
+			os.write(formatClasspath(System.getProperty("java.class.path")));
 			report.transform(os);
 			os.close();
 		} finally {
@@ -119,6 +120,11 @@ public class ReportExecutor {
 
 	private byte[] formatClasslist(String classlist) {
 		final String html = "<b>Classlist:</b> " + classlist + "<br/>";
+		return html.getBytes();
+	}
+
+	private byte[] formatClasspath(String value) {
+		final String html = "<b>Classpath:</b> " + value + "<br/>";
 		return html.getBytes();
 	}
 
