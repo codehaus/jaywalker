@@ -2,9 +2,11 @@ package jaywalker.report;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -13,7 +15,7 @@ import java.util.Set;
 import java.util.jar.JarFile;
 import java.util.jar.Manifest;
 
-import jaywalker.util.Shell;
+import jaywalker.util.ResourceLocator;
 import jaywalker.util.StringHelper;
 import jaywalker.util.URLHelper;
 
@@ -36,16 +38,6 @@ public class DependencyHelper {
 	private final Map unresolvedClassNameByUrlMap = new HashMap();
 
 	private final Map unresolvedUrlByClassNameMap = new HashMap();
-
-	private String[] paths;
-
-	public DependencyHelper() {
-		try {
-			paths = Shell.getEnvironment("CLASSPATH").split(File.pathSeparator);
-		} catch (IOException e) {
-			paths = new String[0];
-		}
-	}
 
 	public boolean isResolved(String className) {
 		return resolvedUrlByClassNameMap.keySet().contains(className);
@@ -78,12 +70,41 @@ public class DependencyHelper {
 		final Set keySet = unresolvedUrlByClassNameMap.keySet();
 		final String[] classNames = (String[]) keySet.toArray(new String[keySet
 				.size()]);
+		ClassLoader cl = createClassLoaderForClasspath();
+		if (cl == null) {
+			cl = Object.class.getClassLoader();
+		}
 		for (int i = 0; i < classNames.length; i++) {
 			String className = classNames[i];
 			String resourceName = asResourceName(className);
-			URL url = Object.class.getResource(resourceName);
-			markAsResolved(url, className);
+			try {
+				Class clazz = Class.forName(className, true, cl);
+				URL url = clazz.getResource(resourceName);
+				markAsResolved(url, className);
+			} catch (ClassNotFoundException e) {
+				URL url = Object.class.getResource(resourceName);
+				markAsResolved(url, className);
+			} catch (NoClassDefFoundError e) {
+				URL url = Object.class.getResource(resourceName);
+				markAsResolved(url, className);
+			}
 		}
+	}
+
+	private ClassLoader createClassLoaderForClasspath() {
+		if (!ResourceLocator.instance().contains("classpath")) {
+			return null;
+		}
+		File[] files = (File[]) ResourceLocator.instance().lookup("classpath");
+		URL[] urls = new URL[files.length];
+		for (int i = 0; i < files.length; i++) {
+			try {
+				urls[i] = files[i].toURL();
+			} catch (MalformedURLException e) {
+				e.printStackTrace();
+			}
+		}
+		return new URLClassLoader(urls);
 	}
 
 	private boolean isUrlInRunningJar(URL url) {
@@ -137,7 +158,7 @@ public class DependencyHelper {
 
 	public void markAsResolved(URL url, String className) {
 		if (url == null
-				|| (isUrlInRunningJar(url) && !isUrlInShellClasspath(url) && !isUrlInJavaLibraries(url))) {
+				|| (isUrlInRunningJar(url) && !isUrlInJavaLibraries(url))) {
 			return;
 		}
 		Set urlSet = (Set) unresolvedUrlByClassNameMap.remove(className);
@@ -160,16 +181,6 @@ public class DependencyHelper {
 
 	private boolean isUrlInJavaLibraries(URL url) {
 		return url.toString().indexOf("rt.jar") != -1;
-	}
-
-	private boolean isUrlInShellClasspath(URL url) {
-		String urlString = url.toString();
-		for (int i = 0; i < paths.length; i++) {
-			if (paths[i].indexOf(urlString) != -1) {
-				return true;
-			}
-		}
-		return false;
 	}
 
 	private Map createContainerDependencyMap() {

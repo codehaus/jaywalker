@@ -58,12 +58,17 @@
 	<target name="testUnifiedReportForClassesDirectory" depends="init">
 		<jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForClassesDirectory" tempDir="build/temp">
 			<classlist file="build/classes" />
+			<classpath>
+				<pathelement location="tools/bcel/bcel-5.1.jar" />
+				<pathelement location="tools/ant/ant-1.6.3.jar" />
+			</classpath>
 		</jaywalker>
 
 		<java jar="jaywalker-${project.version}.jar" fork="true">
 			<arg value="-classlist=build/classes" />
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForClassesDirectory" />
 			<arg value="-tempDir=build/temp" />
+			<arg value="-classpath=tools/ant/ant-1.6.3.jar;tools/bcel/bcel-5.1.jar" />
 		</java>
 
 	</target>
@@ -126,12 +131,20 @@
 	<target name="testUnifiedReportForEarArchive" depends="init">
 		<jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForEarArchive" tempDir="build/temp">
 			<classlist file="build/dist/jaywalker-test.ear" />
+			<classpath>
+				<pathelement location="tools/bcel/bcel-5.1.jar" />
+				<pathelement location="tools/ant/ant-1.6.3.jar" />
+				<pathelement location="tools/junit/junit-3.8.1.jar" />
+				<pathelement path="tools/ant/ant-testutil-1.6.3.jar" />
+				<pathelement path="tools/xmlunit/xmlunit1.0.jar" />
+			</classpath>
 		</jaywalker>
 
 		<java jar="jaywalker-${project.version}.jar" fork="true">
 			<arg value="-classlist=build/dist/jaywalker-test.ear" />
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForEarArchive" />
 			<arg value="-tempDir=build/temp" />
+			<arg value="-classpath=tools/ant/ant-1.6.3.jar;tools/bcel/bcel-5.1.jar;tools/junit/junit-3.8.1.jar;tools/ant/ant-testutil-1.6.3.jar;tools/xmlunit/xmlunit1.0.jar" />
 		</java>
 
 	</target>
@@ -179,6 +192,7 @@
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForJayWalkerProject" />
 			<arg value="-cycle=archive,package,class" />
 			<arg value="-tempDir=build/temp" />
+			<arg value="-classpath=tools/ant/ant-1.6.3.jar" />
 		</java>
 	</target>
 

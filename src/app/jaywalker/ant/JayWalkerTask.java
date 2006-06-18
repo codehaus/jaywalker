@@ -163,8 +163,14 @@ public class JayWalkerTask extends Task {
 
 	public void executeAsForked() {
 
-		commandline.setJar(toTopLevelJarUrl(JayWalkerTask.class)
-				.getAbsolutePath());
+		String jarFilePath = toTopLevelJarUrl(JayWalkerTask.class)
+				.getAbsolutePath();
+		commandline.setJar(jarFilePath);
+
+		Path classPath = commandline.getClasspath();
+		if (classPath != null) {
+			commandline.createArgument().setValue("-classpath=" + classPath);
+		}
 
 		Execute execute = new Execute();
 		execute.setCommandline(commandline.getCommandline());
