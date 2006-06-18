@@ -70,6 +70,10 @@ public class JayWalker {
 		sb.append("[-reportType=reportAttribute ...]\n");
 		sb.append(toSpaces(argColumn));
 		sb.append("[-tempDir=path]\n");
+		sb.append(toSpaces(argColumn));
+		sb.append("[-classpath=");
+		sb.append("element1").append(File.pathSeparator);
+		sb.append("element2").append(File.pathSeparator).append(" ...]\n");
 		sb.append("options :\n");
 		sb.append("    -reportType=reportAttribute ::=\n");
 		final String[] descriptions = executor.getReportDescriptions();

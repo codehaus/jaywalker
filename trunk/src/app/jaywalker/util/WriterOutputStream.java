@@ -15,5 +15,16 @@ public class WriterOutputStream extends OutputStream {
 	public void write(int arg0) throws IOException {
 		writer.write(arg0);
 	}
+	
+	public void flush() throws IOException {
+		super.flush();
+		writer.flush();
+	}
+	
+	public void close() throws IOException {
+		super.close();
+		writer.close();
+	}
+
 
 }

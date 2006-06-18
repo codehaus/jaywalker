@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 import jaywalker.classlist.ClasslistElement;
@@ -51,9 +53,22 @@ public class ReportExecutor {
 		ResourceLocator.instance().register("tempDir", workingDir);
 	}
 
+	private void registerClasspath(Properties properties) throws IOException {
+		if (properties.containsKey("classpath")) {
+			String classpath = properties.getProperty("classpath");
+			String[] classpaths = classpath.split(File.pathSeparator);
+			File[] files = new File[classpaths.length];
+			for (int i = 0; i < classpaths.length; i++) {
+				files[i] = new File(classpaths[i]);
+			}
+			ResourceLocator.instance().register("classpath", files);
+		}
+	}
+
 	public void execute(String classlist, Properties properties, File outDir,
 			String tempPath) throws IOException {
 		registerWorkingDir(tempPath);
+		registerClasspath(properties);
 		initializeDefaults(properties);
 		printClasslist(classlist);
 		System.out.println("Creating the JayWalker report . . .");
@@ -109,13 +124,31 @@ public class ReportExecutor {
 					.create("report.html");
 			OutputStream os = new WriterOutputStream(reportFile.getWriter());
 			os.write(formatClasslist(classlist));
-			os.write(formatClasspath(System.getProperty("java.class.path")));
+			os.write(formatClasspath(lookupClasspath()));
+
 			report.transform(os);
+			
+			os.flush();
 			os.close();
 		} finally {
 			clock.stop(clockType);
 			System.out.println(clock.toString(clockType));
 		}
+	}
+
+	private String lookupClasspath() {
+		StringBuffer sb = new StringBuffer();
+		if (ResourceLocator.instance().contains("classpath")) {
+			File[] files = (File[]) ResourceLocator.instance().lookup(
+					"classpath");
+			for ( int i = 0; i < files.length; i++) {
+				sb.append(files[i].getAbsoluteFile());
+				if ( i + 1 < files.length ) {
+				sb.append(File.pathSeparator);
+				}
+			}
+		}
+		return sb.toString();
 	}
 
 	private byte[] formatClasslist(String classlist) {
