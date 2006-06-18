@@ -51,9 +51,6 @@
 			<arg value="-cycle=archive,package,class" />
 			<arg value="-collision=class" />
 			<arg value="-conflict=class" />
-			<classpath>
-				<pathelement path="${java.class.path}" />
-			</classpath>
 		</java>
 
 	</target>
@@ -67,9 +64,6 @@
 			<arg value="-classlist=build/classes" />
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForClassesDirectory" />
 			<arg value="-tempDir=build/temp" />
-			<classpath>
-				<pathelement path="${java.class.path}" />
-			</classpath>
 		</java>
 
 	</target>
@@ -83,9 +77,6 @@
 			<arg value="-classlist=build/dist/jaywalker-test1.jar" />
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForTest1Archive" />
 			<arg value="-tempDir=build/temp" />
-			<classpath>
-				<pathelement path="${java.class.path}" />
-			</classpath>
 		</java>
 
 	</target>
@@ -99,9 +90,6 @@
 			<arg value="-classlist=build/dist/jaywalker-test2.jar" />
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForTest2Archive" />
 			<arg value="-tempDir=build/temp" />
-			<classpath>
-				<pathelement path="${java.class.path}" />
-			</classpath>
 		</java>
 
 	</target>
@@ -117,9 +105,6 @@
 			<arg value="-classlist=build/dist/jaywalker-test1.jar;build/dist/jaywalker-test2.jar" />
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForTest1Test2Archive" />
 			<arg value="-tempDir=build/temp" />
-			<classpath>
-				<pathelement path="${java.class.path}" />
-			</classpath>
 		</java>
 
 	</target>
@@ -134,9 +119,6 @@
 			<arg value="-classlist=build/dist/jaywalker-test4.jar" />
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForTest4Archive" />
 			<arg value="-tempDir=build/temp" />
-			<classpath>
-				<pathelement path="${java.class.path}" />
-			</classpath>
 		</java>
 
 	</target>
@@ -150,10 +132,6 @@
 			<arg value="-classlist=build/dist/jaywalker-test.ear" />
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForEarArchive" />
 			<arg value="-tempDir=build/temp" />
-			<classpath>
-				<pathelement path="tools/junit/junit-3.8.1.jar" />
-				<pathelement path="${java.class.path}" />
-			</classpath>
 		</java>
 
 	</target>
@@ -167,9 +145,6 @@
 			<arg value="-classlist=build/dist" />
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForBuiltArchives" />
 			<arg value="-tempDir=build/temp" />
-			<classpath>
-				<pathelement path="${java.class.path}" />
-			</classpath>
 		</java>
 
 	</target>
@@ -186,9 +161,6 @@
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForCycle1AndCycle2Archive" />
 			<arg value="-cycle=archive,package,class" />
 			<arg value="-tempDir=build/temp" />
-			<classpath>
-				<pathelement path="${java.class.path}" />
-			</classpath>
 		</java>
 
 	</target>
@@ -207,9 +179,6 @@
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForJayWalkerProject" />
 			<arg value="-cycle=archive,package,class" />
 			<arg value="-tempDir=build/temp" />
-			<classpath>
-				<pathelement location="tools/ant/ant-1.6.3.jar" />
-			</classpath>
 		</java>
 	</target>
 
