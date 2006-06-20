@@ -226,4 +226,9 @@ public class JayWalkerTask extends Task {
 		return getCommandline().createClasspath(getProject()).createPath();
 	}
 
+	public void setIncludeJayWalkerJarFile(boolean value) {
+		getCommandline().createArgument().setValue(
+				"-includeJayWalkerJarFile=" + value);
+	}
+
 }

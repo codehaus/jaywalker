@@ -19,8 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Properties;
 
 import jaywalker.classlist.ClasslistElement;
@@ -69,6 +67,7 @@ public class ReportExecutor {
 			String tempPath) throws IOException {
 		registerWorkingDir(tempPath);
 		registerClasspath(properties);
+		registerIncludeJayWalkerJarFile(properties);
 		initializeDefaults(properties);
 		printClasslist(classlist);
 		System.out.println("Creating the JayWalker report . . .");
@@ -90,6 +89,13 @@ public class ReportExecutor {
 			System.out.println(clock.toString(clockType));
 		}
 
+	}
+
+	private void registerIncludeJayWalkerJarFile(Properties properties) {
+		if (properties.containsKey("includeJayWalkerJarFile")) {
+			Boolean includeJayWalkerJarFile = Boolean.valueOf(properties.getProperty("includeJayWalkerJarFile"));
+			ResourceLocator.instance().register("includeJayWalkerJarFile", includeJayWalkerJarFile);
+		}
 	}
 
 	private void initializeDefaults(Properties properties) {
