@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ISO-8859-1"?>
-<project name="jaywalker" default="all">
+<project name="jaywalker" default="all" basedir=".">
 
 	<property file="build.properties" />
 
@@ -121,7 +121,7 @@
 		<mkdir dir="build/doc/junit" />
 		<delete file="build/doc/emma/coverage.emma" />
 
-		<junit printsummary="on" failureproperty="junit-failure">
+		<junit printsummary="on" dir="${basedir}" failureproperty="junit-failure">
 			<classpath>
 				<pathelement location="build/classes-instr" />
 				<pathelement location="build/classes-test" />
@@ -143,7 +143,7 @@
 
 		</junit>
 
-		<junit printsummary="on" failureproperty="junit-failure">
+		<junit printsummary="on" dir="${basedir}" failureproperty="junit-failure">
 			<classpath>
 				<path refid="emma.lib" />
 				<pathelement path="tools/ant/ant-testutil-1.6.3.jar" />
@@ -171,9 +171,9 @@
 					<include name="*.emma" />
 				</fileset>
 
-				<txt outfile="build/doc/emma/coverage.txt" depth="package" columns="class,method,block,line,name" />
-				<xml outfile="build/doc/emma/coverage.xml" depth="package" />
-				<html outfile="build/doc/emma/coverage.html" depth="method" columns="name,class,method,block,line" />
+				<txt outfile="${basedir}/build/doc/emma/coverage.txt" depth="package" columns="class,method,block,line,name" />
+				<xml outfile="${basedir}/build/doc/emma/coverage.xml" depth="package" />
+				<html outfile="${basedir}/build/doc/emma/coverage.html" depth="method" columns="name,class,method,block,line" />
 			</report>
 		</emma>
 

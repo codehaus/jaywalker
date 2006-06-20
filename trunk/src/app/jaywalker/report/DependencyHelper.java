@@ -71,9 +71,6 @@ public class DependencyHelper {
 		final String[] classNames = (String[]) keySet.toArray(new String[keySet
 				.size()]);
 		ClassLoader cl = createClassLoaderForClasspath();
-		if (cl == null) {
-			cl = Object.class.getClassLoader();
-		}
 		for (int i = 0; i < classNames.length; i++) {
 			String className = classNames[i];
 			String resourceName = asResourceName(className);
@@ -93,7 +90,7 @@ public class DependencyHelper {
 
 	private ClassLoader createClassLoaderForClasspath() {
 		if (!ResourceLocator.instance().contains("classpath")) {
-			return null;
+			return Object.class.getClassLoader();
 		}
 		File[] files = (File[]) ResourceLocator.instance().lookup("classpath");
 		URL[] urls = new URL[files.length];
@@ -107,7 +104,10 @@ public class DependencyHelper {
 		return new URLClassLoader(urls);
 	}
 
-	private boolean isUrlInRunningJar(URL url) {
+	private boolean isUrlInJayWalkerJarFile(URL url) {
+		if (shouldIncludeJayWalkerJarFile()) {
+			return false;
+		}
 		if (url.getProtocol().equals("onejar")) {
 			return true;
 		}
@@ -121,13 +121,28 @@ public class DependencyHelper {
 		if (jarName.startsWith("jar:")) {
 			jarName = jarName.substring("jar:".length());
 		}
-		return isJayWalkerJarFile(jarName);
-
-	}
-
-	private boolean isJayWalkerJarFile(String jarName) {
 		try {
 			File file = new File(new URI(jarName));
+			return isJayWalkerJarFile(file);
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	private boolean shouldIncludeJayWalkerJarFile() {
+		if (ResourceLocator.instance().contains("includeJayWalkerJarFile")) {
+			Boolean value = (Boolean) ResourceLocator.instance().lookup(
+					"includeJayWalkerJarFile");
+			if (value.booleanValue()) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private boolean isJayWalkerJarFile(File file) {
+		try {
 			JarFile jarFile = new JarFile(file);
 			Manifest manifest = jarFile.getManifest();
 			String value = manifest.getMainAttributes().getValue(
@@ -137,9 +152,6 @@ public class DependencyHelper {
 			}
 			return value.equals("jaywalker");
 		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		} catch (URISyntaxException e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -158,7 +170,7 @@ public class DependencyHelper {
 
 	public void markAsResolved(URL url, String className) {
 		if (url == null
-				|| (isUrlInRunningJar(url) && !isUrlInJavaLibraries(url))) {
+				|| (isUrlInJayWalkerJarFile(url) && !isUrlInJavaLibraries(url))) {
 			return;
 		}
 		Set urlSet = (Set) unresolvedUrlByClassNameMap.remove(className);

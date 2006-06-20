@@ -11,6 +11,9 @@ public class InMemoryReportFile implements ReportFile {
 
 	private StringBuffer sb;
 
+	public InMemoryReportFile() {
+	}
+
 	public InMemoryReportFile(String filename) {
 		ResourceLocator locator = ResourceLocator.instance();
 		String client = lookupClient(locator);

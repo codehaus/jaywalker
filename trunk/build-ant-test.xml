@@ -179,7 +179,7 @@
 	</target>
 
 	<target name="testUnifiedReportForJayWalkerProject" depends="init">
-		<jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForJayWalkerProject" tempDir="build/temp">
+		<jaywalker outDir="build/temp/ant/JayWalkerTaskTest.testUnifiedReportForJayWalkerProject" tempDir="build/temp" includeJayWalkerJarFile="true">
 			<classlist file="jaywalker-${project.version}.jar" />
 			<classpath>
 				<pathelement location="tools/ant/ant-1.6.3.jar" />
@@ -192,7 +192,8 @@
 			<arg value="-outDir=build/temp/cmdline/JayWalkerTaskTest.testUnifiedReportForJayWalkerProject" />
 			<arg value="-cycle=archive,package,class" />
 			<arg value="-tempDir=build/temp" />
-			<arg value="-classpath=tools/ant/ant-1.6.3.jar" />
+			<arg value="-classpath=tools/ant/ant-1.6.3.jar;jaywalker-${project.version}.jar!/lib/bcel-5.1.jar" />
+			<arg value="-includeJayWalkerJarFile=true" />
 		</java>
 	</target>
 
