@@ -1,15 +1,8 @@
 package jaywalker.util;
 
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.StringWriter;
-import java.io.Writer;
 
-import jaywalker.report.InMemoryReportFile;
-import jaywalker.report.ReportFile;
-import junit.framework.TestCase;
-
-public class ArchiveDependenciesResolvedDotTest extends TestCase {
+public class ArchiveDependenciesResolvedDotTest extends DotTestCase {
 
 	public void testShouldCreateEmptyDigraph() throws IOException {
 		String input = "<?xml version=\"1.0\"?>\n<report>\n</report>";
@@ -61,31 +54,5 @@ public class ArchiveDependenciesResolvedDotTest extends TestCase {
 				+ "[style=dotted,arrowtail=diamond];\n" + "}";
 		assertOutputEquals("archive-dependencies-resolved-dot.xslt", input,
 				expected);
-	}
-
-	private void assertOutputEquals(String xsltFilename, String input,
-			String expected) throws IOException {
-		ReportFile reportFile = new InMemoryReportFile();
-		Writer writer = reportFile.getWriter();
-		writer.write(input);
-		writer.flush();
-		writer.close();
-		ResourceLocator.instance().register("report.xml", reportFile);
-		XsltTransformer transformer = new XsltTransformer(xsltFilename);
-		StringWriter stringWriter = new StringWriter();
-		OutputStream outputStream = new WriterOutputStream(stringWriter);
-		transformer.write(outputStream);
-		String actual = stringWriter.getBuffer().toString();
-		// outputBytes(expected);
-		// outputBytes(actual);
-		assertEquals(expected, actual);
-	}
-
-	private void outputBytes(String value) {
-		byte[] bytes = value.getBytes();
-		for (int i = 0; i < bytes.length; i++) {
-			System.out.print(bytes[i]);
-		}
-		System.out.println();
 	}
 }
