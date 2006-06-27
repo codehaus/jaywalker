@@ -28,7 +28,7 @@
                 <xsl:value-of select="@url"/>
                 <xsl:text disable-output-escaping="yes">" -&gt; "</xsl:text>
                 <xsl:value-of select="$url"/>
-                <xsl:text disable-output-escaping="yes">" [style=dotted,arrowtail=diamond];&#10;</xsl:text>
+                <xsl:text disable-output-escaping="yes">" [style=dotted arrowhead=vee arrowtail=diamond];&#10;</xsl:text>
             </xsl:for-each>
         </xsl:if>
         <xsl:apply-templates/>

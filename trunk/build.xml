@@ -3,12 +3,8 @@
 
 	<property file="build.properties" />
 
-	<!-- MANIFEST.MF properties -->
-	<property name="implementation.title" value="${ant.project.name}" />
-	<property name="implementation.version" value="${project.version}" />
-	<property name="implementation.url" value="${project.url}" />
-
-	<import file="emma.xml" />
+	<import file="src/ant/manifest.xml" />
+	<import file="src/ant/emma.xml" />
 
 	<path id="path.run.app">
 		<pathelement location="build/classes" />
@@ -53,26 +49,26 @@
 
 	<target name="compile-test1" description="compiles test2">
 		<mkdir dir="build/classes-test/test1" />
-		<javac debug="on" srcdir="src/test1" destdir="build/classes-test/test1">
+		<javac debug="on" srcdir="src/data/test1" destdir="build/classes-test/test1">
 		</javac>
 	</target>
 
 	<target name="compile-test2" description="compiles test2">
 		<mkdir dir="build/classes-test/test2" />
-		<javac debug="on" srcdir="src/test2" destdir="build/classes-test/test2">
+		<javac debug="on" srcdir="src/data/test2" destdir="build/classes-test/test2">
 		</javac>
 	</target>
 
 	<target name="compile-test5" description="compiles test5">
 		<mkdir dir="build/classes-test/test5" />
-		<javac debug="on" srcdir="src/test5" destdir="build/classes-test/test5">
+		<javac debug="on" srcdir="src/data/test5" destdir="build/classes-test/test5">
 		</javac>
 	</target>
 
 	<target name="dist-test" depends="compile-test1, compile-test2, compile-test5">
 		<!-- Jar test harness -->
-		<mkdir dir="build/dist" />
-		<jar destfile="build/dist/${ant.project.name}-test.jar">
+		<mkdir dir="build/data" />
+		<jar destfile="build/data/${ant.project.name}-test.jar">
 			<fileset dir="build/classes-test">
 				<include name="**/test*/**" />
 				<include name="**/*.class" />
@@ -81,31 +77,31 @@
 				<exclude name="test5/**" />
 			</fileset>
 		</jar>
-		<jar basedir="build/classes-test/test1" destfile="build/dist/${ant.project.name}-test1.jar" />
-		<jar destfile="build/dist/${ant.project.name}-test2.jar">
+		<jar basedir="build/classes-test/test1" destfile="build/data/${ant.project.name}-test1.jar" />
+		<jar destfile="build/data/${ant.project.name}-test2.jar">
 			<fileset dir="build/classes-test/test2">
 				<exclude name="bogus/**" />
 			</fileset>
 		</jar>
-		<jar destfile="build/dist/${ant.project.name}-test3.jar">
-			<fileset dir="build/dist">
+		<jar destfile="build/data/${ant.project.name}-test3.jar">
+			<fileset dir="build/data">
 				<include name="${ant.project.name}-test1.jar" />
 				<include name="${ant.project.name}-test2.jar" />
 			</fileset>
 		</jar>
-		<jar destfile="build/dist/${ant.project.name}-test4.jar">
-			<fileset dir="build/dist">
+		<jar destfile="build/data/${ant.project.name}-test4.jar">
+			<fileset dir="build/data">
 				<include name="${ant.project.name}-test1.jar" />
 				<include name="${ant.project.name}-test2.jar" />
 				<include name="${ant.project.name}-test3.jar" />
 			</fileset>
 		</jar>
-		<ear destfile="build/dist/${ant.project.name}-test.ear" appxml="src/metadata/application.xml">
-			<zipfileset dir="build/dist" includes="*.jar" prefix="APP-INF/lib" />
+		<ear destfile="build/data/${ant.project.name}-test.ear" appxml="src/metadata/application.xml">
+			<zipfileset dir="build/data" includes="*.jar" prefix="APP-INF/lib" />
 		</ear>
-		<jar basedir="build/classes-test/test5" destfile="build/dist/${ant.project.name}-test5.jar" />
-		<jar basedir="build/classes-test/test2" destfile="build/dist/${ant.project.name}-cycle-part1.jar" includes="cycle1/Node1.class,cycle2/Node2.class" />
-		<jar basedir="build/classes-test/test2" destfile="build/dist/${ant.project.name}-cycle-part2.jar" includes="cycle3/Node3.class" />
+		<jar basedir="build/classes-test/test5" destfile="build/data/${ant.project.name}-test5.jar" />
+		<jar basedir="build/classes-test/test2" destfile="build/data/${ant.project.name}-cycle-part1.jar" includes="cycle1/Node1.class,cycle2/Node2.class" />
+		<jar basedir="build/classes-test/test2" destfile="build/data/${ant.project.name}-cycle-part2.jar" includes="cycle3/Node3.class" />
 	</target>
 
 	<target name="test" depends="dist, compile-test, dist-test">
