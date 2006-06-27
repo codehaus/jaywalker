@@ -70,7 +70,7 @@ public class JayWalkerTestCase extends TestCase {
         System.out.println(statisticListener);
     }
 
-    private ClasslistElement createClasslistElement(URL url) {
+    protected ClasslistElement createClasslistElement(URL url) {
         ClasslistElementFactory factory = new ClasslistElementFactory();
         return factory.create(url);
     }

@@ -19,6 +19,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Properties;
 
 import jaywalker.classlist.ClasslistElement;
@@ -201,7 +203,7 @@ public class ReportExecutor {
 		clock.start(clockType);
 		try {
 			ClasslistElementVisitor visitor = new ClasslistElementVisitor(
-					elements);
+					elements, lookupClasspathUrls());
 			Writer writer = reportFile.getWriter();
 
 			AggregateReport report = new AggregateReport(reports, writer);
@@ -245,6 +247,20 @@ public class ReportExecutor {
 			System.out.println(clock.toString(clockType));
 		}
 	}
+	
+	private URL [] lookupClasspathUrls() throws MalformedURLException {
+		StringBuffer sb = new StringBuffer();
+		if (ResourceLocator.instance().contains("classpath")) {
+			File[] files = (File[]) ResourceLocator.instance().lookup(
+					"classpath");
+			URL [] urls = new URL[files.length]; 
+			for ( int i = 0; i < files.length; i++) {
+				urls[i] = files[i].toURL();
+			}
+		}
+		return new URL[0];
+	}
+
 
 	public String[] getReportDescriptions() {
 		return configurationSetup.getReportDescriptions();

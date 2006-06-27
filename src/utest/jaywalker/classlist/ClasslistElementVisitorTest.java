@@ -15,11 +15,15 @@
  */
 package jaywalker.classlist;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Date;
+
 import jaywalker.testutil.Path;
 import jaywalker.util.URLHelper;
-
-import java.io.IOException;
-import java.net.URL;
 
 public class ClasslistElementVisitorTest extends JayWalkerTestCase {
 	protected void assertLegalUrl(URL url) {
@@ -123,6 +127,31 @@ public class ClasslistElementVisitorTest extends JayWalkerTestCase {
 			lastElementVisitedCounter++;
 		}
 
+	}
+
+	public void testShouldIgnoreVisitingArchive() throws IOException,
+			URISyntaxException {
+		URL url = Path.FILE_TEST1_JAR.toURL();
+		ClasslistElementListener listener = new ClasslistElementListener() {
+			public void classlistElementVisited(ClasslistElementEvent event) {
+				throw new IllegalStateException("should not be called");
+			}
+
+			public void lastClasslistElementVisited() {
+			}
+		};
+		final ClasslistElement element = createClasslistElement(url);
+		ClasslistElement[] elements = new ClasslistElement[] { element };
+		ClasslistElementVisitor visitor = new ClasslistElementVisitor(elements,
+				new URL[] { url });
+		final ClasslistElementStatistic statisticListener = new ClasslistElementStatistic();
+		visitor.addListener(statisticListener);
+		visitor.addListener(listener);
+		Date start = new Date();
+		visitor.accept();
+		System.out.println("Time to visit elements : "
+				+ (new Date().getTime() - start.getTime()));
+		System.out.println(statisticListener);
 	}
 
 }

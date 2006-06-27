@@ -17,7 +17,7 @@ public class ArchiveDependenciesResolvedDotTest extends DotTestCase {
 				+ "<container type=\"archive\" url=\"child\"/>"
 				+ "</container>" + "</report>";
 		String expected = "digraph G {\n    \"parent\" -> \"child\" "
-				+ "[style=dotted,arrowtail=diamond];\n" + "}";
+				+ "[style=dotted arrowhead=vee arrowtail=diamond];\n" + "}";
 		assertOutputEquals("archive-dependencies-resolved-dot.xslt", input,
 				expected);
 	}
@@ -45,13 +45,13 @@ public class ArchiveDependenciesResolvedDotTest extends DotTestCase {
 				+ "    \"parent1\" -> \"should not be included\";\n"
 				+ "    \"parent1\" -> \"also should not be included\";\n"
 				+ "    \"parent1\" -> \"child1\" "
-				+ "[style=dotted,arrowtail=diamond];\n"
+				+ "[style=dotted arrowhead=vee arrowtail=diamond];\n"
 				+ "    \"child1\" -> \"grandchild1\" "
-				+ "[style=dotted,arrowtail=diamond];\n"
+				+ "[style=dotted arrowhead=vee arrowtail=diamond];\n"
 				+ "    \"parent2\" -> \"child2\" "
-				+ "[style=dotted,arrowtail=diamond];\n"
+				+ "[style=dotted arrowhead=vee arrowtail=diamond];\n"
 				+ "    \"child2\" -> \"grandchild2\" "
-				+ "[style=dotted,arrowtail=diamond];\n" + "}";
+				+ "[style=dotted arrowhead=vee arrowtail=diamond];\n" + "}";
 		assertOutputEquals("archive-dependencies-resolved-dot.xslt", input,
 				expected);
 	}

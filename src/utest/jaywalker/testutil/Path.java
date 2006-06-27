@@ -24,7 +24,7 @@ import java.util.StringTokenizer;
 public class Path {
     public final static File DIR_TEMP = new File("build" + File.separator + "temp");
     public final static File DIR_BUILD_APP = new File("build" + File.separator + "classes");
-    public final static File DIR_BUILD_JAR = new File("build" + File.separator + "dist");
+    public final static File DIR_BUILD_JAR = new File("build" + File.separator + "data");
     public final static File DIR_TEST1 = new File("build" + File.separator + "classes-test" + File.separator + "test1");
     public final static File DIR_TEST2 = new File("build" + File.separator + "classes-test" + File.separator + "test2");
     public final static File FILE_TEST1_JAR = new File(DIR_BUILD_JAR, "jaywalker-test1.jar");

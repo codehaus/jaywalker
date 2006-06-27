@@ -78,13 +78,4 @@ public class JayWalkerTest extends TestCase {
 		}
 	}
 
-	public void testShouldExecuteJayWalkerOnTest1JarSuccessfully()
-			throws IOException {
-		JayWalker jayWalker = new JayWalker();
-		jayWalker.execute(new String[] {
-				"-classlist=" + Path.FILE_TEST1_JAR.getAbsolutePath(),
-				"-outDir=" + new File( Path.DIR_TEMP, "JayWalkerTest.testShouldExecuteJayWalkerOnTest1JarSuccessfully").getAbsolutePath(),
-				"-tempDir=" + Path.DIR_TEMP.getAbsolutePath() });
-	}
-
 }
