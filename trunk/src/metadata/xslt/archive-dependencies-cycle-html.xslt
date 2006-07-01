@@ -4,9 +4,9 @@
     <xsl:strip-space elements="*"/>
     <xsl:template match="report">
         <h3>Archive Cyclic Dependencies</h3>
-        <table>
+        <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
             <th>Archive</th>
-            <th>URL</th>
+            <th>Cycle</th>
             <xsl:apply-templates/>
         </table>
     </xsl:template>

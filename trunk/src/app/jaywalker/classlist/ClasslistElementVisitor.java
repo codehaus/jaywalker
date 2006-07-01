@@ -30,22 +30,12 @@ public class ClasslistElementVisitor {
 
 	private ClasslistElementListener[] listeners = new ClasslistElementListener[0];
 
-	private final URL[] ignoreClasslistElements;
-
-	public ClasslistElementVisitor(ClasslistElement[] classlistElements,
-			URL[] ignoreClasslistElements) {
-		this.classlistElements = classlistElements;
-		this.ignoreClasslistElements = ignoreClasslistElements;
-	}
-	
 	public ClasslistElementVisitor(ClasslistElement[] classlistElements) {
 		this.classlistElements = classlistElements;
-		this.ignoreClasslistElements = new URL[0];
 	}
 
 	public ClasslistElementVisitor(ClasslistContainer cl) {
 		this.classlistElements = cl.getClasslistElements();
-		this.ignoreClasslistElements = new URL[0];
 	}
 
 	public void accept() throws IOException {
@@ -55,24 +45,8 @@ public class ClasslistElementVisitor {
 
 	public void accept(ClasslistElementVisitor v) throws IOException {
 		for (int i = 0; i < classlistElements.length; i++) {
-			if (shouldVisit(classlistElements[i])) {
-				v.visit(classlistElements[i]);
-			}
+			v.visit(classlistElements[i]);
 		}
-	}
-
-	private boolean shouldVisit(ClasslistElement element) {
-		if (ignoreClasslistElements.length == 0) {
-			return true;
-		}
-		for (int i = 0; i < ignoreClasslistElements.length; i++) {
-			System.out.println(ignoreClasslistElements[i]);
-			if (element.getURL().toString().indexOf(
-					ignoreClasslistElements[i].toString()) != -1) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	public void visit(ClasslistElement cle) throws IOException {

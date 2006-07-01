@@ -83,5 +83,5 @@ public class JayWalkerTaskTest extends TestCase {
 		URL url = new URL("file:/C:/JayWalker/jaywalker-x.x-SNAPSHOT.jar");
 		assertEquals("file:/C:/JayWalker/jaywalker-x.x-SNAPSHOT.jar", task.toTopLevelJarUrl(url).toString());
 	}
-
+	
 }

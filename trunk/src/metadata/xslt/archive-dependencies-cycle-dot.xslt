@@ -7,16 +7,25 @@
         <xsl:apply-templates/>
         <xsl:text disable-output-escaping="yes">}</xsl:text>
     </xsl:template>
-    <xsl:template match="container[@type='archive']">
-        <xsl:if test="count(child::dependency)>0">
-            <xsl:for-each select="child::dependency[@type='cycle']/container[@type='archive']">
-                <xsl:text disable-output-escaping="yes">    "</xsl:text>
-                <xsl:value-of select="../../@url"/>
-                <xsl:text disable-output-escaping="yes">" -&gt; "</xsl:text>
-                <xsl:value-of select="@url"/>
-                <xsl:text disable-output-escaping="yes">";&#10;</xsl:text>
-            </xsl:for-each>
-        </xsl:if>
-        <xsl:apply-templates/>
+    <xsl:template match="container[@type='archive']/dependency[@type='cycle']">
+        <xsl:variable name="first-dependency-url" select="container/@url"/>
+        <xsl:for-each select="container[@type='archive']">
+            <xsl:variable name="current-dependency-url" select="@url"/>
+            <xsl:variable name="next-dependency-url">
+                <xsl:choose>
+                    <xsl:when test="position() = last()">
+                        <xsl:value-of select="$first-dependency-url"/>				    
+				    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="following::*/@url"/>
+                    </xsl:otherwise>
+                </xsl:choose>
+            </xsl:variable>
+            <xsl:text disable-output-escaping="yes">    "</xsl:text>
+            <xsl:value-of select="$current-dependency-url"/>
+            <xsl:text disable-output-escaping="yes">" -&gt; "</xsl:text>
+            <xsl:value-of select="$next-dependency-url"/>
+            <xsl:text disable-output-escaping="yes">";&#10;</xsl:text>
+        </xsl:for-each>
     </xsl:template>
 </xsl:stylesheet>

@@ -71,7 +71,11 @@ public class JayWalker {
 		sb.append(toSpaces(argColumn));
 		sb.append("[-tempDir=path]\n");
 		sb.append(toSpaces(argColumn));
-		sb.append("[-classpath=");
+		sb.append("[-classlist-shallow=");
+		sb.append("element1").append(File.pathSeparator);
+		sb.append("element2").append(File.pathSeparator).append(" ...]\n");
+		sb.append(toSpaces(argColumn));
+		sb.append("[-classlist-system=");
 		sb.append("element1").append(File.pathSeparator);
 		sb.append("element2").append(File.pathSeparator).append(" ...]\n");
 		sb.append("options :\n");

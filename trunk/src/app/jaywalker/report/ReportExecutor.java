@@ -16,7 +16,10 @@
 package jaywalker.report;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.net.MalformedURLException;
@@ -53,22 +56,23 @@ public class ReportExecutor {
 		ResourceLocator.instance().register("tempDir", workingDir);
 	}
 
-	private void registerClasspath(Properties properties) throws IOException {
-		if (properties.containsKey("classpath")) {
-			String classpath = properties.getProperty("classpath");
+	private void registerClasslist(Properties properties, String classlistType) {
+		if (properties.containsKey(classlistType)) {
+			String classpath = properties.getProperty(classlistType);
 			String[] classpaths = classpath.split(File.pathSeparator);
 			File[] files = new File[classpaths.length];
 			for (int i = 0; i < classpaths.length; i++) {
 				files[i] = new File(classpaths[i]);
 			}
-			ResourceLocator.instance().register("classpath", files);
+			ResourceLocator.instance().register(classlistType, files);
 		}
 	}
 
 	public void execute(String classlist, Properties properties, File outDir,
 			String tempPath) throws IOException {
 		registerWorkingDir(tempPath);
-		registerClasspath(properties);
+		registerClasslist(properties, "classlist-shallow");
+		registerClasslist(properties, "classlist-system");
 		registerIncludeJayWalkerJarFile(properties);
 		initializeDefaults(properties);
 		printClasslist(classlist);
@@ -86,6 +90,7 @@ public class ReportExecutor {
 					+ reportFile.getParentAbsolutePath());
 			AggregateReport report = execute(classlist, reports, reportFile);
 			outputHtml(outDir, report, classlist);
+			outputStyleSheet(outDir);
 		} finally {
 			clock.stop(clockType);
 			System.out.println(clock.toString(clockType));
@@ -95,8 +100,10 @@ public class ReportExecutor {
 
 	private void registerIncludeJayWalkerJarFile(Properties properties) {
 		if (properties.containsKey("includeJayWalkerJarFile")) {
-			Boolean includeJayWalkerJarFile = Boolean.valueOf(properties.getProperty("includeJayWalkerJarFile"));
-			ResourceLocator.instance().register("includeJayWalkerJarFile", includeJayWalkerJarFile);
+			Boolean includeJayWalkerJarFile = Boolean.valueOf(properties
+					.getProperty("includeJayWalkerJarFile"));
+			ResourceLocator.instance().register("includeJayWalkerJarFile",
+					includeJayWalkerJarFile);
 		}
 	}
 
@@ -131,11 +138,13 @@ public class ReportExecutor {
 			ReportFile reportFile = new ReportFileFactory()
 					.create("report.html");
 			OutputStream os = new WriterOutputStream(reportFile.getWriter());
-			os.write(formatClasslist(classlist));
-			os.write(formatClasspath(lookupClasspath()));
-
+			os.write(createTitle("JayWalker Report"));
+			os.write(createStylesheetLink("stylesheet.css"));
+			os.write(createClasslistTable(classlist,
+					lookupClasslist("classlist-shallow"),
+					lookupClasslist("classlist-system")));
 			report.transform(os);
-			
+
 			os.flush();
 			os.close();
 		} finally {
@@ -144,29 +153,75 @@ public class ReportExecutor {
 		}
 	}
 
-	private String lookupClasspath() {
+	private byte[] createClasslistTable(String deepValue, String shallowValue,
+			String systemValue) {
 		StringBuffer sb = new StringBuffer();
-		if (ResourceLocator.instance().contains("classpath")) {
+		sb.append("<h3>Classlists</h3>");
+		sb.append("<table width=\"95%\" cellspacing=\"2\" ");
+		sb.append("cellpadding=\"5\" border=\"0\" class=\"details\">");
+		sb.append("<th>Classlist</th><th>Value</th>");
+		sb.append(createKeyValueTableRow("default (deep)", deepValue));
+		sb.append(createKeyValueTableRow("shallow", shallowValue));
+		sb.append(createKeyValueTableRow("system", systemValue));
+		sb.append("</table>");
+		return sb.toString().getBytes();
+	}
+
+	private String createKeyValueTableRow(String key, String value) {
+		StringBuffer sb = new StringBuffer();
+		sb.append("<tr><td>");
+		sb.append(key);
+		sb.append("</td><td>");
+		sb.append(value);
+		sb.append("</td></tr>");
+		return sb.toString();
+	}
+
+	private byte[] createTitle(String value) {
+		String html = "<h1>" + value + "</h1>";
+		return html.getBytes();
+	}
+
+	private void outputStyleSheet(File outDir) {
+		File file = new File(outDir, "stylesheet.css");
+		InputStream is = ReportExecutor.class
+				.getResourceAsStream("/META-INF/css/stylesheet.css");
+		try {
+			FileOutputStream fos = new FileOutputStream(file);
+
+			int i = is.read();
+			while (i != -1) {
+				fos.write(i);
+				i = is.read();
+			}
+			fos.flush();
+			fos.close();
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
+	private byte[] createStylesheetLink(String filename) {
+		String html = "<link title=\"Style\" type=\"text/css\" rel=\"stylesheet\" href=\""
+				+ filename + "\">\n";
+		return html.getBytes();
+	}
+
+	private String lookupClasslist(String classlistType) {
+		StringBuffer sb = new StringBuffer();
+		if (ResourceLocator.instance().contains(classlistType)) {
 			File[] files = (File[]) ResourceLocator.instance().lookup(
-					"classpath");
-			for ( int i = 0; i < files.length; i++) {
+					classlistType);
+			for (int i = 0; i < files.length; i++) {
 				sb.append(files[i].getAbsoluteFile());
-				if ( i + 1 < files.length ) {
-				sb.append(File.pathSeparator);
+				if (i + 1 < files.length) {
+					sb.append(File.pathSeparator);
 				}
 			}
 		}
 		return sb.toString();
-	}
-
-	private byte[] formatClasslist(String classlist) {
-		final String html = "<b>Classlist:</b> " + classlist + "<br/>";
-		return html.getBytes();
-	}
-
-	private byte[] formatClasspath(String value) {
-		final String html = "<b>Classpath:</b> " + value + "<br/>";
-		return html.getBytes();
 	}
 
 	private void initOutDir(File outDir) {
@@ -203,10 +258,11 @@ public class ReportExecutor {
 		clock.start(clockType);
 		try {
 			ClasslistElementVisitor visitor = new ClasslistElementVisitor(
-					elements, lookupClasspathUrls());
+					elements);
 			Writer writer = reportFile.getWriter();
 
-			AggregateReport report = new AggregateReport(reports, writer);
+			AggregateReport report = new AggregateReport(reports, writer,
+					lookupClasslistUrlsToIgnore());
 			visitor.addListener(report);
 			visitor.accept();
 
@@ -247,20 +303,29 @@ public class ReportExecutor {
 			System.out.println(clock.toString(clockType));
 		}
 	}
-	
-	private URL [] lookupClasspathUrls() throws MalformedURLException {
-		StringBuffer sb = new StringBuffer();
-		if (ResourceLocator.instance().contains("classpath")) {
+
+	private URL[] lookupClasslistUrlsToIgnore() throws MalformedURLException {
+		URL[] urls1 = lookupClasslistUrls("classlist-system");
+		URL[] urls2 = lookupClasslistUrls("classlist-shallow");
+		URL[] urls = new URL[urls1.length + urls2.length];
+		System.arraycopy(urls1, 0, urls, 0, urls1.length);
+		System.arraycopy(urls2, 0, urls, urls1.length, urls2.length);
+		return urls;
+	}
+
+	private URL[] lookupClasslistUrls(String classlistType)
+			throws MalformedURLException {
+		if (ResourceLocator.instance().contains(classlistType)) {
 			File[] files = (File[]) ResourceLocator.instance().lookup(
-					"classpath");
-			URL [] urls = new URL[files.length]; 
-			for ( int i = 0; i < files.length; i++) {
+					classlistType);
+			URL[] urls = new URL[files.length];
+			for (int i = 0; i < files.length; i++) {
 				urls[i] = files[i].toURL();
 			}
+			return urls;
 		}
 		return new URL[0];
 	}
-
 
 	public String[] getReportDescriptions() {
 		return configurationSetup.getReportDescriptions();

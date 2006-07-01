@@ -207,6 +207,7 @@
 				<exclude name="**/ant/" />
 			</fileset>
 			<zipfileset dir="src/metadata/xslt" prefix="META-INF/xslt" />
+			<zipfileset dir="src/metadata/css" prefix="META-INF/css" />
 		</jar>
 		<mkdir dir="build/one-jar-boot" />
 		<unjar src="tools/one-jar/one-jar-boot-0.95.jar" dest="build/one-jar-boot" />
