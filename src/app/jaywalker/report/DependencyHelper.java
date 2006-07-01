@@ -89,10 +89,26 @@ public class DependencyHelper {
 	}
 
 	private ClassLoader createClassLoaderForClasspath() {
-		if (!ResourceLocator.instance().contains("classpath")) {
+		URL[] urls1 = new URL[0];
+		if (ResourceLocator.instance().contains("classlist-system")) {
+			urls1 = lookupClasslistUrls("classlist-system");
+		}
+		URL[] urls2 = new URL[0];
+		if (ResourceLocator.instance().contains("classlist-shallow")) {
+			urls2 = lookupClasslistUrls("classlist-shallow");
+		}
+		if (urls1.length == 0 && urls2.length == 0) {
 			return Object.class.getClassLoader();
 		}
-		File[] files = (File[]) ResourceLocator.instance().lookup("classpath");
+		URL[] urls = new URL[urls1.length + urls2.length];
+		System.arraycopy(urls1, 0, urls, 0, urls1.length);
+		System.arraycopy(urls2, 0, urls, urls1.length, urls2.length);
+		return new URLClassLoader(urls1);
+	}
+
+	private URL[] lookupClasslistUrls(String classlistType) {
+		File[] files = (File[]) ResourceLocator.instance()
+				.lookup(classlistType);
 		URL[] urls = new URL[files.length];
 		for (int i = 0; i < files.length; i++) {
 			try {
@@ -101,7 +117,7 @@ public class DependencyHelper {
 				e.printStackTrace();
 			}
 		}
-		return new URLClassLoader(urls);
+		return urls;
 	}
 
 	private boolean isUrlInJayWalkerJarFile(URL url) {

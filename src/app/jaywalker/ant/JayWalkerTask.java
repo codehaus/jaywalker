@@ -34,9 +34,6 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.Task;
 import org.apache.tools.ant.taskdefs.Execute;
 import org.apache.tools.ant.types.CommandlineJava;
-import org.apache.tools.ant.types.FileSet;
-import org.apache.tools.ant.types.Path;
-import org.apache.tools.ant.types.Reference;
 
 public class JayWalkerTask extends Task {
 
@@ -65,9 +62,11 @@ public class JayWalkerTask extends Task {
 		validate();
 
 		try {
-			String classlist = createClasslist();
-			registerClasslist(classlist);
-			createClasslistArgument(classlist);
+			ClasslistBuilder classlist = createClasslistBuilder();
+			registerClasslist(classlist.getClasslist("deep"));
+			createClasslistArgument(classlist.getClasslist("deep"));
+			createClasslistArgument(classlist, "shallow");
+			createClasslistArgument(classlist, "system");
 			createOptionArguments();
 
 			executeAsForked();
@@ -76,6 +75,14 @@ public class JayWalkerTask extends Task {
 			throw new BuildException(e);
 		}
 
+	}
+
+	private void createClasslistArgument(ClasslistBuilder classlist, String type) {
+		String str = classlist.getClasslist(type);
+		if (str.length() > 0) {
+			commandline.createArgument().setValue(
+					"-classlist-" + type + "=" + str);
+		}
 	}
 
 	private void createOptionArguments() {
@@ -125,27 +132,20 @@ public class JayWalkerTask extends Task {
 		optionSet.add(option);
 	}
 
-	protected String createClasslist() {
-		StringBuffer sb = new StringBuffer();
+	protected ClasslistBuilder createClasslistBuilder() {
+		ClasslistBuilder builder = new ClasslistBuilder();
 		for (Iterator itFilesets = classlists.iterator(); itFilesets.hasNext();) {
-			FileSet fs = (FileSet) itFilesets.next();
-			DirectoryScanner ds = fs.getDirectoryScanner(getProject());
-			final String[] includedDirs = ds.getIncludedDirectories();
-			final String[] includedFiles = ds.getIncludedFiles();
-			sb.append(includeElements(ds.getBasedir(), includedDirs));
-			sb.append(includeElements(ds.getBasedir(), includedFiles));
-		}
-		return sb.toString();
-	}
+			Classlist cl = (Classlist) itFilesets.next();
+			String nestedPath = cl.getNestedPath();
+			if (nestedPath == null) {
+				DirectoryScanner ds = cl.getDirectoryScanner(getProject());
+				builder.append(cl, ds);
+			} else {
+				builder.append(cl, nestedPath);
+			}
 
-	private String includeElements(File baseDir, String[] includedFiles) {
-		StringBuffer sb = new StringBuffer();
-		for (int i = 0; i < includedFiles.length; i++) {
-			final File file = new File(baseDir, includedFiles[i]);
-			sb.append(file.getAbsolutePath());
-			sb.append(File.pathSeparator);
 		}
-		return sb.toString();
+		return builder;
 	}
 
 	public void setOutDir(File outDir) {
@@ -166,11 +166,6 @@ public class JayWalkerTask extends Task {
 		String jarFilePath = toTopLevelJarUrl(JayWalkerTask.class)
 				.getAbsolutePath();
 		commandline.setJar(jarFilePath);
-
-		Path classPath = commandline.getClasspath();
-		if (classPath != null) {
-			commandline.createArgument().setValue("-classpath=" + classPath);
-		}
 
 		Execute execute = new Execute();
 		execute.setCommandline(commandline.getCommandline());
@@ -212,18 +207,6 @@ public class JayWalkerTask extends Task {
 		} catch (MalformedURLException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	public void setClasspath(Path s) {
-		createClasspath().append(s);
-	}
-
-	public void setClasspathRef(Reference r) {
-		createClasspath().setRefid(r);
-	}
-
-	public Path createClasspath() {
-		return getCommandline().createClasspath(getProject()).createPath();
 	}
 
 	public void setIncludeJayWalkerJarFile(boolean value) {

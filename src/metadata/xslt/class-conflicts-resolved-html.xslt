@@ -5,9 +5,9 @@
     <xsl:key name="distinct-classname" match="element" use="@value"/>
     <xsl:template match="report">
         <h3>Conflicts Dependencies</h3>
-        <table>
+        <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
             <th>Class Name</th>
-            <th>URL</th>
+            <th>Conflict</th>
             <th>serialVersionUid</th>
             <xsl:for-each
                 select="//element[generate-id()=generate-id(key('distinct-classname',@value))]">

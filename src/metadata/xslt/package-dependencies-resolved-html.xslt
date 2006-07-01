@@ -6,7 +6,7 @@
         use="concat(../../@value,':',@value)"/>
     <xsl:template match="report">
         <h3>Package Resolved Dependencies</h3>
-        <table>
+        <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
             <th>Package</th>
             <th>Dependency</th>
             <xsl:for-each

@@ -9,7 +9,7 @@
     </xsl:template>
     <xsl:template match="container/dependency[@type='cycle']">
         <xsl:variable name="first-dependency-url" select="container/@url"/>
-        <xsl:for-each select="container">
+        <xsl:for-each select="container[@type='package']">
             <xsl:variable name="current-dependency-url" select="@url"/>
             <xsl:variable name="next-dependency-url">
                 <xsl:choose>

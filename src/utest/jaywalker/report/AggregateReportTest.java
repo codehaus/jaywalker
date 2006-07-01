@@ -18,17 +18,23 @@ package jaywalker.report;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 import java.util.Properties;
 
+import jaywalker.classlist.ClasslistElement;
+import jaywalker.classlist.ClasslistElementEvent;
+import jaywalker.classlist.ClasslistElementFactory;
 import jaywalker.classlist.ClasslistElementListener;
+import jaywalker.classlist.ClasslistElementStatistic;
+import jaywalker.classlist.ClasslistElementVisitor;
 import jaywalker.classlist.JayWalkerTestCase;
 import jaywalker.testutil.Path;
 import jaywalker.util.Outputter;
 
 public class AggregateReportTest extends JayWalkerTestCase {
-	
+
 	private final Configuration[] CONFIGURATIONS = new Configuration[] {
 			new DependencyReportConfiguration(new DependencyModel()),
 			new CollisionReportConfiguration(new CollisionModel()) };
@@ -40,17 +46,19 @@ public class AggregateReportTest extends JayWalkerTestCase {
 		}
 		return listeners;
 	}
-	
+
 	public void assertCreateReportFor(URL url) throws IOException {
 		Date start = new Date();
 
 		Report[] reports = new Report[] { createCollisionReport(),
 				createDependencyReport() };
 
-		AggregateModel model = new AggregateModel(getClasslistElementListeners());
+		AggregateModel model = new AggregateModel(
+				getClasslistElementListeners());
 		assertVisit(url, model);
 		BufferedWriter writer = new BufferedWriter(new StringWriter());
-		AggregateReport report = new AggregateReport(reports, writer);
+		AggregateReport report = new AggregateReport(reports, writer,
+				new URL[0]);
 		assertVisit(url, report);
 		writer.close();
 		System.out.println("Report initialization time : "
@@ -60,6 +68,27 @@ public class AggregateReportTest extends JayWalkerTestCase {
 		System.out.println("Report creation time : "
 				+ (new Date().getTime() - start.getTime()));
 		System.out.println(reportValue);
+	}
+
+	public void testShouldIgnoreVisitingArchive() throws IOException,
+			URISyntaxException {
+		URL url = Path.FILE_TEST1_JAR.toURL();
+		ClasslistElementListener listener = new ClasslistElementListener() {
+			public void classlistElementVisited(ClasslistElementEvent event) {
+				throw new IllegalStateException("should not be called");
+			}
+
+			public void lastClasslistElementVisited() {
+			}
+		};
+		final ClasslistElement element = createClasslistElement(url);
+		ClasslistElement[] elements = new ClasslistElement[] { element };
+		AggregateModel visitor = new AggregateModel(
+				getClasslistElementListeners());
+		ClasslistElementEvent event = new ClasslistElementEvent(
+				new ClasslistElementFactory().create(Path.FILE_TEST1_JAR
+						.toURL()));
+		visitor.classlistElementVisited(event);
 	}
 
 	private Report createDependencyReport() {

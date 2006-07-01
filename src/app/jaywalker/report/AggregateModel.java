@@ -21,7 +21,7 @@ import jaywalker.classlist.ClasslistElementListener;
 public class AggregateModel implements ClasslistElementListener {
 	private final ClasslistElementListener[] models;
 
-	public AggregateModel(ClasslistElementListener [] listeners) {
+	public AggregateModel(ClasslistElementListener[] listeners) {
 		models = listeners;
 	}
 

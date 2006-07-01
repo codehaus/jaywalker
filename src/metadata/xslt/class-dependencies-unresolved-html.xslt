@@ -5,9 +5,9 @@
     <xsl:key name="distinct-classname" match="element[@type='class']/dependency[@type='unresolved']" use="@value"/>
     <xsl:template match="report">
         <h3>Class Unresolved Dependencies</h3>
-        <table>
-            <th>Class Name</th>
-            <th>URL</th>
+        <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
+            <th>Unresolved Class Name</th>
+            <th>Dependent</th>
             <xsl:for-each
                 select="//dependency[generate-id()=generate-id(key('distinct-classname',@value))]">
                 <xsl:variable name="classname" select="@value"/>
