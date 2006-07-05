@@ -45,6 +45,10 @@ public class ClassElementFile {
 
 	private String[] interfaces;
 
+	private boolean isInterface;
+
+	private boolean isAbstract;
+
 	private String[] dependencies;
 
 	public ClassElementFile(URL url, JavaClass javaClass) {
@@ -84,6 +88,8 @@ public class ClassElementFile {
 	private void initializeWith(JavaClass javaClass) {
 		className = javaClass.getClassName();
 		superClassName = javaClass.getSuperclassName();
+		isInterface = javaClass.isInterface();
+		isAbstract = javaClass.isAbstract();
 		interfaces = javaClass.getInterfaceNames();
 		Set set = new HashSet();
 		DependencyVisitor dependencyVisitor = new DependencyVisitor();
@@ -109,6 +115,12 @@ public class ClassElementFile {
 		idx = nextIdx + 1;
 		nextIdx = toNextIdx(classInfo, idx);
 		superClassName = classInfo.substring(idx, nextIdx);
+		idx = nextIdx + 1;
+		nextIdx = toNextIdx(classInfo, idx);
+		isInterface = toBooleanValue(classInfo, idx, nextIdx);
+		idx = nextIdx + 1;
+		nextIdx = toNextIdx(classInfo, idx);
+		isAbstract = toBooleanValue(classInfo, idx, nextIdx);
 		idx = nextIdx + 1;
 		interfaces = split(classInfo, idx);
 		idx = skipNextList(classInfo, idx);
@@ -202,11 +214,21 @@ public class ClassElementFile {
 		StringBuffer sb = new StringBuffer();
 		sb.append(className).append("|");
 		sb.append(superClassName).append("|");
+		sb.append(toIntValue(isInterface)).append("|");
+		sb.append(toIntValue(isAbstract)).append("|");
 		sb.append(denormalize(interfaces, "|"));
 		sb.append(denormalize(dependencies, "|"));
 		return sb.toString();
 	}
 
+	private int toIntValue(boolean value) {
+		return (value) ? 1 : 0;
+	}
+
+	private boolean toBooleanValue(String classInfo, int idx, int nextIdx) {
+		return classInfo.substring(idx, nextIdx).equals("1");
+	}
+	
 	private String denormalize(String[] values, String delimiter) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(values.length).append(delimiter);

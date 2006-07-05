@@ -159,7 +159,7 @@ public class ReportExecutor {
 		sb.append("<h3>Classlists</h3>");
 		sb.append("<table width=\"95%\" cellspacing=\"2\" ");
 		sb.append("cellpadding=\"5\" border=\"0\" class=\"details\">");
-		sb.append("<th>Classlist</th><th>Value</th>");
+		sb.append("<tr><th>Classlist</th><th>Value</th></tr>");
 		sb.append(createKeyValueTableRow("default (deep)", deepValue));
 		sb.append(createKeyValueTableRow("shallow", shallowValue));
 		sb.append(createKeyValueTableRow("system", systemValue));

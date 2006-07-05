@@ -1,7 +1,6 @@
 package jaywalker.report;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -12,9 +11,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 
+import jaywalker.util.JayWalkerRuntime;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.StringHelper;
 import jaywalker.util.URLHelper;
@@ -158,19 +156,7 @@ public class DependencyHelper {
 	}
 
 	private boolean isJayWalkerJarFile(File file) {
-		try {
-			JarFile jarFile = new JarFile(file);
-			Manifest manifest = jarFile.getManifest();
-			String value = manifest.getMainAttributes().getValue(
-					"Implementation-Title");
-			if (value == null) {
-				return false;
-			}
-			return value.equals("jaywalker");
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
+		return new JayWalkerRuntime(file).getTitle().equals("jaywalker");
 	}
 
 	private String toPackageName(String className) {

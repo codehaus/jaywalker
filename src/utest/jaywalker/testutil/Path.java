@@ -37,7 +37,7 @@ public class Path {
     public final static File FILE_TEST_EAR = new File(DIR_BUILD_JAR, "jaywalker-test.ear");
     public final static File FILE_CLASSLIST_ELEMENT_FACTORY_CLASS = new File(DIR_BUILD_APP, toFilename(ClasslistElementFactory.class));
     public final static File FILE_CLASSLIST_ELEMENT_VISITOR_CLASS = new File(DIR_BUILD_APP, toFilename(ClasslistElementVisitor.class));
-
+	
     static {
         DIR_TEMP.mkdirs();
     }
