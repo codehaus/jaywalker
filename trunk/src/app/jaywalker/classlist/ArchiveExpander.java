@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
@@ -30,6 +31,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 import jaywalker.util.FileSystem;
+import jaywalker.util.JayWalkerRuntime;
 import jaywalker.util.URLHelper;
 import jaywalker.util.ZipFileVisitor;
 import jaywalker.util.ZipFileVisitor.ZipEntryListener;
@@ -57,6 +59,7 @@ public class ArchiveExpander {
 		File archiveFile = cache.getArchiveFile();
 		File archiveIdx = helper.toArchiveIdx(cache.getURL());
 		File archiveCls = helper.toArchiveCls(cache.getURL());
+		File archiveVersion = helper.toArchiveVersion(cache.getURL());
 
 		final String absolutePath = archiveFile.getAbsolutePath();
 
@@ -64,6 +67,9 @@ public class ArchiveExpander {
 			throw new FileNotFoundException("File not found : "
 					+ archiveFile.getAbsolutePath());
 		}
+		
+		cache.create(archiveVersion);
+		createArchiveVersion(archiveVersion);
 
 		// Look at archive...
 		ZipFile zip = new ZipFile(absolutePath);
@@ -88,11 +94,28 @@ public class ArchiveExpander {
 
 	}
 
+	private void createArchiveVersion(File archiveVersion) {
+		try {
+			Properties properties = new Properties();
+			properties.setProperty("version", new JayWalkerRuntime()
+					.getVersion());
+			properties.store(new FileOutputStream(archiveVersion),
+					archiveVersion.getAbsolutePath());
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		} catch (URISyntaxException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	private ZipEntryListener createZipEntryListener(final ArchiveCache cache,
 			final Properties idxProperties, final Properties clsProperties,
 			final FileChannel outputChannel) {
 		return new ZipEntryListener() {
 			private long offset;
+
 			private URLHelper urlHelper = new URLHelper();
 
 			public void visit(ZipFile zipFile, ZipEntry zipEntry)
@@ -102,8 +125,7 @@ public class ArchiveExpander {
 				final long size = zipEntry.getSize();
 				if (!zipEntry.isDirectory()) {
 
-					if (urlHelper.isLegalArchiveExtension(zipEntry
-							.getName())) {
+					if (urlHelper.isLegalArchiveExtension(zipEntry.getName())) {
 						File cachedFile = cache.createFile(filename);
 						FileSystem.writeInputStreamToFile(zipFile
 								.getInputStream(zipEntry), size, cachedFile);

@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.RandomAccessFile;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
@@ -14,6 +15,7 @@ import java.util.Properties;
 
 import jaywalker.util.FileSystem;
 import jaywalker.util.HashCode;
+import jaywalker.util.JayWalkerRuntime;
 import jaywalker.util.URLHelper;
 
 import org.apache.bcel.classfile.ClassParser;
@@ -25,6 +27,8 @@ public class ArchiveCache {
 
 	private File archiveFile;
 
+	private File archiveVersion;
+
 	private File archiveLock;
 
 	private final URL url;
@@ -34,13 +38,42 @@ public class ArchiveCache {
 		URLHelper urlHelper = new URLHelper();
 		archiveDir = urlHelper.toArchiveDir(url);
 		archiveFile = urlHelper.toArchiveFile(url);
+		archiveVersion = urlHelper.toArchiveVersion(url);
 		archiveLock = urlHelper.toArchiveLock(archiveDir);
 	}
 
 	public boolean isStale() {
 		return archiveDir.exists()
-				&& (archiveDir.lastModified() <= archiveFile.lastModified() || archiveLock
-						.exists());
+				&& (hasArchiveChangedRecently()
+						|| hasArchiveExpandingFailedLast() || isVersionMismatch());
+	}
+
+	private boolean hasArchiveExpandingFailedLast() {
+		return archiveLock.exists();
+	}
+
+	private boolean hasArchiveChangedRecently() {
+		return archiveDir.lastModified() <= archiveFile.lastModified();
+	}
+
+	private boolean isVersionMismatch() {
+		try {
+			return !new JayWalkerRuntime().getVersion().equals(getVersion());
+		} catch (URISyntaxException e) {
+			return true;
+		}
+	}
+
+	private String getVersion() {
+		try {
+			Properties properties = new Properties();
+			properties.load(new FileInputStream(archiveVersion));
+			return properties.getProperty("version");
+		} catch (FileNotFoundException e) {
+			return "";
+		} catch (IOException e) {
+			return "";
+		}
 	}
 
 	public void delete() {

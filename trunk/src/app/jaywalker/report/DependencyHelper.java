@@ -55,15 +55,6 @@ public class DependencyHelper {
 		set.add(setItem);
 	}
 
-	private String asResourceName(String resource) {
-		if (!resource.startsWith("/")) {
-			resource = "/" + resource;
-		}
-		resource = resource.replace('.', '/');
-		resource = resource + ".class";
-		return resource;
-	}
-
 	public void resolveSystemClasses() {
 		final Set keySet = unresolvedUrlByClassNameMap.keySet();
 		final String[] classNames = (String[]) keySet.toArray(new String[keySet
@@ -71,7 +62,7 @@ public class DependencyHelper {
 		ClassLoader cl = createClassLoaderForClasspath();
 		for (int i = 0; i < classNames.length; i++) {
 			String className = classNames[i];
-			String resourceName = asResourceName(className);
+			String resourceName = HELPER_URL.asResourceName(className);
 			try {
 				Class clazz = Class.forName(className, true, cl);
 				URL url = clazz.getResource(resourceName);
