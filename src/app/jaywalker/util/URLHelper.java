@@ -191,6 +191,11 @@ public class URLHelper {
 				+ ".idx");
 	}
 
+	public File toArchiveVersion(URL baseUrl) throws MalformedURLException {
+		return new File(toArchiveDir(baseUrl), toArchiveFile(baseUrl).getName()
+				+ ".ver");
+	}
+
 	public File toArchiveLock(File archiveDir) {
 		return new File(archiveDir.getParentFile(), archiveDir.getName()
 				+ ".lck");
@@ -295,6 +300,20 @@ public class URLHelper {
 
 	public boolean isArchivedFile(URL url) {
 		return url.getProtocol().startsWith("jar");
+	}
+
+	public URL toResource(Class resourceClass) {
+		return URLHelper.class.getResource(asResourceName(resourceClass
+				.getName()));
+	}
+
+	public String asResourceName(String resource) {
+		if (!resource.startsWith("/")) {
+			resource = "/" + resource;
+		}
+		resource = resource.replace('.', '/');
+		resource = resource + ".class";
+		return resource;
 	}
 
 }
