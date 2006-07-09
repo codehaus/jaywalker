@@ -36,20 +36,29 @@ public class DependencyReportConfiguration implements Configuration {
 	private ReportSetupMap createReportTagMap(DependencyModel dependencyModel) {
 		ReportSetupMap dependencyReportTagMap = new ReportSetupMap();
 
-		Outputter[] archiveDependencyOutputters = createXsltChainedXsltDotOutputters(
-				"archive-dependencies-resolved-html.xslt",
-				"archive-dependencies-resolved-dot.xslt",
-				"archive.resolved.dot");
+		Outputter[] archiveDependencyOutputters = new Outputter[] {
+				new XsltTransformer("archive-dependencies-metrics-html.xslt"),
+				new XsltTransformer("archive-dependencies-resolved-html.xslt"),
+				new ChainedOutputter(new Outputter[] {
+						new XsltTransformer(
+								"archive-dependencies-resolved-dot.xslt"),
+						new DotOutputterFactory()
+								.create("archive.resolved.dot") }) };
 
 		dependencyReportTagMap.put("dependency", "archive",
 				new ContainerDependencyTag(dependencyModel),
 				archiveDependencyOutputters);
 
-		Outputter[] packageDependencyOutputters = createXsltChainedXsltDotOutputters(
-				"package-dependencies-resolved-html.xslt",
-				"package-dependencies-resolved-dot.xslt",
-				"package.resolved.dot");
 		
+		Outputter[] packageDependencyOutputters = new Outputter[] {
+				new XsltTransformer("package-dependencies-metrics-html.xslt"),
+				new XsltTransformer("package-dependencies-resolved-html.xslt"),
+				new ChainedOutputter(new Outputter[] {
+						new XsltTransformer(
+								"package-dependencies-resolved-dot.xslt"),
+						new DotOutputterFactory()
+								.create("package.resolved.dot") }) };
+
 		dependencyReportTagMap.put("dependency", "package",
 				new PackageDependencyTag(dependencyModel),
 				packageDependencyOutputters);
@@ -60,8 +69,7 @@ public class DependencyReportConfiguration implements Configuration {
 
 		Outputter[] archiveCycleOutputters = createXsltChainedXsltDotOutputters(
 				"archive-dependencies-cycle-html.xslt",
-				"archive-dependencies-cycle-dot.xslt",
-				"archive.cycle.dot");
+				"archive-dependencies-cycle-dot.xslt", "archive.cycle.dot");
 
 		dependencyReportTagMap.put("cycle", "archive",
 				new ContainerCyclicDependencyTag(dependencyModel),
@@ -69,8 +77,7 @@ public class DependencyReportConfiguration implements Configuration {
 
 		Outputter[] packageCycleOutputters = createXsltChainedXsltDotOutputters(
 				"package-dependencies-cycle-html.xslt",
-				"package-dependencies-cycle-dot.xslt",
-				"package.cycle.dot");
+				"package-dependencies-cycle-dot.xslt", "package.cycle.dot");
 
 		dependencyReportTagMap.put("cycle", "package",
 				new PackageCyclicDependencyTag(dependencyModel),
@@ -78,8 +85,7 @@ public class DependencyReportConfiguration implements Configuration {
 
 		Outputter[] classCycleOutputters = createXsltChainedXsltDotOutputters(
 				"class-dependencies-cycle-html.xslt",
-				"class-dependencies-cycle-dot.xslt",
-				"class.cycle.dot");
+				"class-dependencies-cycle-dot.xslt", "class.cycle.dot");
 
 		dependencyReportTagMap.put("cycle", "class",
 				new ElementCyclicDependencyTag(dependencyModel),
@@ -112,5 +118,5 @@ public class DependencyReportConfiguration implements Configuration {
 						new XsltTransformer(chainedXsltFilename),
 						new DotOutputterFactory().create(chainedDotFilename) }) };
 	}
-	
+
 }

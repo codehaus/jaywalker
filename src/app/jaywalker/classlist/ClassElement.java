@@ -43,7 +43,7 @@ public class ClassElement extends ClasslistElement {
 	}
 
 	public String getName() {
-		return getClassFile().getClassName();
+		return getClassElementFile().getClassName();
 	}
 
 	public String getPackageName() {
@@ -55,18 +55,18 @@ public class ClassElement extends ClasslistElement {
 	}
 
 	public String getSuperName() {
-		return getClassFile().getSuperClassName();
+		return getClassElementFile().getSuperClassName();
 	}
 
 	public String[] getInterfaceNames() {
-		return getClassFile().getInterfaceNames();
+		return getClassElementFile().getInterfaceNames();
 	}
 
 	public String[] getDependencies() {
 		return file.getDependencies();
 	}
 
-	private ClassElementFile getClassFile() {
+	private ClassElementFile getClassElementFile() {
 		if (file == null) {
 			file = new ClassElementFile(url);
 		}
@@ -97,6 +97,13 @@ public class ClassElement extends ClasslistElement {
 	}
 
 	public String getType() {
+		ClassElementFile classElementFile = getClassElementFile();
+		if (classElementFile.isInterface()) {
+			return "interface";
+		}
+		if (classElementFile.isAbstract()) {
+			return "abstract";
+		}
 		return "class";
 	}
 

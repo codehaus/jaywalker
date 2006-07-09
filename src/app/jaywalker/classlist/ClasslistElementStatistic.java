@@ -15,12 +15,6 @@
  */
 package jaywalker.classlist;
 
-import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
-
-import jaywalker.util.URLHelper;
-
 public class ClasslistElementStatistic implements ClasslistElementListener {
 
 	private class Counter {
@@ -41,10 +35,6 @@ public class ClasslistElementStatistic implements ClasslistElementListener {
 
 	private Counter fileCntr = new Counter();
 
-	private Map fileCounterMap = new HashMap();
-
-	private Map directoryCounterMap = new HashMap();
-
 	public void classlistElementVisited(ClasslistElementEvent event) {
 		final ClasslistElement element = event.getElement();
 		final Class clazz = element.getClass();
@@ -52,25 +42,8 @@ public class ClasslistElementStatistic implements ClasslistElementListener {
 			archiveCntr.increment();
 		} else if (clazz == DirectoryContainer.class) {
 			dirCntr.increment();
-			incrementCounterIfOfType(element.getContainer(),
-					directoryCounterMap, DirectoryContainer.class);
 		} else {
 			fileCntr.increment();
-			incrementCounterIfOfType(element.getContainer(), fileCounterMap,
-					DirectoryContainer.class);
-			// new URLHelper().toBaseContainerUrl(element.getURL());
-		}
-	}
-
-	private void incrementCounterIfOfType(ClasslistElement element, Map map,
-			Class clazz) {
-		if (element.getClass() == clazz) {
-			Counter counter = (Counter) map.get(element.getURL());
-			if (counter == null) {
-				counter = new Counter();
-				map.put(element.getURL(), counter);
-			}
-			counter.increment();
 		}
 	}
 
@@ -82,13 +55,4 @@ public class ClasslistElementStatistic implements ClasslistElementListener {
 				+ fileCntr + " files";
 	}
 
-	public long getFileCountFor(URL url) {
-		Counter counter = (Counter) fileCounterMap.get(url);
-		return counter.get();
-	}
-
-	public long getDirectoryCountFor(URL url) {
-		Counter counter = (Counter) directoryCounterMap.get(url);
-		return counter.get();
-	}
 }

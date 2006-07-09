@@ -228,7 +228,7 @@ public class ClassElementFile {
 	private boolean toBooleanValue(String classInfo, int idx, int nextIdx) {
 		return classInfo.substring(idx, nextIdx).equals("1");
 	}
-	
+
 	private String denormalize(String[] values, String delimiter) {
 		StringBuffer sb = new StringBuffer();
 		sb.append(values.length).append(delimiter);
@@ -236,6 +236,14 @@ public class ClassElementFile {
 			sb.append(values[i]).append(delimiter);
 		}
 		return sb.toString();
+	}
+
+	public boolean isInterface() {
+		return isInterface;
+	}
+	
+	public boolean isAbstract() {
+		return isAbstract;
 	}
 
 }

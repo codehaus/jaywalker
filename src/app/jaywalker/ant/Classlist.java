@@ -16,10 +16,7 @@
 package jaywalker.ant;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URL;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.types.FileSet;
 
 public class Classlist extends FileSet {

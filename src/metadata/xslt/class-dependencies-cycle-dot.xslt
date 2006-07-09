@@ -7,7 +7,7 @@
         <xsl:apply-templates/>
         <xsl:text disable-output-escaping="yes">}</xsl:text>
     </xsl:template>
-    <xsl:template match="element[@type='class']/dependency[@type='cycle']">
+    <xsl:template match="element[@type='class' or @type='interface' or @type='abstract']/dependency[@type='cycle']">
         <xsl:variable name="first-dependency-url" select="element/@url"/>
         <xsl:for-each select="element">
             <xsl:variable name="current-dependency-url" select="@url"/>

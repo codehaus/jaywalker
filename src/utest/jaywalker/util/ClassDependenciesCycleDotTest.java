@@ -2,7 +2,7 @@ package jaywalker.util;
 
 import java.io.IOException;
 
-public class ClassDependenciesCycleDotTest extends DotTestCase {
+public class ClassDependenciesCycleDotTest extends XsltTestCase {
 
 	public void testShouldCreateEmptyDigraph() throws IOException {
 		String input = "<?xml version=\"1.0\"?>\n<report>\n</report>";
