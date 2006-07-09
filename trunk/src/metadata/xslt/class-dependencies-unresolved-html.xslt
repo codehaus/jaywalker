@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="html"/>
     <xsl:strip-space elements="*"/>
-    <xsl:key name="distinct-classname" match="element[@type='class']/dependency[@type='unresolved']" use="@value"/>
+    <xsl:key name="distinct-classname" match="element[@type='class' or @type='interface' or @type='abstract']/dependency[@type='unresolved']" use="@value"/>
     <xsl:template match="report">
         <h3>Class Unresolved Dependencies</h3>
         <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">

@@ -14,7 +14,7 @@ public class ClassElementTag implements ClasslistElementTag {
 		final ClassElement classElement = (ClassElement) element;
 		final StringBuffer sb = new StringBuffer();
 		final URL url = classElement.getURL();
-		sb.append("<element type=\"class\" url=\"");
+		sb.append("<element type=\"" + element.getType() + "\" url=\"");
 		sb.append(url.toString());
 		sb.append("\" value=\"");
 		sb.append(classElement.getName());

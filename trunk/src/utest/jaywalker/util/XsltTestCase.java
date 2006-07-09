@@ -9,7 +9,7 @@ import jaywalker.report.InMemoryReportFile;
 import jaywalker.report.ReportFile;
 import junit.framework.TestCase;
 
-public class DotTestCase extends TestCase {
+public class XsltTestCase extends TestCase {
 
 	protected void assertOutputEquals(String xsltFilename, String input, String expected) throws IOException {
 		ReportFile reportFile = new InMemoryReportFile();
@@ -23,8 +23,8 @@ public class DotTestCase extends TestCase {
 		OutputStream outputStream = new WriterOutputStream(stringWriter);
 		transformer.write(outputStream);
 		String actual = stringWriter.getBuffer().toString();
-		// outputBytes(expected);
-		// outputBytes(actual);
+		//outputBytes(expected);
+		//outputBytes(actual);
 		assertEquals(expected, actual);
 	}
 

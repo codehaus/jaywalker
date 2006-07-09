@@ -22,7 +22,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class URLHelper {
-	private final static StringHelper stringHelper = new StringHelper();
+	private final static StringHelper HELPER_STRING = new StringHelper();
 
 	/**
 	 * Returns the URL encoding of the classlist element in the folowing format:
@@ -163,7 +163,7 @@ public class URLHelper {
 
 	public URL appendIfMissing(String suffix, URL target) {
 		String urlString = target.toString();
-		urlString = stringHelper.appendIfMissing("/", urlString);
+		urlString = HELPER_STRING.appendIfMissing("/", urlString);
 		try {
 			return new URL(urlString);
 		} catch (MalformedURLException e) {
@@ -181,7 +181,7 @@ public class URLHelper {
 	}
 
 	public URL toArchiveURL(URL url) throws MalformedURLException {
-		String urlString = stringHelper
+		String urlString = HELPER_STRING
 				.prependIfMissing("jar:", url.toString());
 		return new URL(urlString + "!/");
 	}
@@ -253,7 +253,7 @@ public class URLHelper {
 	public String[] prependUrlString(URL baseUrl, String[] filenames) {
 		String urlString = baseUrl.toString();
 		if (new URLHelper().isLegalArchiveExtension(baseUrl)) {
-			urlString = stringHelper.prependIfMissing("jar:", urlString);
+			urlString = HELPER_STRING.prependIfMissing("jar:", urlString);
 			urlString += "!/";
 		} else {
 			urlString += "/";

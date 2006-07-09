@@ -10,10 +10,10 @@
             <xsl:apply-templates/>
         </table>
     </xsl:template>
-    <xsl:template match="element[@type='class']">
+    <xsl:template match="element[@type='class' or @type='interface' or @type='abstract']">
         <xsl:if test="count(child::dependency)>0">
             <xsl:variable name="element-dependencies"
-                select="child::dependency[@type='cycle']/element[@type='class']"/>
+                select="child::dependency[@type='cycle']/element[@type='class' or @type='interface' or @type='abstract']"/>
             <xsl:if test="count($element-dependencies)>0">
                 <xsl:text disable-output-escaping="yes">&#10;&lt;tr&gt;</xsl:text>
                 <xsl:text disable-output-escaping="yes">&lt;td rowspan="</xsl:text>
