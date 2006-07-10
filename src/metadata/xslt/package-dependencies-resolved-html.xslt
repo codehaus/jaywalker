@@ -11,6 +11,7 @@
             <th>Dependency</th>
             <xsl:for-each
                 select="//container[generate-id()=generate-id(key('arc',concat(../../@value,':',@value)))]">
+                <xsl:sort select="../../@value"/>
                 <xsl:variable name="source">
                     <xsl:choose>
                         <xsl:when test="not(../../@value)">&lt;default&gt;</xsl:when>

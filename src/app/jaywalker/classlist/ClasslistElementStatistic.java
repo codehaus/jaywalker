@@ -27,6 +27,10 @@ public class ClasslistElementStatistic implements ClasslistElementListener {
 		public long get() {
 			return value;
 		}
+		
+		public String toString() {
+			return String.valueOf(value);
+		}
 	}
 
 	private Counter archiveCntr = new Counter();

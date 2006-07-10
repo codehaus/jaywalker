@@ -9,6 +9,14 @@
             <th>Class Name</th>
             <th>Conflict</th>
             <th>serialVersionUid</th>
+            <xsl:choose>
+                <xsl:when test="count(//collision) = 0">
+				    <tr><td colspan="3"><i>
+				    <xsl:text>No Conflicts Found</xsl:text>
+				    </i></td></tr>
+                </xsl:when>
+                <xsl:otherwise>
+            
             <xsl:for-each
                 select="//element[generate-id()=generate-id(key('distinct-classname',@value))]">
                 <xsl:if test="count(child::collision/conflict) > 0">
@@ -37,6 +45,8 @@
                     </xsl:for-each>
                 </xsl:if>
             </xsl:for-each>
+                </xsl:otherwise>
+            </xsl:choose>
         </table>
     </xsl:template>
 </xsl:stylesheet>
