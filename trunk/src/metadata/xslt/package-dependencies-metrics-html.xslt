@@ -15,9 +15,7 @@
             <th>Instability</th>
             <th>Distance</th>
             </tr>
-            <xsl:apply-templates>
-                <xsl:sort select="@value"/>
-            </xsl:apply-templates>
+            <xsl:apply-templates/>
         </table>
     </xsl:template>
     <xsl:template match="container">

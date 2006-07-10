@@ -7,7 +7,9 @@
         <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
             <th>Archive</th>
             <th>Dependency</th>
-            <xsl:apply-templates/>
+            <xsl:apply-templates>
+                <xsl:sort select="@url"/>
+            </xsl:apply-templates>
         </table>
     </xsl:template>
     <xsl:template match="container[@type='archive']">
@@ -21,6 +23,7 @@
             <xsl:value-of select="@url"/>
             <xsl:text disable-output-escaping="yes">&lt;/td&gt;</xsl:text>
             <xsl:for-each select="$container-dependencies">
+                <xsl:sort select="@url"/>
                 <td>
                     <xsl:value-of select="@url"/>
                 </td>
