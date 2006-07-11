@@ -28,6 +28,7 @@
     </xsl:template>
     
     <xsl:template match="//container[generate-id()=generate-id(key('arc',concat(../../@value,':',@value)))]">
+
         <xsl:variable name="source">
             <xsl:choose>
                 <xsl:when test="not(../../@value)">&lt;default&gt;</xsl:when>
@@ -51,8 +52,17 @@
             </xsl:otherwise>
         </xsl:choose>
    
+        <xsl:variable name="target">
+            <xsl:choose>
+                <xsl:when test="not(@value) or string-length(@value) = 0">&lt;default&gt;</xsl:when>
+                <xsl:otherwise>
+                     <xsl:value-of select="@value"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
             <td>
-                <xsl:value-of select="@value"/>
+                <xsl:value-of select="$target"/>
             </td>
    
         <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
