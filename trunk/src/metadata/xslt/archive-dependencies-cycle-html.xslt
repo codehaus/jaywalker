@@ -5,9 +5,20 @@
     <xsl:template match="report">
         <h3>Archive Cyclic Dependencies</h3>
         <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
+            <tr>
             <th>Archive</th>
             <th>Cycle</th>
-            <xsl:apply-templates/>
+            </tr>
+            <xsl:choose>
+                <xsl:when test="count(//dependency[@type='cycle']/container[@type='archive']) = 0">
+				    <tr><td colspan="2"><i>
+				    <xsl:text>No Cycles Found</xsl:text>
+				    </i></td></tr>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates/>
+                </xsl:otherwise>
+            </xsl:choose>
         </table>
     </xsl:template>
     <xsl:template match="container[@type='archive']">

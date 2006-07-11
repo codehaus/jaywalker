@@ -2,18 +2,7 @@ package jaywalker.util;
 
 import java.io.IOException;
 
-public class ArchiveDependenciesMetricsHtmlTest extends HtmlTestCase {
-
-	private static final String TITLE = "<h3>Archive Dependencies Metrics</h3>\r\n";
-
-	private static final String TABLE_HEADER = "<tr>\r\n"
-			+ "<th>Archive</th><th>Total Classes</th><th>Abstract Classes</th>"
-			+ "<th>Abstractness</th>" + "<th>Afferent</th>"
-			+ "<th>Efferent</th>" + "<th>Instability</th>"
-			+ "<th>Distance</th>" + "\r\n</tr>\r\n";
-
-	private static final String TABLE_START = TITLE + TAG_START_TABLE_DETAILS
-			+ TABLE_HEADER;
+public class ArchiveDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase {
 
 	private static final String SIMPLE_ARCHIVE = "<container type=\"archive\" url=\"archive\">"
 			+ "<element type=\"class\" url=\"url\"/>"
@@ -61,18 +50,29 @@ public class ArchiveDependenciesMetricsHtmlTest extends HtmlTestCase {
 			+ "<element type=\"abstract\" url=\"url\"/>"
 			+ "</container>";
 
-	public void testShouldCreateTableHeaderForNoData() throws IOException {
-		String input = "<?xml version=\"1.0\"?>\n<report>\n</report>";
-		String expected = TABLE_START + "</table>\r\n";
-		assertOutputEquals("archive-dependencies-metrics-html.xslt", input,
-				expected);
+	public String getTitleValue() {
+		return "Archive Dependencies Metrics";
+	}
+
+	public String[] getHeaderValues() {
+		return new String[] { "Archive", "Total Classes", "Abstract Classes",
+				"Abstractness", "Afferent", "Efferent", "Instability",
+				"Distance" };
+	}
+
+	public String getNoDataRowValue() {
+		return "No Archives Found";
+	}
+
+	public String getXsltFileName() {
+		return "archive-dependencies-metrics-html.xslt";
 	}
 
 	public void testShouldCreateTableWithTotalClassAndAbstractClassCountForOneArchive()
 			throws IOException {
 		String input = "<?xml version=\"1.0\"?><report>" + SIMPLE_ARCHIVE
 				+ "</report>";
-		String expected = TABLE_START
+		String expected = tableStart
 				+ "<tr>\r\n<td>archive</td><td>9</td><td>6</td><td>0.67</td><td>0</td><td>1</td><td>1</td><td>1.67</td>"
 				+ "\r\n</tr>\r\n" + "</table>\r\n";
 		assertOutputEquals("archive-dependencies-metrics-html.xslt", input,
@@ -83,7 +83,7 @@ public class ArchiveDependenciesMetricsHtmlTest extends HtmlTestCase {
 			throws IOException {
 		String input = "<?xml version=\"1.0\"?><report>" + SIMPLE_ARCHIVE
 				+ SIMPLE_ARCHIVE + "</report>";
-		String expected = TABLE_START
+		String expected = tableStart
 				+ "<tr>\r\n<td>archive</td><td>9</td><td>6</td><td>0.67</td><td>0</td><td>1</td><td>1</td><td>1.67</td>\r\n</tr>\r\n"
 				+ "<tr>\r\n<td>archive</td><td>9</td><td>6</td><td>0.67</td><td>0</td><td>1</td><td>1</td><td>1.67</td>\r\n</tr>\r\n"
 				+ "</table>\r\n";
@@ -95,7 +95,7 @@ public class ArchiveDependenciesMetricsHtmlTest extends HtmlTestCase {
 			throws IOException {
 		String input = "<?xml version=\"1.0\"?><report>" + NESTED_ARCHIVE
 				+ "</report>";
-		String expected = TABLE_START
+		String expected = tableStart
 				+ "<tr>\r\n<td>archive</td><td>9</td><td>6</td><td>0.67</td><td>0</td><td>5</td><td>1</td><td>1.67</td>\r\n</tr>\r\n"
 				+ "<tr>\r\n<td>archive2</td><td>2</td><td>2</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td>\r\n</tr>\r\n"
 				+ "<tr>\r\n<td>archive3</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td>\r\n</tr>\r\n"

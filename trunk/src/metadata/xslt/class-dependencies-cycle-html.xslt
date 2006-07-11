@@ -2,14 +2,29 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="html"/>
     <xsl:strip-space elements="*"/>
+    
     <xsl:template match="report">
         <h3>Class Cyclic Dependencies</h3>
         <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
-            <th>Archive</th>
+            <tr>
+            <th>Class</th>
             <th>Cycle</th>
-            <xsl:apply-templates/>
+            </tr>
+            <xsl:choose>
+                <xsl:when test="count(//element[@type='class' or @type='interface' or @type='abstract']/dependency[@type='cycle']/element[@type='class' or @type='interface' or @type='abstract']) = 0">
+				    <tr><td colspan="2"><i>
+				    <xsl:text>No Cycles Found</xsl:text>
+				    </i></td></tr>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates>
+                        <xsl:sort select="@url"/>
+                    </xsl:apply-templates>
+                </xsl:otherwise>
+            </xsl:choose>
         </table>
     </xsl:template>
+    
     <xsl:template match="element[@type='class' or @type='interface' or @type='abstract']">
         <xsl:if test="count(child::dependency)>0">
             <xsl:variable name="element-dependencies"

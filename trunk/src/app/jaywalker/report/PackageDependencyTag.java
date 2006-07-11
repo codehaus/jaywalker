@@ -43,7 +43,7 @@ public class PackageDependencyTag implements Tag {
 		for (int i = 0; i < packageNames.length; i++) {
 			sb.append(reportHelper.toSpaces(parentUrlStack.size() + 1));
 			sb.append("<container type=\"package\" value=\"");
-			sb.append(stringHelper.isEmpty(packageNames[i]) ? "default"
+			sb.append(stringHelper.isEmpty(packageNames[i]) ? ""
 					: packageNames[i]);
 			sb.append("\"/>\n");
 		}
