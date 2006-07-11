@@ -8,8 +8,7 @@
         <h3>Class Collisions</h3>
         <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
             <th>Class Name</th>
-            <th>Conflict</th>
-            <th>serialVersionUid</th>
+            <th>Collision</th>
             <xsl:choose>
                 <xsl:when test="count(//collision) = 0">
 				    <tr><td colspan="2"><i>
