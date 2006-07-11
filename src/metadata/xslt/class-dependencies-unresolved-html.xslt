@@ -14,7 +14,7 @@
             <xsl:choose>
                 <xsl:when test="count(//dependency[generate-id()=generate-id(key('distinct-classname',@value))]) = 0">
 				    <tr><td colspan="2"><i>
-				    <xsl:text>No Unresolved Dependencies Found</xsl:text>
+				    <xsl:text>No Missing Classes</xsl:text>
 				    </i></td></tr>
                 </xsl:when>
                 <xsl:otherwise>
