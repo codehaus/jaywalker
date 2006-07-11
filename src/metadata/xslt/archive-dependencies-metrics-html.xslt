@@ -15,11 +15,21 @@
             <th>Instability</th>
             <th>Distance</th>
             </tr>
-            <xsl:apply-templates>
-                <xsl:sort select="@url"/>
-            </xsl:apply-templates>
+            <xsl:choose>
+                <xsl:when test="count(//container[@type='archive'][name(..)='container' or name(..)='report']) = 0">
+				    <tr><td colspan="8"><i>
+				    <xsl:text>No Archives Found</xsl:text>
+				    </i></td></tr>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates>
+                        <xsl:sort select="@url"/>
+                    </xsl:apply-templates>
+                </xsl:otherwise>
+            </xsl:choose>
         </table>
     </xsl:template>
+
     <xsl:template match="container[@type='archive'][name(..)='container' or name(..)='report']">
 
         <xsl:variable name="url"

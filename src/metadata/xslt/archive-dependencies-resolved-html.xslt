@@ -2,16 +2,29 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="html"/>
     <xsl:strip-space elements="*"/>
+    
     <xsl:template match="report">
         <h3>Archive Resolved Dependencies</h3>
         <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
+            <tr>
             <th>Archive</th>
             <th>Dependency</th>
-            <xsl:apply-templates>
-                <xsl:sort select="@url"/>
-            </xsl:apply-templates>
+            </tr>
+            <xsl:choose>
+                <xsl:when test="count(//container[@type='archive']/dependency[@type='resolved']/container[@type='archive']) = 0">
+				    <tr><td colspan="2"><i>
+				    <xsl:text>No Archives Found</xsl:text>
+				    </i></td></tr>
+                </xsl:when>
+                <xsl:otherwise>
+                    <xsl:apply-templates>
+                        <xsl:sort select="@url"/>
+                    </xsl:apply-templates>
+                </xsl:otherwise>
+            </xsl:choose>
         </table>
     </xsl:template>
+    
     <xsl:template match="container[@type='archive']">
         <xsl:if test="count(child::dependency)>0">
             <xsl:text disable-output-escaping="yes">&#10;&lt;tr&gt;</xsl:text>

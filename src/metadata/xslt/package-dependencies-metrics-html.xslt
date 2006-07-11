@@ -15,7 +15,18 @@
             <th>Instability</th>
             <th>Distance</th>
             </tr>
-            <xsl:apply-templates/>
+            <xsl:choose>
+                <xsl:when test="count(//container/element[@type='class' or @type='interface' or @type='abstract']) = 0">
+				    <tr><td colspan="8"><i>
+				    <xsl:text>No Packages Found</xsl:text>
+				    </i></td></tr>
+                </xsl:when>
+                <xsl:otherwise>
+            <xsl:apply-templates>
+                <xsl:sort select="@url"/>
+                    </xsl:apply-templates>
+                </xsl:otherwise>
+            </xsl:choose>
         </table>
     </xsl:template>
     <xsl:template match="container">
