@@ -11,7 +11,7 @@ public class ClassDependenciesUnresolvedHtmlTest extends HtmlDetailTableTestCase
 	}
 
 	public String getNoDataRowValue() {
-		return "No Unresolved Dependencies Found";
+		return "No Missing Classes";
 	}
 
 	public String getXsltFileName() {
