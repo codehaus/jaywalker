@@ -4,12 +4,14 @@
     <xsl:strip-space elements="*"/>
     
     <xsl:template match="report">
-        <h3>Archive Resolved Dependencies</h3>
-        <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
+        <table id="table-3" class="sort-table">
+            <thead>
             <tr>
-            <th>Archive</th>
-            <th>Dependency</th>
+            <td>Archive</td>
+            <td>Dependency</td>
             </tr>
+            </thead>
+            <tbody>
             <xsl:choose>
                 <xsl:when test="count(//container[@type='archive']/dependency[@type='resolved']/container[@type='archive']) = 0">
 				    <tr><td colspan="2"><i>
@@ -22,6 +24,7 @@
                     </xsl:apply-templates>
                 </xsl:otherwise>
             </xsl:choose>
+            </tbody>
         </table>
     </xsl:template>
     

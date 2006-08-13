@@ -5,12 +5,14 @@
     <xsl:key name="distinct-classname" match="element[@type='class' or @type='interface' or @type='abstract']/dependency[@type='unresolved']" use="@value"/>
 
     <xsl:template match="report">
-        <h3>Class Unresolved Dependencies</h3>
-        <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
+        <table id="table-3" class="sort-table">
+        	<thead>
             <tr>
-            <th>Unresolved Class Name</th>
-            <th>Dependent</th>
+            <td>Unresolved Class Name</td>
+            <td>Dependent</td>
             </tr>
+            </thead>
+            <tbody>
             <xsl:choose>
                 <xsl:when test="count(//dependency[generate-id()=generate-id(key('distinct-classname',@value))]) = 0">
 				    <tr><td colspan="2"><i>
@@ -23,6 +25,7 @@
                     </xsl:apply-templates>
                 </xsl:otherwise>
             </xsl:choose>
+            </tbody>
         </table>
     </xsl:template>
     

@@ -5,11 +5,13 @@
     <xsl:key name="distinct-classname" match="element" use="@value"/>
 
     <xsl:template match="report">
-        <h3>Conflicts Dependencies</h3>
-        <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
-            <th>Class Name</th>
-            <th>Conflict</th>
-            <th>serialVersionUid</th>
+        <table id="table-3" class="sort-table">
+        	<thead>
+            <td>Class Name</td>
+            <td>Conflict</td>
+            <td>serialVersionUid</td>
+            </thead>
+            <tbody>
             <xsl:choose>
                 <xsl:when test="count(//collision) = 0">
 				    <tr><td colspan="3"><i>
@@ -20,6 +22,7 @@
                     <xsl:apply-templates/>
                 </xsl:otherwise>
             </xsl:choose>
+            </tbody>
         </table>
     </xsl:template>
     
