@@ -4,10 +4,10 @@ import java.io.IOException;
 
 public abstract class HtmlDetailTableTestCase extends XsltTestCase {
 
-	protected static final String TAG_START_TABLE_DETAILS = "<table class=\"details\" border=\"0\" cellpadding=\"5\" cellspacing=\"2\" width=\"95%\">\r\n";
+	protected static final String TAG_START_TABLE_DETAILS = "<table class=\"sort-table\" id=\"table-3\">\r\n";
 
-	protected final String tableStart = toTitle(getTitleValue())
-			+ TAG_START_TABLE_DETAILS + toTableHeader(getHeaderValues());
+	protected final String tableStart = TAG_START_TABLE_DETAILS
+			+ toTableHeader(getHeaderValues());
 
 	private final String rowNoData = toTableDataRow(getNoDataRowValue(),
 			getHeaderValues().length);
@@ -25,11 +25,11 @@ public abstract class HtmlDetailTableTestCase extends XsltTestCase {
 	}
 
 	public String toTableHeader(String[] values) {
-		StringBuffer sb = new StringBuffer("<tr>\r\n");
+		StringBuffer sb = new StringBuffer("<thead>\r\n<tr>\r\n");
 		for (int i = 0; i < values.length; i++) {
-			sb.append("<th>").append(values[i]).append("</th>");
+			sb.append("<td>").append(values[i]).append("</td>");
 		}
-		sb.append("\r\n</tr>\r\n");
+		sb.append("\r\n</tr>\r\n</thead>\r\n<tbody>\r\n");
 		return sb.toString();
 	}
 
@@ -43,7 +43,7 @@ public abstract class HtmlDetailTableTestCase extends XsltTestCase {
 
 	public void testShouldCreateTableHeaderForNoData() throws IOException {
 		String input = "<?xml version=\"1.0\"?>\n<report>\n</report>";
-		String expected = tableStart + rowNoData + "</table>\r\n";
+		String expected = tableStart + rowNoData + "</tbody>\r\n</table>\r\n";
 		assertOutputEquals(getXsltFileName(), input, expected);
 	}
 

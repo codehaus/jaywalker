@@ -1,0 +1,244 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+	"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<html>
+<head>
+<title>JayWalker Report</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+
+<!-- import webfx widgets -->
+<script type="text/javascript" src="local/webfxlayout.js"></script>
+<script type="text/javascript" src="local/webfxapi.js"></script>
+<script type="text/javascript" src="js/tabpane.js"></script>
+<script type="text/javascript" src="js/stringbuilder.js"></script>
+<script type="text/javascript" src="js/sortabletable.js"></script>
+
+
+<!-- import stylesheets -->
+<link type="text/css" rel="stylesheet" href="css/tab.css" />
+<link type="text/css" rel="styleSheet" href="css/sortabletable.css" />
+<link type="text/css" rel="styleSheet" href="css/override.css" />
+
+
+</head>
+<body>
+
+
+<h2>JayWalker Report</h2>
+
+<script type="text/javascript" src="js/tablesetup.js"></script>
+
+<!-- begin tab pane -->
+<div class="tab-pane" id="article-tab">
+
+<script type="text/javascript">
+var tabPane;
+var archiveTabPane;
+var packageTabPane;
+var classTabPane;
+
+tabPane = new WebFXTabPane( document.getElementById( "article-tab" ), true );
+</script>
+
+<!-- begin Archive tab -->
+<div class="tab-page" id="archive-page">
+<h2 class="tab">Archive</h2>
+
+<script type="text/javascript">
+tabPane.addTabPage( document.getElementById( "archive-page" ) );
+document.write(sb.toString());
+</script>
+
+<br/>
+
+<!-- begin packageTabPane tab -->
+<div class="tab-pane" id="archiveTabPane">
+
+<script type="text/javascript">
+archiveTabPane = new WebFXTabPane( document.getElementById( "archiveTabPane" ), true );
+</script>
+
+<!-- begin Metrics page -->
+<div class="tab-page" id="archive-metrics-page">
+<h2 class="tab">Metrics</h2>
+
+<script type="text/javascript">
+archiveTabPane.addTabPage( document.getElementById( "archive-metrics-page" ) );
+document.write(sb.toString());
+</script>
+
+</div>
+<!-- end Metrics page -->
+
+<!-- begin Resolved page -->
+<div class="tab-page" id="archive-resolved-page">
+<h2 class="tab">Resolved</h2>
+
+<script type="text/javascript">
+archiveTabPane.addTabPage( document.getElementById( "archive-resolved-page" ) );
+document.write(sb.toString());
+</script>
+
+</div>
+<!-- end Resolved page -->
+
+<!-- begin Cycle page -->
+<div class="tab-page" id="archive-cycle-page">
+<h2 class="tab">Cycle</h2>
+
+<script type="text/javascript">
+archiveTabPane.addTabPage( document.getElementById( "archive-cycle-page" ) );
+document.write(sb.toString());
+</script>
+
+</div>
+<!-- end Cycle page -->
+
+
+</div>
+<!-- end archiveTabPane tab -->
+
+</div>
+<!-- end Archive tab -->
+
+<!-- begin Package page -->
+<div class="tab-page" id="package-page">
+<h2 class="tab">Package</h2>
+
+<script type="text/javascript">
+tabPane.addTabPage( document.getElementById( "package-page" ) );
+document.write(sb.toString());
+</script>
+
+<br/>
+
+<!-- begin packageTabPane tab -->
+<div class="tab-pane" id="packageTabPane">
+
+<script type="text/javascript">
+packageTabPane = new WebFXTabPane( document.getElementById( "packageTabPane" ), true );
+</script>
+
+<!-- begin Metrics page -->
+<div class="tab-page" id="package-metrics-page">
+<h2 class="tab">Metrics</h2>
+
+<script type="text/javascript">
+packageTabPane.addTabPage( document.getElementById( "package-metrics-page" ) );
+document.write(sb.toString());
+</script>
+
+</div>
+<!-- end Metrics page -->
+
+<!-- begin Resolved page -->
+<div class="tab-page" id="package-resolved-page">
+<h2 class="tab">Resolved</h2>
+
+<script type="text/javascript">
+packageTabPane.addTabPage( document.getElementById( "package-resolved-page" ) );
+document.write(sb.toString());
+</script>
+
+</div>
+<!-- end Resolved page -->
+
+</div>
+<!-- end packageTabPane tab -->
+
+<!-- begin Cycle page -->
+<div class="tab-page" id="package-cycle-page">
+<h2 class="tab">Cycle</h2>
+
+<script type="text/javascript">
+packageTabPane.addTabPage( document.getElementById( "package-cycle-page" ) );
+document.write(sb.toString());
+</script>
+
+</div>
+<!-- end Cycle page -->
+
+</div>
+<!-- end Package tab -->
+
+<!-- begin Class page -->
+<div class="tab-page" id="class-page">
+<h2 class="tab">Class</h2>
+
+<script type="text/javascript">
+tabPane.addTabPage( document.getElementById( "class-page" ) );
+document.write(sb.toString());
+</script>
+
+<br/>
+
+<!-- begin classTabPane tab -->
+<div class="tab-pane" id="classTabPane">
+
+<script type="text/javascript">
+classTabPane = new WebFXTabPane( document.getElementById( "classTabPane" ), true );
+</script>
+
+<!-- begin Collision page -->
+<div class="tab-page" id="collision-page">
+<h2 class="tab">Collision</h2>
+
+<script type="text/javascript">
+classTabPane.addTabPage( document.getElementById( "collision-page" ) );
+document.write(sb.toString());
+</script>
+
+</div>
+<!-- end Collision page -->
+
+<!-- begin Conflict page -->
+<div class="tab-page" id="conflict-page">
+<h2 class="tab">Conflict</h2>
+
+<script type="text/javascript">
+classTabPane.addTabPage( document.getElementById( "conflict-page" ) );
+document.write(sb.toString());
+</script>
+
+</div>
+<!-- end Conflict page -->
+
+<!-- begin Unresolved page -->
+<div class="tab-page" id="class-unresolved-page">
+<h2 class="tab">Unresolved</h2>
+
+<script type="text/javascript">
+classTabPane.addTabPage( document.getElementById( "class-unresolved-page" ) );
+document.write(sb.toString());
+</script>
+
+</div>
+<!-- end Unresolved page -->
+
+<!-- begin Cycle page -->
+<div class="tab-page" id="class-cycle-page">
+<h2 class="tab">Cycle</h2>
+
+<script type="text/javascript">
+classTabPane.addTabPage( document.getElementById( "class-cycle-page" ) );
+document.write(sb.toString());
+</script>
+
+</div>
+<!-- end Cycle page -->
+
+</div>
+<!-- end classTabPane tab -->
+
+</div>
+<!-- end Class pane -->
+
+</div>
+<!-- end tabPane pane -->
+
+<!-- initialize sortable table -->
+<script type="text/javascript" src="js/sorttable.js"></script>
+
+</body>
+</html>

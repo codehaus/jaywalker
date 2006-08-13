@@ -1,0 +1,102 @@
+html, body {
+	background:	ThreeDFace;
+	font-family:	Verdana, Helvetica, Arial, Sans-Serif;
+	font:			Message-Box;
+
+}
+
+code {
+	font-size:	1em;
+}
+
+
+form {
+	margin:		0;
+	padding:	0;
+}
+
+/* over ride styles from webfxlayout */
+
+.dynamic-tab-pane-control.tab-pane {
+	margin-left:	0px;
+	margin-right:	0px;
+	width: 100%;
+	height: 800;
+}
+
+.dynamic-tab-pane-control .tab-page {
+	margin-left:	10px;
+	margin-right:	10px;
+	height:		800;
+	overflow:	hidden;
+}
+
+
+.dynamic-tab-pane-control .tab-page .dynamic-tab-pane-control .tab-page {
+	margin-left:	0px;
+	margin-right:	0px;
+}
+
+.dynamic-tab-pane-control h2 {
+	text-align:	center;
+	width:		auto;
+}
+
+.dynamic-tab-pane-control h2 a {
+	display:	inline;
+	width:		auto;
+}
+
+.dynamic-tab-pane-control a:hover {
+	background: transparent;
+}
+
+.dynamic-tab-pane-control .tab-page h2 {
+	text-align:	left;
+}
+
+.dynamic-tab-pane-control .tab-row .tab {
+	margin-left:	10px;
+	margin-right:	-10px;
+}
+
+.dynamic-tab-pane-control .tab-row .tab.selected {
+	margin-left:	10px;
+	margin-right:	-10px;
+
+}
+
+/* over ride styles from scrolltable */
+
+.sort-table {
+	margin:		0;
+	width:		100%;
+	height:		200px;
+}
+
+.sort-table tbody {
+	height:		200px;
+	overflow-x:	hidden;
+	overflow-y:	visible;
+}
+
+.sort-table td {
+	font:			11px Tahoma;
+}
+
+.sort-table thead td {
+	background-color:	#F1F1ED;
+	font:			11px Tahoma;
+	
+}
+
+/* add alternate row color scheme */
+
+.even {
+	background:	#eee;
+}
+
+.odd {
+
+}
+

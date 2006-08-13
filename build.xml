@@ -197,6 +197,9 @@
 			</filterset>
 		</copy>
 		<mkdir dir="build/dist" />
+		<zip destfile="build/dist/report.zip">
+			<zipfileset dir="src/metadata/report" prefix="" />
+		</zip>
 		<jar destfile="build/dist/${ant.project.name}-bin-${project.version}.jar" manifest="build/meta-inf/main-manifest.mf">
 			<fileset dir="build/classes">
 				<exclude name="**/test*/**" />
@@ -208,6 +211,7 @@
 			</fileset>
 			<zipfileset dir="src/metadata/xslt" prefix="META-INF/xslt" />
 			<zipfileset dir="src/metadata/css" prefix="META-INF/css" />
+			<zipfileset file="build/dist/report.zip" prefix="META-INF" />
 		</jar>
 		<mkdir dir="build/one-jar-boot" />
 		<unjar src="tools/one-jar/one-jar-boot-0.95.jar" dest="build/one-jar-boot" />

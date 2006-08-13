@@ -51,7 +51,7 @@ public class PackageDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 				+ "<tr>\r\n<td></td><td>7</td><td>4</td><td>0.57</td><td>0</td><td>1</td><td>1</td><td>1.57</td>"
 				+ "\r\n</tr>\r\n"
 				+ "<tr>\r\n<td>dir</td><td>2</td><td>2</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td>"
-				+ "\r\n</tr>\r\n" + "</table>\r\n";
+				+ "\r\n</tr>\r\n" + "</tbody>\r\n</table>\r\n";
 		assertOutputEquals("package-dependencies-metrics-html.xslt", input,
 				expected);
 	}

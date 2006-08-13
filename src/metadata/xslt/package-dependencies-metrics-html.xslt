@@ -3,18 +3,20 @@
     <xsl:output method="html"/>
     <xsl:strip-space elements="*"/>
     <xsl:template match="report">
-        <h3>Package Dependencies Metrics</h3>
-        <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
+        <table id="table-3" class="sort-table">
+        	<thead>
             <tr>
-            <th>Package</th>
-            <th>Total Classes</th>
-            <th>Abstract Classes</th>
-            <th>Abstractness</th>
-            <th>Afferent</th> 
-            <th>Efferent</th>           
-            <th>Instability</th>
-            <th>Distance</th>
+            <td>Package</td>
+            <td>Total Classes</td>
+            <td>Abstract Classes</td>
+            <td>Abstractness</td>
+            <td>Afferent</td> 
+            <td>Efferent</td>           
+            <td>Instability</td>
+            <td>Distance</td>
             </tr>
+            </thead>
+            <tbody>
             <xsl:choose>
                 <xsl:when test="count(//container/element[@type='class' or @type='interface' or @type='abstract']) = 0">
 				    <tr><td colspan="8"><i>
@@ -27,6 +29,7 @@
                     </xsl:apply-templates>
                 </xsl:otherwise>
             </xsl:choose>
+            </tbody>
         </table>
     </xsl:template>
     <xsl:template match="container">

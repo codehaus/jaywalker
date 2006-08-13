@@ -30,12 +30,15 @@ import jaywalker.classlist.ClasslistElement;
 import jaywalker.classlist.ClasslistElementFactory;
 import jaywalker.classlist.ClasslistElementStatistic;
 import jaywalker.classlist.ClasslistElementVisitor;
+import jaywalker.ui.Html;
+import jaywalker.ui.TabSetup;
 import jaywalker.util.Clock;
 import jaywalker.util.FileSystem;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.Shell;
 import jaywalker.util.StringHelper;
 import jaywalker.util.WriterOutputStream;
+import jaywalker.util.XsltTransformerMap;
 
 public class ReportExecutor {
 
@@ -138,15 +141,17 @@ public class ReportExecutor {
 			ReportFile reportFile = new ReportFileFactory()
 					.create("report.html");
 			OutputStream os = new WriterOutputStream(reportFile.getWriter());
-			os.write(createTitle("JayWalker Report"));
-			os.write(createStylesheetLink("stylesheet.css"));
-			os.write(createClasslistTable(classlist,
-					lookupClasslist("classlist-shallow"),
-					lookupClasslist("classlist-system")));
-			report.transform(os);
+			new Html().index(os, new TabSetup(new XsltTransformerMap()));
+			// os.write(createTitle("JayWalker Report"));
+			// os.write(createStylesheetLink("stylesheet.css"));
+			// os.write(createClasslistTable(classlist,
+			// lookupClasslist("classlist-shallow"),
+			// lookupClasslist("classlist-system")));
+			//report.transform(os);
 
 			os.flush();
 			os.close();
+
 		} finally {
 			clock.stop(clockType);
 			System.out.println(clock.toString(clockType));

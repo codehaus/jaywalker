@@ -4,12 +4,14 @@
     <xsl:strip-space elements="*"/>
     
     <xsl:template match="report">
-        <h3>Class Cyclic Dependencies</h3>
-        <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
+        <table id="table-3" class="sort-table">
+        	<thead>
             <tr>
-            <th>Class</th>
-            <th>Cycle</th>
+            <td>Class</td>
+            <td>Cycle</td>
             </tr>
+            </thead>
+            <tbody>
             <xsl:choose>
                 <xsl:when test="count(//element[@type='class' or @type='interface' or @type='abstract']/dependency[@type='cycle']/element[@type='class' or @type='interface' or @type='abstract']) = 0">
 				    <tr><td colspan="2"><i>
@@ -22,6 +24,7 @@
                     </xsl:apply-templates>
                 </xsl:otherwise>
             </xsl:choose>
+            </tbody>
         </table>
     </xsl:template>
     

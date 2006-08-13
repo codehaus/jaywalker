@@ -6,12 +6,14 @@
         use="concat(../../@value,':',@value)"/>
 
     <xsl:template match="report">
-        <h3>Package Resolved Dependencies</h3>
-        <table width="95%" cellspacing="2" cellpadding="5" border="0" class="details">
+        <table id="table-3" class="sort-table">
+        	<thead>
             <tr>
-            <th>Package</th>
-            <th>Dependency</th>
+            <td>Package</td>
+            <td>Dependency</td>
             </tr>
+            </thead>
+            <tbody>
             <xsl:choose>
                 <xsl:when test="count(//container[generate-id()=generate-id(key('arc',concat(../../@value,':',@value)))]) = 0">
 				    <tr><td colspan="2"><i>
@@ -24,6 +26,7 @@
                     </xsl:apply-templates>
                 </xsl:otherwise>
             </xsl:choose>
+            </tbody>
         </table>
     </xsl:template>
     
@@ -31,9 +34,18 @@
 
         <xsl:variable name="source">
             <xsl:choose>
-                <xsl:when test="not(../../@value)">&lt;default&gt;</xsl:when>
+                <xsl:when test="not(../../@value) or string-length(../../@value) = 0">&lt;default&gt;</xsl:when>
                 <xsl:otherwise>
                      <xsl:value-of select="../../@value"/>
+                </xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <xsl:variable name="target">
+            <xsl:choose>
+                <xsl:when test="not(@value) or string-length(@value) = 0">&lt;default&gt;</xsl:when>
+                <xsl:otherwise>
+                     <xsl:value-of select="@value"/>
                 </xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
@@ -52,20 +64,11 @@
             </xsl:otherwise>
         </xsl:choose>
    
-        <xsl:variable name="target">
-            <xsl:choose>
-                <xsl:when test="not(@value) or string-length(@value) = 0">&lt;default&gt;</xsl:when>
-                <xsl:otherwise>
-                     <xsl:value-of select="@value"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
-        
             <td>
                 <xsl:value-of select="$target"/>
             </td>
    
-        <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
+            <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
    
     </xsl:template>
 
