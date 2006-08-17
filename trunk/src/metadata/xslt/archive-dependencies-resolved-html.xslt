@@ -21,7 +21,7 @@
 				    <xsl:text disable-output-escaping="yes">&lt;/tr&gt;</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:apply-templates select="container[@type='archive'][count(child::dependency)>0]">
+                    <xsl:apply-templates select="//container[@type='archive'][count(dependency[@type='resolved']/container[@type='archive'])>0]">
                         <xsl:sort select="@url"/>
                     </xsl:apply-templates>
                 </xsl:otherwise>

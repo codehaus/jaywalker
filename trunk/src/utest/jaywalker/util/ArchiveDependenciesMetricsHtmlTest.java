@@ -98,7 +98,7 @@ public class ArchiveDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 				+ "</report>";
 		String expected = tableStart + "\n"
 				+ "<tr class=\"odd\"><td>archive</td><td>9</td><td>6</td><td>0.67</td><td>0</td><td>5</td><td>1</td><td>1.67</td></tr>\n"
-				+ "<tr class=\"odd\"><td>archive2</td><td>2</td><td>2</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>\n"
+				+ "<tr class=\"even\"><td>archive2</td><td>2</td><td>2</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>\n"
 				+ "<tr class=\"odd\"><td>archive3</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>"
 				+ "</tbody>\r\n"
 				+ "</table>\r\n";
