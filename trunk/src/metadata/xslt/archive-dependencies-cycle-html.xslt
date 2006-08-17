@@ -13,9 +13,11 @@
             <tbody>
             <xsl:choose>
                 <xsl:when test="count(//dependency[@type='cycle']/container[@type='archive']) = 0">
-				    <tr><td colspan="2"><i>
+				    <xsl:text disable-output-escaping="yes">&lt;tr&gt;</xsl:text>
+				    <td colspan="2"><i>
 				    <xsl:text>No Cycles Found</xsl:text>
-				    </i></td></tr>
+				    </i></td>
+				    <xsl:text disable-output-escaping="yes">&lt;/tr&gt;</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:apply-templates select="container[@type='archive'][count(dependency[@type='cycle']/container[@type='archive'])>0]"/>
@@ -48,6 +50,7 @@
         <xsl:text disable-output-escaping="yes">&lt;/td&gt;</xsl:text>
 
         <xsl:for-each select="$container-dependencies">
+            
             <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
             <xsl:value-of select="$row-class"/>
            	<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
@@ -55,7 +58,9 @@
             <td>
                 <xsl:value-of select="@url"/>
             </td>
+            
             <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
+            
         </xsl:for-each>
 
     </xsl:template>

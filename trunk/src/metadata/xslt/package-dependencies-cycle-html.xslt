@@ -14,9 +14,11 @@
             <tbody>
             <xsl:choose>
                 <xsl:when test="count(//container/dependency[@type='cycle']/container[@type='package']) = 0">
-				    <tr><td colspan="2"><i>
+				    <xsl:text disable-output-escaping="yes">&lt;tr&gt;</xsl:text>
+				    <td colspan="2"><i>
 				    <xsl:text>No Cycles Found</xsl:text>
-				    </i></td></tr>
+				    </i></td>
+				    <xsl:text disable-output-escaping="yes">&lt;/tr&gt;</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:apply-templates select="//container[count(dependency[@type='cycle']/container[@type='package'])>0]">
