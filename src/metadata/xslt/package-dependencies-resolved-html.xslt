@@ -23,7 +23,7 @@
 				    <xsl:text disable-output-escaping="yes">&lt;/tr&gt;</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:apply-templates select="//container[generate-id()=generate-id(key('distinct-package',@value))][dependency[@type='resolved']/container[@type='package']]">
+                    <xsl:apply-templates select="//container[generate-id()=generate-id(key('distinct-package',@value))][dependency[@type='resolved']/container[@type='package'][@value!=../../@value]]">
                         <xsl:sort select="@value"/>
                     </xsl:apply-templates>
                 </xsl:otherwise>
@@ -36,7 +36,14 @@
     
         <xsl:variable name="package-name" select="@value"/>
 
-        <xsl:variable name="row-class">
+        <xsl:variable name="package-dependencies" 
+                select="//container[@value=$package-name]
+                         /dependency[@type='resolved']
+                         /container[@type='package']
+                          [@value!=$package-name]
+                          [generate-id()=generate-id(key('distinct-package-dependencies',@value))]" />
+                          
+         <xsl:variable name="row-class">
             <xsl:choose>
                 <xsl:when test="position() mod 2 = 0">even</xsl:when>
                 <xsl:otherwise>odd</xsl:otherwise>
@@ -46,13 +53,6 @@
         <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
         <xsl:value-of select="$row-class"/>
         <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
-        
-        <xsl:variable name="package-dependencies" 
-                select="//container[@value=$package-name]
-                         /dependency[@type='resolved']
-                         /container[@type='package']
-                          [@value!=$package-name]
-                          [generate-id()=generate-id(key('distinct-package-dependencies',@value))]" />
         
         <xsl:text disable-output-escaping="yes">&lt;td rowspan="</xsl:text>
         <xsl:value-of select="count($package-dependencies)+1"/>
@@ -75,7 +75,7 @@
 
             <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
         </xsl:for-each>
-   
+        
     </xsl:template>
 
 </xsl:stylesheet>

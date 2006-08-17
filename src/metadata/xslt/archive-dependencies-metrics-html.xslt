@@ -26,7 +26,7 @@
 		        	<xsl:text disable-output-escaping="yes">&lt;/tr&gt;</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:apply-templates>
+                    <xsl:apply-templates select="//container[@type='archive'][name(..)='container' or name(..)='report']">
                         <xsl:sort select="@url"/>
                     </xsl:apply-templates>
                 </xsl:otherwise>
@@ -35,7 +35,7 @@
         </table>
     </xsl:template>
 
-    <xsl:template match="container[@type='archive'][name(..)='container' or name(..)='report']">
+    <xsl:template match="container">
 
         <xsl:variable name="url"
                 select="@url"/>
@@ -101,7 +101,6 @@
         
     	<xsl:text disable-output-escaping="yes">&lt;/tr&gt;</xsl:text>
 
-        <xsl:apply-templates/>
     </xsl:template>
     
 </xsl:stylesheet>
