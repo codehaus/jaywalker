@@ -2,6 +2,8 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="html"/>
     <xsl:strip-space elements="*"/>
+    <xsl:key name="distinct-package" match="container[dependency[@type='resolved']/container[@type='package']]" use="@value"/>
+    
     <xsl:template match="report">
         <table id="table-3" class="sort-table">
         	<thead>
@@ -19,13 +21,15 @@
             <tbody>
             <xsl:choose>
                 <xsl:when test="count(//container/element[@type='class' or @type='interface' or @type='abstract']) = 0">
-				    <tr><td colspan="8"><i>
+				    <xsl:text disable-output-escaping="yes">&lt;tr&gt;</xsl:text>
+				    <td colspan="8"><i>
 				    <xsl:text>No Packages Found</xsl:text>
-				    </i></td></tr>
+				    </i></td>
+				    <xsl:text disable-output-escaping="yes">&lt;/tr&gt;</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-            <xsl:apply-templates>
-                <xsl:sort select="@url"/>
+                    <xsl:apply-templates select="//container[generate-id()=generate-id(key('distinct-package',@value))][count(element[@type='class' or @type='interface' or @type='abstract']) > 0]">
+                        <xsl:sort select="@url"/>
                     </xsl:apply-templates>
                 </xsl:otherwise>
             </xsl:choose>
@@ -33,52 +37,61 @@
         </table>
     </xsl:template>
     <xsl:template match="container">
-		<xsl:if test="count(child::element[@type='class' or @type='interface' or @type='abstract']) > 0">
+    
+        <xsl:variable name="package-name" select="@value"/>
 
-            <xsl:variable name="value"
-                    select="@value"/>	
+        <xsl:variable name="abstract-class-count"
+                select="count(//container[@value=$package-name]/element[@type='interface' or @type='abstract'])"/>
 
-            <xsl:variable name="abstract-class-count"
-                    select="count(child::element[@type='interface' or @type='abstract'])"/>
+        <xsl:variable name="total-class-count"
+                select="$abstract-class-count + count(//container[@value=$package-name]/element[@type='class'])"/>
 
-            <xsl:variable name="total-class-count"
-                    select="$abstract-class-count + count(child::element[@type='class'])"/>
+        <xsl:variable name="abstractness"
+                select="round(100 * ($abstract-class-count div $total-class-count)) div 100"/>
 
-            <xsl:variable name="abstractness"
-                    select="round(100 * ($abstract-class-count div $total-class-count)) div 100"/>
+        <xsl:variable name="afferent"
+                select="count(//container/dependency[@type='resolved']/container[@type='package'][@value=$package-name])"/>
 
-            <xsl:variable name="afferent"
-                    select="count(//container/dependency[@type='resolved']/container[@type='package'][@value=$value])"/>
+        <xsl:variable name="efferent"
+                select="count(//container[@value=$package-name]/dependency[@type='resolved']/container[@type='package'])"/>
 
-            <xsl:variable name="efferent"
-                    select="count(child::dependency[@type='resolved']/container[@type='package'])"/>
-
-            <xsl:variable name="instability"
-                    select="round(100 * ($efferent div ($efferent + $afferent))) div 100"/>
+        <xsl:variable name="instability"
+                select="round(100 * ($efferent div ($efferent + $afferent))) div 100"/>
                 
-            <xsl:variable name="distance"
-                    select="round(100 * ($abstractness + $instability)) div 100"/>
+        <xsl:variable name="distance"
+                select="round(100 * ($abstractness + $instability)) div 100"/>
 
-            <tr><td>
-            <xsl:value-of select="$value"/>
-            </td><td>
-            <xsl:value-of select="$total-class-count"/>        
-            </td><td>
-            <xsl:value-of select="$abstract-class-count"/>
-            </td><td>
-            <xsl:value-of select="$abstractness"/>        
-            </td><td>
-            <xsl:value-of select="$afferent"/>        
-            </td><td>
-            <xsl:value-of select="$efferent"/>        
-            </td><td>
-            <xsl:value-of select="$instability"/>        
-            </td><td>
-            <xsl:value-of select="$distance"/>
-            </td></tr>
+       <xsl:variable name="row-class">
+            <xsl:choose>
+                <xsl:when test="position() mod 2 = 0">even</xsl:when>
+                <xsl:otherwise>odd</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
+        <xsl:value-of select="$row-class"/>
+        <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+
+        <td>
+        <xsl:value-of select="$package-name"/>
+        </td><td>
+        <xsl:value-of select="$total-class-count"/>        
+        </td><td>
+        <xsl:value-of select="$abstract-class-count"/>
+        </td><td>
+        <xsl:value-of select="$abstractness"/>        
+        </td><td>
+        <xsl:value-of select="$afferent"/>        
+        </td><td>
+        <xsl:value-of select="$efferent"/>        
+        </td><td>
+        <xsl:value-of select="$instability"/>        
+        </td><td>
+        <xsl:value-of select="$distance"/>
+        </td>
        
-        </xsl:if>
-        <xsl:apply-templates/>
+        <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
+       
     </xsl:template>
     
 </xsl:stylesheet>

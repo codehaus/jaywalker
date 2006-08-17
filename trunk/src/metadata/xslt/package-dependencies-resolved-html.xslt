@@ -2,9 +2,9 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:output method="html"/>
     <xsl:strip-space elements="*"/>
-    <xsl:key name="arc" match="dependency[@type='resolved']/container[@type='package']"
-        use="concat(../../@value,':',@value)"/>
-
+    <xsl:key name="distinct-package" match="container[dependency[@type='resolved']/container[@type='package']]" use="@value"/>
+    <xsl:key name="distinct-package-dependencies" match="container/dependency[@type='resolved']/container[@type='package']" use="@value"/>
+        
     <xsl:template match="report">
         <table id="table-3" class="sort-table">
         	<thead>
@@ -15,14 +15,16 @@
             </thead>
             <tbody>
             <xsl:choose>
-                <xsl:when test="count(//container[generate-id()=generate-id(key('arc',concat(../../@value,':',@value)))]) = 0">
-				    <tr><td colspan="2"><i>
+                <xsl:when test="count(//container[dependency[@type='resolved']/container[@type='package']]) = 0">
+				    <xsl:text disable-output-escaping="yes">&lt;tr&gt;</xsl:text>
+				    <td colspan="2"><i>
 				    <xsl:text>No Packages Found</xsl:text>
-				    </i></td></tr>
+				    </i></td>
+				    <xsl:text disable-output-escaping="yes">&lt;/tr&gt;</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:apply-templates>
-                        <xsl:sort select="../../@value"/>
+                    <xsl:apply-templates select="//container[generate-id()=generate-id(key('distinct-package',@value))][dependency[@type='resolved']/container[@type='package']]">
+                        <xsl:sort select="@value"/>
                     </xsl:apply-templates>
                 </xsl:otherwise>
             </xsl:choose>
@@ -30,45 +32,45 @@
         </table>
     </xsl:template>
     
-    <xsl:template match="//container[generate-id()=generate-id(key('arc',concat(../../@value,':',@value)))]">
+    <xsl:template match="container">
+    
+        <xsl:variable name="package-name" select="@value"/>
 
-        <xsl:variable name="source">
+        <xsl:variable name="row-class">
             <xsl:choose>
-                <xsl:when test="not(../../@value) or string-length(../../@value) = 0">&lt;default&gt;</xsl:when>
-                <xsl:otherwise>
-                     <xsl:value-of select="../../@value"/>
-                </xsl:otherwise>
+                <xsl:when test="position() mod 2 = 0">even</xsl:when>
+                <xsl:otherwise>odd</xsl:otherwise>
             </xsl:choose>
         </xsl:variable>
         
-        <xsl:variable name="target">
-            <xsl:choose>
-                <xsl:when test="not(@value) or string-length(@value) = 0">&lt;default&gt;</xsl:when>
-                <xsl:otherwise>
-                     <xsl:value-of select="@value"/>
-                </xsl:otherwise>
-            </xsl:choose>
-        </xsl:variable>
+        <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
+        <xsl:value-of select="$row-class"/>
+        <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
         
-        <xsl:choose>
-            <xsl:when test="not(preceding-sibling::node())">
-                <xsl:text disable-output-escaping="yes">&#10;&lt;tr&gt;</xsl:text>
-                <xsl:text disable-output-escaping="yes">&lt;td rowspan="</xsl:text>
-                <xsl:value-of select="../@value"/>
-                <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
-                <xsl:value-of select="$source"/>
-                <xsl:text disable-output-escaping="yes">&lt;/td&gt;</xsl:text>
-            </xsl:when>
-            <xsl:otherwise>
-                <xsl:text disable-output-escaping="yes">&#10;&lt;tr&gt;</xsl:text>
-            </xsl:otherwise>
-        </xsl:choose>
-   
+        <xsl:variable name="package-dependencies" 
+                select="//container[@value=$package-name]
+                         /dependency[@type='resolved']
+                         /container[@type='package']
+                          [@value!=$package-name]
+                          [generate-id()=generate-id(key('distinct-package-dependencies',@value))]" />
+        
+        <xsl:text disable-output-escaping="yes">&lt;td rowspan="</xsl:text>
+        <xsl:value-of select="count($package-dependencies)+1"/>
+        <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+        <xsl:value-of select="$package-name"/>
+        <xsl:text disable-output-escaping="yes">&lt;/td&gt;</xsl:text>
+                
+        <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
+        
+        <xsl:for-each select="$package-dependencies">
+            <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
+            <xsl:value-of select="$row-class"/>
+           	<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
             <td>
-                <xsl:value-of select="$target"/>
+                <xsl:value-of select="@value"/>
             </td>
-   
             <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
+        </xsl:for-each>
    
     </xsl:template>
 

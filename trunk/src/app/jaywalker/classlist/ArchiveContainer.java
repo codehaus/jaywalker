@@ -62,6 +62,7 @@ public class ArchiveContainer extends ClasslistContainer {
 	public ClasslistElement[] getClasslistElements() {
 		if (urls == null) {
 			urls = toUrls(url);
+			packageName = toPackageName(urls);
 		}
 		return super.getClasslistElements();
 	}

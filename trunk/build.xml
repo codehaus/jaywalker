@@ -198,7 +198,9 @@
 		</copy>
 		<mkdir dir="build/dist" />
 		<zip destfile="build/dist/report.zip">
-			<zipfileset dir="src/metadata/report" prefix="" />
+			<zipfileset dir="src/metadata/report" prefix="">
+				<exclude name="index.html"/>
+			</zipfileset>
 		</zip>
 		<jar destfile="build/dist/${ant.project.name}-bin-${project.version}.jar" manifest="build/meta-inf/main-manifest.mf">
 			<fileset dir="build/classes">

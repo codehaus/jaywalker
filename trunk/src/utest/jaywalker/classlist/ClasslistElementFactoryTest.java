@@ -63,7 +63,7 @@ public class ClasslistElementFactoryTest extends TestCase {
     public void testShouldCreateValidDirectoryElement() throws MalformedURLException {
         URL url = Path.DIR_BUILD_APP.toURL();
         int fileCnt = Path.DIR_BUILD_APP.listFiles().length;
-        final DirectoryContainer element = (DirectoryContainer) new ClasslistElementFactory().create(url);
+        final ClasslistContainer element = (ClasslistContainer) new ClasslistElementFactory().create(url);
         assertDirectoryContainer(element, fileCnt);
     }
 

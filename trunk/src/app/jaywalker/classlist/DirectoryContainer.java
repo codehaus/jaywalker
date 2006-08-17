@@ -23,8 +23,6 @@ import jaywalker.util.URLHelper;
 
 public class DirectoryContainer extends ClasslistContainer {
 
-	private final String packageName;
-
 	public static class Creator implements ClasslistElementCreator {
 		public boolean isType(URL url) {
 			return url.toString().endsWith("/");
@@ -54,22 +52,6 @@ public class DirectoryContainer extends ClasslistContainer {
 
 	public String getType() {
 		return "directory";
-	}
-
-	public String getPackageName() {
-		return packageName;
-	}
-
-	private String toPackageName(URL[] urls) {
-		for (int i = 0; i < urls.length; i++) {
-			if (urls[i].toString().endsWith(".class")) {
-				ClasslistElementFactory factory = new ClasslistElementFactory();
-				ClassElement classElement = (ClassElement) factory
-						.create(urls[i]);
-				return classElement.getPackageName();
-			}
-		}
-		return null;
 	}
 
 }

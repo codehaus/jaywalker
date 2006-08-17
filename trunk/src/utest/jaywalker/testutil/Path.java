@@ -71,6 +71,8 @@ public class Path {
 	public static final File FILE_REPORT_ZIP = new File("build"
 			+ File.separator + "dist" + File.separator + "report.zip");
 
+	public static final File DIR_REPORT_ZIP = new File(DIR_TEMP, "report.zip");
+
 	static {
 		DIR_TEMP.mkdirs();
 	}

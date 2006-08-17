@@ -29,15 +29,15 @@ public abstract class HtmlDetailTableTestCase extends XsltTestCase {
 		for (int i = 0; i < values.length; i++) {
 			sb.append("<td>").append(values[i]).append("</td>");
 		}
-		sb.append("\r\n</tr>\r\n</thead>\r\n<tbody>\r\n");
+		sb.append("\r\n</tr>\r\n</thead>\r\n<tbody>");
 		return sb.toString();
 	}
 
 	public String toTableDataRow(String value, int columnCnt) {
-		StringBuffer sb = new StringBuffer("<tr>\r\n<td colspan=\"");
+		StringBuffer sb = new StringBuffer("<tr><td colspan=\"");
 		sb.append(columnCnt).append("\"><i>");
 		sb.append(value);
-		sb.append("</i></td>\r\n</tr>\r\n");
+		sb.append("</i></td></tr>");
 		return sb.toString();
 	}
 

@@ -19,7 +19,7 @@ public class ClasslistElementTagMediator implements ClasslistElementTag {
 	private final static ClasslistElementTag TAG_DEFAULT_CONTAINER = new DefaultClasslistContainerTag();
 
 	static {
-		MAP_TAG.put(ArchiveContainer.class, TAG_DEFAULT_CONTAINER);
+		MAP_TAG.put(ArchiveContainer.class, new ArchiveContainerTag());
 		MAP_TAG.put(DirectoryContainer.class, new DirectoryContainerTag());
 		MAP_TAG.put(ClassElement.class, new ClassElementTag());
 		MAP_TAG.put(FileElement.class, TAG_DEFAULT_ELEMENT);

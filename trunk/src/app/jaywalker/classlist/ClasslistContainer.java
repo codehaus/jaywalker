@@ -19,6 +19,7 @@ import java.net.URL;
 
 public class ClasslistContainer extends ClasslistElement {
     protected URL [] urls = new URL[0];
+	protected String packageName;
 
     public ClasslistContainer(URL url) {
         super(url);
@@ -32,4 +33,20 @@ public class ClasslistContainer extends ClasslistElement {
         }
         return elements;
     }
+
+	public String getPackageName() {
+		return packageName;
+	}
+
+	protected String toPackageName(URL[] urls) {
+		for (int i = 0; i < urls.length; i++) {
+			if (urls[i].toString().endsWith(".class")) {
+				ClasslistElementFactory factory = new ClasslistElementFactory();
+				ClassElement classElement = (ClassElement) factory
+						.create(urls[i]);
+				return classElement.getPackageName();
+			}
+		}
+		return null;
+	}
 }
