@@ -63,12 +63,16 @@
         <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
         
         <xsl:for-each select="$package-dependencies">
+            <xsl:sort select="@value"/>
+
             <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
             <xsl:value-of select="$row-class"/>
            	<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+
             <td>
                 <xsl:value-of select="@value"/>
             </td>
+
             <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
         </xsl:for-each>
    
