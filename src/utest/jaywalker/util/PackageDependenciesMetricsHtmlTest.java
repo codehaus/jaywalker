@@ -47,11 +47,11 @@ public class PackageDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 			throws IOException {
 		String input = "<?xml version=\"1.0\"?><report>" + SIMPLE_ARCHIVE
 				+ "</report>";
-		String expected = tableStart
-				+ "<tr>\r\n<td></td><td>7</td><td>4</td><td>0.57</td><td>0</td><td>1</td><td>1</td><td>1.57</td>"
-				+ "\r\n</tr>\r\n"
-				+ "<tr>\r\n<td>dir</td><td>2</td><td>2</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td>"
-				+ "\r\n</tr>\r\n" + "</tbody>\r\n</table>\r\n";
+		String expected = tableStart + "\n"
+				+ "<tr class=\"odd\"><td></td><td>7</td><td>4</td><td>0.57</td><td>0</td><td>1</td><td>1</td><td>1.57</td>"
+				+ "</tr>\n"
+				+ "</tbody>\r\n"
+				+ "</table>\r\n";
 		assertOutputEquals("package-dependencies-metrics-html.xslt", input,
 				expected);
 	}

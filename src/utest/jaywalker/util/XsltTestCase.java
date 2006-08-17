@@ -11,7 +11,8 @@ import junit.framework.TestCase;
 
 public class XsltTestCase extends TestCase {
 
-	protected void assertOutputEquals(String xsltFilename, String input, String expected) throws IOException {
+	protected void assertOutputEquals(String xsltFilename, String input,
+			String expected) throws IOException {
 		ReportFile reportFile = new InMemoryReportFile();
 		Writer writer = reportFile.getWriter();
 		writer.write(input);
@@ -23,15 +24,17 @@ public class XsltTestCase extends TestCase {
 		OutputStream outputStream = new WriterOutputStream(stringWriter);
 		transformer.write(outputStream);
 		String actual = stringWriter.getBuffer().toString();
-		//outputBytes(expected);
-		//outputBytes(actual);
+		outputBytes(expected);
+		outputBytes(actual);
 		assertEquals(expected, actual);
 	}
 
 	private void outputBytes(String value) {
 		byte[] bytes = value.getBytes();
 		for (int i = 0; i < bytes.length; i++) {
-			System.out.print(bytes[i]);
+			char ch = (bytes[i] == 10 || bytes[i] == 13) ? ' ' : value
+					.charAt(i);
+			System.out.print(ch + "(" + bytes[i] + ")");
 		}
 		System.out.println();
 	}

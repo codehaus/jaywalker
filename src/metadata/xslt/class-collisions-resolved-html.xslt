@@ -18,34 +18,47 @@
 				    </i></td></tr>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:apply-templates/>
+                    <xsl:apply-templates select="//element[generate-id()=generate-id(key('distinct-classname',@value))][count(collision)>0]"/>
                 </xsl:otherwise>
             </xsl:choose>
             </tbody>
         </table>
     </xsl:template>
-    
-    <xsl:template match="//element[generate-id()=generate-id(key('distinct-classname',@value))]">
-        <xsl:if test="count(child::collision) > 0">
-            <xsl:text disable-output-escaping="yes">&#10;&lt;tr&gt;</xsl:text>
-            <xsl:text disable-output-escaping="yes">&lt;td rowspan="</xsl:text>
-            <xsl:value-of select="count(child::collision)+1"/>
-            <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
-            <xsl:value-of select="@value"/>
-            <xsl:text disable-output-escaping="yes">&lt;/td&gt;</xsl:text>
+
+    <xsl:template match="element">
+
+        <xsl:variable name="row-class">
+            <xsl:choose>
+                <xsl:when test="position() mod 2 = 0">even</xsl:when>
+                <xsl:otherwise>odd</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
+        <xsl:value-of select="$row-class"/>
+      	<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+
+        <xsl:text disable-output-escaping="yes">&lt;td rowspan="</xsl:text>
+        <xsl:value-of select="count(child::collision)+1"/>
+        <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+        <xsl:value-of select="@value"/>
+        <xsl:text disable-output-escaping="yes">&lt;/td&gt;</xsl:text>
+            <td>
+                <xsl:value-of select="@url"/>
+            </td>
+
+        <xsl:for-each select="collision">
+            <xsl:if test="position() > 0">
+                <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
+                <xsl:value-of select="$row-class"/>
+               	<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+            </xsl:if>
                 <td>
                     <xsl:value-of select="@url"/>
                 </td>
-            <xsl:for-each select="collision">
-                <xsl:if test="position() > 0">
-                    <xsl:text disable-output-escaping="yes">&#10;&lt;tr&gt;</xsl:text>
-                </xsl:if>
-                    <td>
-                        <xsl:value-of select="@url"/>
-                    </td>
-                <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
-            </xsl:for-each>
-        </xsl:if>
-    </xsl:template>
+            <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
+        </xsl:for-each>
+    
+    </xsl:template>    
     
 </xsl:stylesheet>

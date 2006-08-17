@@ -15,12 +15,14 @@
             <tbody>
             <xsl:choose>
                 <xsl:when test="count(//dependency[generate-id()=generate-id(key('distinct-classname',@value))]) = 0">
-				    <tr><td colspan="2"><i>
+				    <xsl:text disable-output-escaping="yes">&lt;tr&gt;</xsl:text>
+				    <td colspan="2"><i>
 				    <xsl:text>No Missing Classes</xsl:text>
-				    </i></td></tr>
+				    </i></td>
+				    <xsl:text disable-output-escaping="yes">&lt;/tr&gt;</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:apply-templates>
+                    <xsl:apply-templates select="//dependency[generate-id()=generate-id(key('distinct-classname',@value))]">
                         <xsl:sort select="@value"/>
                     </xsl:apply-templates>
                 </xsl:otherwise>
@@ -29,10 +31,21 @@
         </table>
     </xsl:template>
     
-    <xsl:template match="//dependency[generate-id()=generate-id(key('distinct-classname',@value))]">
+    <xsl:template match="dependency">
         <xsl:variable name="classname" select="@value"/>
         <xsl:variable name="dependencies" select="//dependency[@type='unresolved'][@value=$classname]"/>
-        <xsl:text disable-output-escaping="yes">&#10;&lt;tr&gt;</xsl:text>
+
+        <xsl:variable name="row-class">
+            <xsl:choose>
+                <xsl:when test="position() mod 2 = 0">even</xsl:when>
+                <xsl:otherwise>odd</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
+        <xsl:value-of select="$row-class"/>
+       	<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+
         <xsl:text disable-output-escaping="yes">&lt;td rowspan="</xsl:text>
         <xsl:value-of select="count($dependencies)"/>
         <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
@@ -41,7 +54,9 @@
                 
         <xsl:for-each select="$dependencies">
             <xsl:if test="position()>1">
-                <xsl:text disable-output-escaping="yes">&#10;&lt;tr&gt;</xsl:text>
+                <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
+                <xsl:value-of select="$row-class"/>
+               	<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
             </xsl:if>
                 <td>
                     <xsl:value-of select="../@url"/>

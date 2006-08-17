@@ -19,9 +19,11 @@
             <tbody>
             <xsl:choose>
                 <xsl:when test="count(//container[@type='archive'][name(..)='container' or name(..)='report']) = 0">
-				    <tr><td colspan="8"><i>
+    	        	<xsl:text disable-output-escaping="yes">&lt;tr&gt;</xsl:text>
+				    <td colspan="8"><i>
 				    <xsl:text>No Archives Found</xsl:text>
-				    </i></td></tr>
+				    </i></td>
+		        	<xsl:text disable-output-escaping="yes">&lt;/tr&gt;</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:apply-templates>
@@ -68,7 +70,18 @@
         <xsl:variable name="distance"
                 select="round(100 * ($abstractness + $instability)) div 100"/>
 
-        <tr><td>
+        <xsl:variable name="row-class">
+            <xsl:choose>
+                <xsl:when test="position() mod 2 = 0">even</xsl:when>
+                <xsl:otherwise>odd</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+        
+        <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
+        <xsl:value-of select="$row-class"/>
+       	<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+        
+        <td>
         <xsl:value-of select="@url"/>
         </td><td>
         <xsl:value-of select="$total-class-count"/>        
@@ -84,7 +97,10 @@
         <xsl:value-of select="$instability"/>        
         </td><td>
         <xsl:value-of select="$distance"/>
-        </td></tr>
+        </td>
+        
+    	<xsl:text disable-output-escaping="yes">&lt;/tr&gt;</xsl:text>
+
         <xsl:apply-templates/>
     </xsl:template>
     

@@ -29,7 +29,19 @@
             <xsl:variable name="container-dependencies"
                 select="child::dependency[@type='cycle']/container[@type='archive']"/>
             <xsl:if test="count($container-dependencies)>0">
-                <xsl:text disable-output-escaping="yes">&#10;&lt;tr&gt;</xsl:text>
+                <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
+    
+                <xsl:choose>
+                    <xsl:when test="position() mod 2">
+                	    <xsl:text disable-output-escaping="yes">even</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                    	<xsl:text disable-output-escaping="yes">odd</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+            
+             	<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+
                 <xsl:text disable-output-escaping="yes">&lt;td rowspan="</xsl:text>
                 <xsl:value-of select="count($container-dependencies)"/>
                 <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>

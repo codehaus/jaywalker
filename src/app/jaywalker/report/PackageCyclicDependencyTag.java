@@ -15,6 +15,7 @@
  */
 package jaywalker.report;
 
+import jaywalker.classlist.ClasslistContainer;
 import jaywalker.classlist.ClasslistElement;
 import jaywalker.classlist.DirectoryContainer;
 import jaywalker.classlist.ClasslistElementFactory;
@@ -38,7 +39,7 @@ public class PackageCyclicDependencyTag implements Tag {
         for (int i = 0; i < packageCycleUrls.length; i++) {
             ClasslistElement element = factory.create(packageCycleUrls[i]);
             if (element.getClass() == DirectoryContainer.class) {
-                DirectoryContainer directory = (DirectoryContainer) element;
+                ClasslistContainer directory = (ClasslistContainer) element;
                 values[i] = directory.getPackageName();
             } else {
                 values[i] = "";

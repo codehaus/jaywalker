@@ -25,6 +25,8 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import jaywalker.classlist.ClasslistElement;
 import jaywalker.classlist.ClasslistElementFactory;
@@ -39,6 +41,7 @@ import jaywalker.util.Shell;
 import jaywalker.util.StringHelper;
 import jaywalker.util.WriterOutputStream;
 import jaywalker.util.XsltTransformerMap;
+import jaywalker.util.ZipExpander;
 
 public class ReportExecutor {
 
@@ -147,10 +150,15 @@ public class ReportExecutor {
 			// os.write(createClasslistTable(classlist,
 			// lookupClasslist("classlist-shallow"),
 			// lookupClasslist("classlist-system")));
-			//report.transform(os);
+			// report.transform(os);
 
 			os.flush();
 			os.close();
+
+			;
+			ZipInputStream zis = new ZipInputStream(ReportFile.class
+					.getResourceAsStream("/META-INF/report.zip"));
+			new ZipExpander(zis).expand(outDir);
 
 		} finally {
 			clock.stop(clockType);

@@ -39,7 +39,7 @@ public class ArchiveContainerTest extends JayWalkerTestCase {
         assertTrue(cle instanceof ArchiveContainer);
 
         assertElementByKeywordExistsForType((ArchiveContainer) cle, "/SerializableImpl.class", ClassElement.class);
-        DirectoryContainer metaInfDir = (DirectoryContainer) assertElementByKeywordExistsForType((ArchiveContainer) cle, "/META-INF/", DirectoryContainer.class);
+        ClasslistContainer metaInfDir = (ClasslistContainer) assertElementByKeywordExistsForType((ArchiveContainer) cle, "/META-INF/", DirectoryContainer.class);
         ClasslistElement[] elements = metaInfDir.getClasslistElements();
         assertEquals(1,elements.length);
     }

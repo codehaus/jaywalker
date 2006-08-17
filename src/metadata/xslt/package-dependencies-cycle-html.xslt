@@ -14,9 +14,11 @@
             <tbody>
             <xsl:choose>
                 <xsl:when test="count(//container/dependency[@type='cycle']/container[@type='package']) = 0">
-				    <tr><td colspan="2"><i>
+				    <xsl:text disable-output-escaping="yes">&lt;tr&gt;</xsl:text>
+				    <td colspan="2"><i>
 				    <xsl:text>No Cycles Found</xsl:text>
-				    </i></td></tr>
+				    </i></td>
+				    <xsl:text disable-output-escaping="yes">&lt;/tr&gt;</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
                     <xsl:apply-templates>
@@ -33,7 +35,17 @@
             <xsl:variable name="container-dependencies"
                 select="child::dependency[@type='cycle']/container[@type='package']"/>
             <xsl:if test="count($container-dependencies)>0">
-                <xsl:text disable-output-escaping="yes">&#10;&lt;tr&gt;</xsl:text>
+                <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
+    
+                <xsl:choose>
+                    <xsl:when test="position() mod 2">
+                	    <xsl:text disable-output-escaping="yes">even</xsl:text>
+                    </xsl:when>
+                    <xsl:otherwise>
+                    	<xsl:text disable-output-escaping="yes">odd</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
+                
                 <xsl:text disable-output-escaping="yes">&lt;td rowspan="</xsl:text>
                 <xsl:value-of select="count($container-dependencies)"/>
                 <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
