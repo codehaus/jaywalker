@@ -4,9 +4,10 @@ import java.io.IOException;
 
 public abstract class HtmlDetailTableTestCase extends XsltTestCase {
 
-	protected static final String TAG_START_TABLE_DETAILS = "<table class=\"sort-table\" id=\"table-3\">\r\n";
+	protected final String tagStartTableDetails = "<table class=\"sort-table\" id=\""
+			+ getTableId() + "\">\r\n";
 
-	protected final String tableStart = TAG_START_TABLE_DETAILS
+	protected final String tableStart = tagStartTableDetails
 			+ toTableHeader(getHeaderValues());
 
 	private final String rowNoData = toTableDataRow(getNoDataRowValue(),
@@ -19,6 +20,8 @@ public abstract class HtmlDetailTableTestCase extends XsltTestCase {
 	public abstract String[] getHeaderValues();
 
 	public abstract String getNoDataRowValue();
+
+	public abstract String getTableId();
 
 	public String toTitle(String value) {
 		return "<h3>" + value + "</h3>\r\n";

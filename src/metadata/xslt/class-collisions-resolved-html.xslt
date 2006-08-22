@@ -5,7 +5,7 @@
     <xsl:key name="distinct-classname" match="element" use="@value"/>
     
     <xsl:template match="report">
-        <table id="table-3" class="sort-table">
+        <table id="class-collision-resolved-table" class="sort-table">
         	<thead>
             <td>Class Name</td>
             <td>Collision</td>

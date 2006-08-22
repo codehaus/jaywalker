@@ -42,6 +42,10 @@ public class PackageDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 	public String getXsltFileName() {
 		return "package-dependencies-metrics-html.xslt";
 	}
+	
+	public String getTableId() {
+		return "package-dependencies-metrics-table";
+	}
 
 	public void testShouldCreateTableWithTotalClassAndAbstractClassCountForOneArchive()
 			throws IOException {

@@ -7,7 +7,7 @@ import java.util.Properties;
 import jaywalker.util.XsltTransformer;
 import jaywalker.util.XsltTransformerMap;
 
-public class TabSetup implements Content {
+public class SummaryTabPane implements Content {
 
 	private final Properties properties;
 
@@ -21,7 +21,9 @@ public class TabSetup implements Content {
 
 	private XsltTransformerMap transformerMap;
 
-	public TabSetup(XsltTransformerMap transformerMap) {
+	private TabCreator tabCreator = new TabCreator(mainTabPane);
+
+	public SummaryTabPane(XsltTransformerMap transformerMap) {
 		this.transformerMap = transformerMap;
 		this.properties = new Properties();
 		properties.setProperty("archive", "metrics,resolved,cycle");
@@ -35,14 +37,14 @@ public class TabSetup implements Content {
 			addArchiveTabPage("Metrics");
 			addArchiveTabPage("Resolved");
 			addArchiveTabPage("Cycle");
-			addTab(archiveTabPane, "Archive");
+			tabCreator.addTab(archiveTabPane, "Archive");
 		}
 
 		if (properties.containsKey("package")) {
 			addPackageTabPage("Metrics");
 			addPackageTabPage("Resolved");
 			addPackageTabPage("Cycle");
-			addTab(packageTabPane, "Package");
+			tabCreator.addTab(packageTabPane, "Package");
 		}
 
 		if (properties.containsKey("class")) {
@@ -50,30 +52,10 @@ public class TabSetup implements Content {
 			addClassTabPage("Conflict");
 			addClassTabPage("Unresolved");
 			addClassTabPage("Cycle");
-			addTab(classTabPane, "Class");
+			tabCreator.addTab(classTabPane, "Class");
 		}
 
-		return toBytes(mainTabPane);
-	}
-
-	private byte[] toBytes(TabPane tabPane) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		tabPane.write(baos);
-		baos.flush();
-		baos.close();
-		return baos.toByteArray();
-	}
-
-	private void addTab(TabPane tabPane, String tabPageName) throws IOException {
-		mainTabPane.add(createTabPage(tabPane, tabPageName));
-	}
-
-	private TabPage createTabPage(TabPane tabPane, String tabPageName)
-			throws IOException {
-		final TabPage tabPage = new TabPage(tabPageName);
-		tabPage.add("<br/>".getBytes());
-		tabPage.add(toBytes(tabPane));
-		return tabPage;
+		return tabCreator.getBytes();
 	}
 
 	private void addArchiveTabPage(String name) throws IOException {

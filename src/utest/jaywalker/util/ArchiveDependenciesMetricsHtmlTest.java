@@ -67,6 +67,10 @@ public class ArchiveDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 	public String getXsltFileName() {
 		return "archive-dependencies-metrics-html.xslt";
 	}
+	
+	public String getTableId() {
+		return "archive-dependencies-metrics-table";
+	}
 
 	public void testShouldCreateTableWithTotalClassAndAbstractClassCountForOneArchive()
 			throws IOException {

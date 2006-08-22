@@ -6,7 +6,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TabPane extends Html {
+public class TabPane extends HtmlOutputter {
 
 	private final String name;
 

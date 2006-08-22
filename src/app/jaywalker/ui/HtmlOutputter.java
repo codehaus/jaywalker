@@ -3,11 +3,11 @@ package jaywalker.ui;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class Html {
+public class HtmlOutputter {
 
-	public void index(OutputStream os, Content content) throws IOException {
+	public void index(OutputStream os, Content[] contents) throws IOException {
 		docType(os);
-		html(os, content);
+		html(os, contents);
 	}
 
 	protected void docType(OutputStream os) throws IOException {
@@ -15,10 +15,10 @@ public class Html {
 		os.write(docType.getBytes());
 	}
 
-	protected void html(OutputStream os, Content content) throws IOException {
+	protected void html(OutputStream os, Content[] contents) throws IOException {
 		os.write("<html>".getBytes());
 		head(os);
-		body(os, content);
+		body(os, contents);
 		os.write("</html>".getBytes());
 	}
 
@@ -51,7 +51,7 @@ public class Html {
 			throws IOException {
 		os.write("<meta http-equiv=\"".getBytes());
 		os.write(httpEquiv.getBytes());
-		os.write(" content=\"".getBytes());
+		os.write("\" content=\"".getBytes());
 		os.write(content.getBytes());
 		os.write("\" />".getBytes());
 	}
@@ -70,11 +70,13 @@ public class Html {
 		os.write("\" />".getBytes());
 	}
 
-	protected void body(OutputStream os, Content content) throws IOException {
+	protected void body(OutputStream os, Content[] contents) throws IOException {
 		os.write("<body>".getBytes());
 		h2(os, titleValue());
 		javascript(os, "js/tablesetup.js");
-		os.write(content.getBytes());
+		for (int i = 0; i < contents.length; i++) {
+			os.write(contents[i].getBytes());
+		}
 		os.write("</body>".getBytes());
 	}
 
@@ -112,6 +114,49 @@ public class Html {
 			os.write("\n".getBytes());
 		}
 		os.write("</script>".getBytes());
+	}
+
+	public void table(OutputStream os, String id, String clazz,
+			String[] headers, String[][] values) throws IOException {
+		os.write("<table class=\"".getBytes());
+		os.write(clazz.getBytes());
+		os.write("\" id=\"".getBytes());
+		os.write(id.getBytes());
+		os.write("\">".getBytes());
+		thead(os, headers);
+		tbody(os, values);
+		os.write("</table>".getBytes());
+	}
+
+	public void tbody(OutputStream os, String[][] values) throws IOException {
+		os.write("<tbody>".getBytes());
+		for (int i = 0; i < values.length; i++) {
+			tr(os, ((i + 1) % 2 == 0) ? "even" : "odd", values[i]);
+		}
+		os.write("</tbody>".getBytes());
+	}
+
+	public void thead(OutputStream os, String[] headers) throws IOException {
+		os.write("<thead>".getBytes());
+		tr(os, "header", headers);
+		os.write("</thead>".getBytes());
+	}
+
+	public void tr(OutputStream os, String clazz, String[] values)
+			throws IOException {
+		os.write("<tr class=\"".getBytes());
+		os.write(clazz.getBytes());
+		os.write("\">".getBytes());
+		for (int i = 0; i < values.length; i++) {
+			td(os, values[i]);
+		}
+		os.write("</tr>".getBytes());
+	}
+
+	public void td(OutputStream os, String value) throws IOException {
+		os.write("<td>".getBytes());
+		os.write(value.getBytes());
+		os.write("</td>".getBytes());
 	}
 
 }
