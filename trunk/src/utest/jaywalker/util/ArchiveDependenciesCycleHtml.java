@@ -17,5 +17,10 @@ public class ArchiveDependenciesCycleHtml extends HtmlDetailTableTestCase {
 	public String getXsltFileName() {
 		return "archive-dependencies-cycle-html.xslt";
 	}
+	
+	public String getTableId() {
+		return "archive-dependencies-cycle-table";
+	}
+
 
 }

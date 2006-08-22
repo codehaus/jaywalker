@@ -4,7 +4,7 @@
     <xsl:strip-space elements="*"/>
 
     <xsl:template match="report">
-        <table id="table-3" class="sort-table">
+        <table id="package-dependencies-cycle-table" class="sort-table">
         	<thead>
             <tr>
             <td>Package</td>

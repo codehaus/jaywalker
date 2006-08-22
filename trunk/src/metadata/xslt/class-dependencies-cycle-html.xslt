@@ -4,7 +4,7 @@
     <xsl:strip-space elements="*"/>
     
     <xsl:template match="report">
-        <table id="table-3" class="sort-table">
+        <table id="class-dependencies-cycle-table" class="sort-table">
         	<thead>
             <tr>
             <td>Class</td>
@@ -21,7 +21,7 @@
 				    <xsl:text disable-output-escaping="yes">&lt;/tr&gt;</xsl:text>
                 </xsl:when>
                 <xsl:otherwise>
-                    <xsl:apply-templates>
+                    <xsl:apply-templates select="//element[@type='class' or @type='interface' or @type='abstract'][count(dependency)>0]">
                         <xsl:sort select="@url"/>
                     </xsl:apply-templates>
                 </xsl:otherwise>
@@ -30,33 +30,40 @@
         </table>
     </xsl:template>
     
-    <xsl:template match="element[@type='class' or @type='interface' or @type='abstract'][count(dependency)>0]">
+    <xsl:template match="element">
         <xsl:variable name="element-dependencies"
             select="child::dependency[@type='cycle']/element[@type='class' or @type='interface' or @type='abstract']"/>
-        <xsl:if test="count($element-dependencies)>0">
-            <xsl:variable name="row-class">
-                <xsl:choose>
-                    <xsl:when test="position() mod 2 = 0">even</xsl:when>
-                    <xsl:otherwise>odd</xsl:otherwise>
-                </xsl:choose>
-            </xsl:variable>
 
+        <xsl:variable name="row-class">
+            <xsl:choose>
+                <xsl:when test="position() mod 2 = 0">even</xsl:when>
+                <xsl:otherwise>odd</xsl:otherwise>
+            </xsl:choose>
+        </xsl:variable>
+
+        <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
+        <xsl:value-of select="$row-class"/>
+       	<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+
+        <xsl:text disable-output-escaping="yes">&lt;td rowspan="</xsl:text>
+        <xsl:value-of select="count($element-dependencies)+1"/>
+        <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+        <xsl:value-of select="@url"/>
+        <xsl:text disable-output-escaping="yes">&lt;/td&gt;</xsl:text>
+        
+        <xsl:for-each select="$element-dependencies">
+        
             <xsl:text disable-output-escaping="yes">&#10;&lt;tr class="</xsl:text>
             <xsl:value-of select="$row-class"/>
            	<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
-
-            <xsl:text disable-output-escaping="yes">&lt;td rowspan="</xsl:text>
-            <xsl:value-of select="count($element-dependencies)"/>
-            <xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
-            <xsl:value-of select="@url"/>
-            <xsl:text disable-output-escaping="yes">&lt;/td&gt;</xsl:text>
-            <xsl:for-each select="$element-dependencies">
-                <td>
-                    <xsl:value-of select="@url"/>
-                </td>
-                <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
-            </xsl:for-each>
-        </xsl:if>
-        <xsl:apply-templates/>
+        
+            <td>
+                <xsl:value-of select="@url"/>
+            </td>
+        
+            <xsl:text disable-output-escaping="yes">&lt;/tr&gt;&#10;</xsl:text>
+            
+        </xsl:for-each>
+        
     </xsl:template>
 </xsl:stylesheet>

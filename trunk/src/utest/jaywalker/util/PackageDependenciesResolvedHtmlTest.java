@@ -18,5 +18,10 @@ public class PackageDependenciesResolvedHtmlTest extends
 	public String getXsltFileName() {
 		return "package-dependencies-resolved-html.xslt";
 	}
+	
+	public String getTableId() {
+		return "package-dependencies-resolved-table";
+	}
+
 
 }

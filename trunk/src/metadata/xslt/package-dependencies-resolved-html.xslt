@@ -6,7 +6,7 @@
     <xsl:key name="distinct-package-dependencies" match="container/dependency[@type='resolved']/container[@type='package']" use="@value"/>
         
     <xsl:template match="report">
-        <table id="table-3" class="sort-table">
+        <table id="package-dependencies-resolved-table" class="sort-table">
         	<thead>
             <tr>
             <td>Package</td>

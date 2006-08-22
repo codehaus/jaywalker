@@ -18,5 +18,10 @@ public class ArchiveDependenciesResolvedHtmlTest extends
 	public String getXsltFileName() {
 		return "archive-dependencies-resolved-html.xslt";
 	}
+	
+	public String getTableId() {
+		return "archive-dependencies-resolved-table";
+	}
+
 
 }

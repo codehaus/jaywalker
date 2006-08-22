@@ -25,15 +25,16 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Properties;
-import java.util.zip.ZipFile;
 import java.util.zip.ZipInputStream;
 
 import jaywalker.classlist.ClasslistElement;
 import jaywalker.classlist.ClasslistElementFactory;
 import jaywalker.classlist.ClasslistElementStatistic;
 import jaywalker.classlist.ClasslistElementVisitor;
-import jaywalker.ui.Html;
-import jaywalker.ui.TabSetup;
+import jaywalker.ui.ClasslistTabPane;
+import jaywalker.ui.Content;
+import jaywalker.ui.HtmlOutputter;
+import jaywalker.ui.SummaryTabPane;
 import jaywalker.util.Clock;
 import jaywalker.util.FileSystem;
 import jaywalker.util.ResourceLocator;
@@ -144,7 +145,11 @@ public class ReportExecutor {
 			ReportFile reportFile = new ReportFileFactory()
 					.create("report.html");
 			OutputStream os = new WriterOutputStream(reportFile.getWriter());
-			new Html().index(os, new TabSetup(new XsltTransformerMap()));
+			new HtmlOutputter().index(os, new Content[] {
+					new ClasslistTabPane(classlist,
+							lookupClasslist("classlist-shallow"),
+							lookupClasslist("classlist-system")),
+					new SummaryTabPane(new XsltTransformerMap()) });
 			// os.write(createTitle("JayWalker Report"));
 			// os.write(createStylesheetLink("stylesheet.css"));
 			// os.write(createClasslistTable(classlist,
@@ -166,35 +171,6 @@ public class ReportExecutor {
 		}
 	}
 
-	private byte[] createClasslistTable(String deepValue, String shallowValue,
-			String systemValue) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("<h3>Classlists</h3>");
-		sb.append("<table width=\"95%\" cellspacing=\"2\" ");
-		sb.append("cellpadding=\"5\" border=\"0\" class=\"details\">");
-		sb.append("<tr><th>Classlist</th><th>Value</th></tr>");
-		sb.append(createKeyValueTableRow("default (deep)", deepValue));
-		sb.append(createKeyValueTableRow("shallow", shallowValue));
-		sb.append(createKeyValueTableRow("system", systemValue));
-		sb.append("</table>");
-		return sb.toString().getBytes();
-	}
-
-	private String createKeyValueTableRow(String key, String value) {
-		StringBuffer sb = new StringBuffer();
-		sb.append("<tr><td>");
-		sb.append(key);
-		sb.append("</td><td>");
-		sb.append(value);
-		sb.append("</td></tr>");
-		return sb.toString();
-	}
-
-	private byte[] createTitle(String value) {
-		String html = "<h1>" + value + "</h1>";
-		return html.getBytes();
-	}
-
 	private void outputStyleSheet(File outDir) {
 		File file = new File(outDir, "stylesheet.css");
 		InputStream is = ReportExecutor.class
@@ -214,12 +190,6 @@ public class ReportExecutor {
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
-	}
-
-	private byte[] createStylesheetLink(String filename) {
-		String html = "<link title=\"Style\" type=\"text/css\" rel=\"stylesheet\" href=\""
-				+ filename + "\">\n";
-		return html.getBytes();
 	}
 
 	private String lookupClasslist(String classlistType) {

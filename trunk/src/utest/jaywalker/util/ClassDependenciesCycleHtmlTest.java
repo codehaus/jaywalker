@@ -17,5 +17,10 @@ public class ClassDependenciesCycleHtmlTest extends HtmlDetailTableTestCase {
 	public String getXsltFileName() {
 		return "class-dependencies-cycle-html.xslt";
 	}
+	
+	public String getTableId() {
+		return "class-dependencies-cycle-table";
+	}
+
 
 }

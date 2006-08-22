@@ -17,5 +17,10 @@ public class ClassDependenciesUnresolvedHtmlTest extends HtmlDetailTableTestCase
 	public String getXsltFileName() {
 		return "class-dependencies-unresolved-html.xslt";
 	}
+	
+	public String getTableId() {
+		return "class-dependencies-unresolved-table";
+	}
+
 
 }

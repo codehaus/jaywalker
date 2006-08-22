@@ -5,7 +5,7 @@
     <xsl:key name="distinct-classname" match="element[@type='class' or @type='interface' or @type='abstract']/dependency[@type='unresolved']" use="@value"/>
 
     <xsl:template match="report">
-        <table id="table-3" class="sort-table">
+        <table id="class-dependencies-unresolved-table" class="sort-table">
         	<thead>
             <tr>
             <td>Unresolved Class Name</td>

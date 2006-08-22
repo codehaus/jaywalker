@@ -3,7 +3,7 @@
     <xsl:output method="html"/>
     <xsl:strip-space elements="*"/>
     <xsl:template match="report">
-        <table id="table-3" class="sort-table">
+        <table id="archive-dependencies-metrics-table" class="sort-table">
             <thead>
             <tr>
             <td>Archive</td>

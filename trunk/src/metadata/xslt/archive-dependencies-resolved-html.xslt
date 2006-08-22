@@ -4,7 +4,7 @@
     <xsl:strip-space elements="*"/>
     
     <xsl:template match="report">
-        <table id="table-3" class="sort-table">
+        <table id="archive-dependencies-resolved-table" class="sort-table">
             <thead>
             <tr>
             <td>Archive</td>
