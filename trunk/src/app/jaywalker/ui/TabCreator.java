@@ -16,14 +16,15 @@ public class TabCreator implements Content {
 	}
 
 	public void addTabToPane(TabPane tabPane, String tabPageName,
-			String tabPageDescription) throws IOException {
-		mainTabPane
-				.add(createTabPage(tabPane, tabPageName, tabPageDescription));
+			String tabPageTitle, String tabPageDescription) throws IOException {
+		mainTabPane.add(createTabPage(tabPane, tabPageName, tabPageTitle,
+				tabPageDescription));
 	}
 
 	private TabPage createTabPage(TabPane tabPane, String tabPageName,
-			String tabPageDescription) throws IOException {
-		final TabPage tabPage = new TabPage(tabPageName, tabPageDescription);
+			String tabPageTitle, String tabPageDescription) throws IOException {
+		final TabPage tabPage = new TabPage(tabPageName, tabPageTitle,
+				tabPageDescription);
 		tabPage.add("<br/>".getBytes());
 		tabPage.add(toBytes(tabPane));
 		return tabPage;

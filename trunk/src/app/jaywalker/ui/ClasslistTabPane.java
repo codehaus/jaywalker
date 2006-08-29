@@ -5,7 +5,7 @@ import java.io.IOException;
 
 public class ClasslistTabPane implements Content {
 
-	private TabPane mainTabPane = new TabPane("Main");
+	private TabPane mainTabPane = new TabPane("Classlist");
 
 	private TabCreator tabCreator = new TabCreator(mainTabPane);
 
@@ -25,19 +25,22 @@ public class ClasslistTabPane implements Content {
 	}
 
 	public byte[] getBytes() throws IOException {
-		addPageToMainPane("Deep", deepValue, "Elements whose dependencies are walked");
-		addPageToMainPane("Shallow", shallowValue, "Elements whose dependencies are not walked");
-		addPageToMainPane("System", systemValue, "Elements which are not walked");
+		addPageToMainPane("Deep", deepValue, "Deep Classlist",
+				"Elements whose dependencies are walked");
+		addPageToMainPane("Shallow", shallowValue, "Shallow Classlist",
+				"Elements whose dependencies are not walked");
+		addPageToMainPane("System", systemValue, "System Classlist",
+				"Elements which are not walked");
 		return tabCreator.getBytes();
 	}
 
 	private void addPageToMainPane(String classlistType, String classlist,
-			String description) throws IOException {
+			String title, String description) throws IOException {
 		String[][] toStringArrayArray = toStringArrayArray(classlistType,
 				classlist);
-		mainTabPane.add(new TabPage(classlistType, description, createTable(
-				"classlist-" + classlistType.toLowerCase() + "-table",
-				"sort-table", toStringArrayArray)));
+		mainTabPane.add(new TabPage(classlistType, title, description,
+				createTable("classlist-" + classlistType.toLowerCase()
+						+ "-table", "sort-table", toStringArrayArray)));
 	}
 
 	private byte[] createTable(String id, String clazz, String[][] values)
