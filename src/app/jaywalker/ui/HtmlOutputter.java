@@ -31,8 +31,12 @@ public class HtmlOutputter {
 		javascript(os, "js/tabpane.js");
 		javascript(os, "js/stringbuilder.js");
 		javascript(os, "js/sortabletable.js");
+		javascript(os, "js/domLib.js");
+		javascript(os, "js/fadomatic.js");
+		javascript(os, "js/domTT.js");
 		css(os, "css/tab.css");
 		css(os, "css/sortabletable.css");
+		css(os, "css/dom.css");
 		css(os, "css/override.css");
 		os.write("</head>".getBytes());
 	}
@@ -95,11 +99,17 @@ public class HtmlOutputter {
 		os.write("</h2>".getBytes());
 	}
 
-	protected void toolTip(OutputStream os, String value, String tip)
+	protected void toolTip(OutputStream os, String value, String tipTitle, String tipValue)
 			throws IOException {
-		os.write("<a href=\"#\" title=\"".getBytes());
-		os.write(tip.getBytes());
-		os.write("\">".getBytes());
+		os.write("<a href=\"#\" ".getBytes());
+		os.write("onmouseover=\"this.style.color = '#D17E62'; ".getBytes());
+		os.write("domTT_activate(this, event, 'content','".getBytes());
+		os.write(tipTitle.getBytes());
+		os.write("<p>".getBytes());
+		os.write(tipValue.getBytes());
+		os.write("</p>".getBytes());
+		os.write("', 'delay', 1000, 'trail', true, 'fade', 'both', 'fadeMax', 87, 'styleClass', 'niceTitle');\" ".getBytes()); 
+		os.write("onmouseout=\"this.style.color = ''; domTT_mouseout(this, event);\">".getBytes());
 		os.write(value.getBytes());
 		os.write("</a>".getBytes());
 	}

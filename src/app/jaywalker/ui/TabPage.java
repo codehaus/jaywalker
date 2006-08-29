@@ -14,15 +14,19 @@ public class TabPage {
 
 	private static final HtmlOutputter OUTPUTTER_HTML = new HtmlOutputter();
 
+	private final String title;
+
 	private final String description;
 
-	public TabPage(String name, String description) {
+	public TabPage(String name, String title, String description) {
 		this.name = name;
+		this.title = title;
 		this.description = description;
 	}
 
-	public TabPage(String name, String description, byte[] content) {
+	public TabPage(String name, String title, String description, byte[] content) {
 		this.name = name;
+		this.title = title;
 		this.description = description;
 		add(content);
 	}
@@ -31,9 +35,10 @@ public class TabPage {
 		list.add(content);
 	}
 
-	private byte[] toolTip(String value, String tip) throws IOException {
+	private byte[] toolTip(String value, String tipTitle, String tipValue)
+			throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		OUTPUTTER_HTML.toolTip(baos, value, tip);
+		OUTPUTTER_HTML.toolTip(baos, value, tipTitle, tipValue);
 		baos.flush();
 		baos.close();
 		return baos.toByteArray();
@@ -42,7 +47,8 @@ public class TabPage {
 	public void write(OutputStream os, String tabPaneName, String variable)
 			throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		OUTPUTTER_HTML.h2(baos, "tab", new String(toolTip(name, description)));
+		OUTPUTTER_HTML.h2(baos, "tab", new String(toolTip(name, title,
+				description)));
 		final String id = toId(tabPaneName);
 		OUTPUTTER_HTML.javascript(baos,
 				new String[] { addTabPage(variable, id) });

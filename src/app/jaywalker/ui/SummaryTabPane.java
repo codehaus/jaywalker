@@ -34,58 +34,75 @@ public class SummaryTabPane implements Content {
 	public byte[] getBytes() throws IOException {
 
 		if (properties.containsKey("archive")) {
-			addArchiveTabPage("Metrics", "Archive Metric Report");
+			addArchiveTabPage("Metrics", "Archive Metric Report",
+					"Summary metrics report on Archive elements");
 			addArchiveTabPage("Resolved",
-					"Resolved Archive Dependencies Report");
-			addArchiveTabPage("Cycle", "Archive Cycles Report");
+					"Resolved Archive Dependencies Report",
+					"Dependencies report on resolved Archive elements");
+			addArchiveTabPage("Cycle", "Archive Cycles Report",
+					"Cyclic dependencies report on resolved Archive elements");
 			tabCreator.addTabToPane(archiveTabPane, "Archive",
-					"Archive Summary Reports");
+					"Archive Summary Reports",
+					"Summary Reports specific to Archives");
 		}
 
 		if (properties.containsKey("package")) {
-			addPackageTabPage("Metrics", "Package Metric Report");
+			addPackageTabPage("Metrics", "Package Metric Report",
+					"Summary metrics report on Package elements");
 			addPackageTabPage("Resolved",
-					"Resolved Archive Dependencies Report");
-			addPackageTabPage("Cycle", "Archive Cycles Report");
+					"Resolved Archive Dependencies Report",
+					"Dependencies report on resolved Package elements");
+			addPackageTabPage("Cycle", "Archive Cycles Report",
+					"Cyclic dependencies report on resolved Archive elements");
 			tabCreator.addTabToPane(packageTabPane, "Package",
-					"Package Summary Reports");
+					"Package Summary Reports",
+					"Summary Reports specific to Packages");
 		}
 
 		if (properties.containsKey("class")) {
-			addClassTabPage("Collision", "Class Collision Report");
-			addClassTabPage("Conflict", "Class Conflict Report");
-			addClassTabPage("Unresolved", "Unresolved Classes Report");
-			addClassTabPage("Cycle", "Class Cycles Report");
+			addClassTabPage(
+					"Collision",
+					"Class Collision Report",
+					"Report identifying those classes that have name collisions with other classes found during the walk");
+			addClassTabPage(
+					"Conflict",
+					"Class Conflict Report",
+					"Report identifying those Serializable classes whose serialVersionUid is conflicting with similar Serializable classes found during the walk");
+			addClassTabPage("Unresolved", "Unresolved Classes Report",
+					"Dependencies report on unresolved Class elements");
+			addClassTabPage("Cycle", "Class Cycles Report",
+					"Cyclic dependencies report on Class elements");
 			tabCreator.addTabToPane(classTabPane, "Class",
-					"Class Summary Reports");
+					"Class Summary Reports",
+					"Summary Reports specific to Classes");
 		}
 
 		return tabCreator.getBytes();
 	}
 
-	private void addArchiveTabPage(String name, String description)
+	private void addArchiveTabPage(String name, String title, String description)
 			throws IOException {
-		addTabPage(archiveTabPane, "archive", name, description);
+		addTabPage(archiveTabPane, "archive", name, title, description);
 	}
 
-	private void addPackageTabPage(String name, String description)
+	private void addPackageTabPage(String name, String title, String description)
 			throws IOException {
-		addTabPage(packageTabPane, "package", name, description);
+		addTabPage(packageTabPane, "package", name, title, description);
 	}
 
-	private void addClassTabPage(String name, String description)
+	private void addClassTabPage(String name, String title, String description)
 			throws IOException {
-		addTabPage(classTabPane, "class", name, description);
+		addTabPage(classTabPane, "class", name, title, description);
 	}
 
 	private void addTabPage(TabPane tabPane, String scope, String name,
-			String description) throws IOException {
+			String title, String description) throws IOException {
 		String value = name.toLowerCase();
 		if (properties.containsKey(scope)) {
 			if (properties.getProperty(scope).indexOf(value) != -1) {
 				final XsltTransformer xsltTransformer = transformerMap.get(
 						scope, value);
-				tabPane.add(new TabPage(name, description,
+				tabPane.add(new TabPage(name, title, description,
 						toBytes(xsltTransformer)));
 			}
 		}

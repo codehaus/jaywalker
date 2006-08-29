@@ -11,9 +11,9 @@ public class TabCreatorTest extends TestCase {
 		TabPane tabPane1 = new TabPane("1");
 		TabPane tabPane2 = new TabPane("2");
 		TabPane tabPane3 = new TabPane("3");
-		creator.addTabToPane(tabPane1, "1", "1");
-		creator.addTabToPane(tabPane2, "2", "2");
-		creator.addTabToPane(tabPane3, "3", "3");
+		creator.addTabToPane(tabPane1, "1", "1", "1");
+		creator.addTabToPane(tabPane2, "2", "2", "1");
+		creator.addTabToPane(tabPane3, "3", "3", "1");
 		assertNotNull(creator.getBytes());
 	}
 }

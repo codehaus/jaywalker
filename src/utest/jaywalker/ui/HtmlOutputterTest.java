@@ -100,7 +100,8 @@ public class HtmlOutputterTest extends TestCase {
 		String expected = "<head>(title)(text/html; charset=utf-8)"
 				+ "(local/webfxlayout.js)(local/webfxapi.js)"
 				+ "(js/tabpane.js)(js/stringbuilder.js)(js/sortabletable.js)"
-				+ "(css/tab.css)(css/sortabletable.css)(css/override.css)</head>";
+				+ "(js/domLib.js)(js/fadomatic.js)(js/domTT.js)"
+				+ "(css/tab.css)(css/sortabletable.css)(css/dom.css)(css/override.css)</head>";
 		assertEquals(expected, executor);
 	}
 
