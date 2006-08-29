@@ -34,50 +34,59 @@ public class SummaryTabPane implements Content {
 	public byte[] getBytes() throws IOException {
 
 		if (properties.containsKey("archive")) {
-			addArchiveTabPage("Metrics");
-			addArchiveTabPage("Resolved");
-			addArchiveTabPage("Cycle");
-			tabCreator.addTab(archiveTabPane, "Archive");
+			addArchiveTabPage("Metrics", "Archive Metric Report");
+			addArchiveTabPage("Resolved",
+					"Resolved Archive Dependencies Report");
+			addArchiveTabPage("Cycle", "Archive Cycles Report");
+			tabCreator.addTabToPane(archiveTabPane, "Archive",
+					"Archive Summary Reports");
 		}
 
 		if (properties.containsKey("package")) {
-			addPackageTabPage("Metrics");
-			addPackageTabPage("Resolved");
-			addPackageTabPage("Cycle");
-			tabCreator.addTab(packageTabPane, "Package");
+			addPackageTabPage("Metrics", "Package Metric Report");
+			addPackageTabPage("Resolved",
+					"Resolved Archive Dependencies Report");
+			addPackageTabPage("Cycle", "Archive Cycles Report");
+			tabCreator.addTabToPane(packageTabPane, "Package",
+					"Package Summary Reports");
 		}
 
 		if (properties.containsKey("class")) {
-			addClassTabPage("Collision");
-			addClassTabPage("Conflict");
-			addClassTabPage("Unresolved");
-			addClassTabPage("Cycle");
-			tabCreator.addTab(classTabPane, "Class");
+			addClassTabPage("Collision", "Class Collision Report");
+			addClassTabPage("Conflict", "Class Conflict Report");
+			addClassTabPage("Unresolved", "Unresolved Classes Report");
+			addClassTabPage("Cycle", "Class Cycles Report");
+			tabCreator.addTabToPane(classTabPane, "Class",
+					"Class Summary Reports");
 		}
 
 		return tabCreator.getBytes();
 	}
 
-	private void addArchiveTabPage(String name) throws IOException {
-		addTabPage(archiveTabPane, "archive", name);
-	}
-
-	private void addPackageTabPage(String name) throws IOException {
-		addTabPage(packageTabPane, "package", name);
-	}
-
-	private void addClassTabPage(String name) throws IOException {
-		addTabPage(classTabPane, "class", name);
-	}
-
-	private void addTabPage(TabPane tabPane, String scope, String name)
+	private void addArchiveTabPage(String name, String description)
 			throws IOException {
+		addTabPage(archiveTabPane, "archive", name, description);
+	}
+
+	private void addPackageTabPage(String name, String description)
+			throws IOException {
+		addTabPage(packageTabPane, "package", name, description);
+	}
+
+	private void addClassTabPage(String name, String description)
+			throws IOException {
+		addTabPage(classTabPane, "class", name, description);
+	}
+
+	private void addTabPage(TabPane tabPane, String scope, String name,
+			String description) throws IOException {
 		String value = name.toLowerCase();
 		if (properties.containsKey(scope)) {
 			if (properties.getProperty(scope).indexOf(value) != -1) {
 				final XsltTransformer xsltTransformer = transformerMap.get(
 						scope, value);
-				tabPane.add(new TabPage(name, toBytes(xsltTransformer)));
+				tabPane.add(new TabPage(name, description,
+						toBytes(xsltTransformer)));
 			}
 		}
 	}

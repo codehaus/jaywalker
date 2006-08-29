@@ -13,12 +13,13 @@
 <script type="text/javascript" src="js/tabpane.js"></script>
 <script type="text/javascript" src="js/stringbuilder.js"></script>
 <script type="text/javascript" src="js/sortabletable.js"></script>
-
+<script type="text/javascript" src="js/helptip.js"></script>
 
 <!-- import stylesheets -->
 <link type="text/css" rel="stylesheet" href="css/tab.css" />
 <link type="text/css" rel="styleSheet" href="css/sortabletable.css" />
 <link type="text/css" rel="styleSheet" href="css/override.css" />
+<link type="text/css" rel="StyleSheet" href="css/helptip.css" />
 
 
 </head>
@@ -39,11 +40,12 @@ var packageTabPane;
 var classTabPane;
 
 tabPane = new WebFXTabPane( document.getElementById( "article-tab" ), true );
+var linkHelp = "The help tool tip was made by Erik Arvidsson for <a href='http://webfx.eae.net' target='_new'>WebFX</a>";
 </script>
 
 <!-- begin Archive tab -->
 <div class="tab-page" id="archive-page">
-<h2 class="tab">Archive</h2>
+<h2 class="tab"><a href="#" title="something">Archive</a></h2>
 
 <script type="text/javascript">
 tabPane.addTabPage( document.getElementById( "archive-page" ) );

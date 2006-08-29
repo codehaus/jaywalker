@@ -95,6 +95,15 @@ public class HtmlOutputter {
 		os.write("</h2>".getBytes());
 	}
 
+	protected void toolTip(OutputStream os, String value, String tip)
+			throws IOException {
+		os.write("<a href=\"#\" title=\"".getBytes());
+		os.write(tip.getBytes());
+		os.write("\">".getBytes());
+		os.write(value.getBytes());
+		os.write("</a>".getBytes());
+	}
+
 	protected void div(OutputStream os, String clazz, String id, byte[] value)
 			throws IOException {
 		os.write("<div class=\"".getBytes());

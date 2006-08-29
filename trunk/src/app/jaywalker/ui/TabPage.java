@@ -6,18 +6,24 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TabPage extends HtmlOutputter {
+public class TabPage {
 
 	private final String name;
 
 	private final List list = new ArrayList();
 
-	public TabPage(String name) {
+	private static final HtmlOutputter OUTPUTTER_HTML = new HtmlOutputter();
+
+	private final String description;
+
+	public TabPage(String name, String description) {
 		this.name = name;
+		this.description = description;
 	}
 
-	public TabPage(String name, byte[] content) {
+	public TabPage(String name, String description, byte[] content) {
 		this.name = name;
+		this.description = description;
 		add(content);
 	}
 
@@ -25,18 +31,27 @@ public class TabPage extends HtmlOutputter {
 		list.add(content);
 	}
 
+	private byte[] toolTip(String value, String tip) throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		OUTPUTTER_HTML.toolTip(baos, value, tip);
+		baos.flush();
+		baos.close();
+		return baos.toByteArray();
+	}
+
 	public void write(OutputStream os, String tabPaneName, String variable)
 			throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		h2(baos, "tab", name);
+		OUTPUTTER_HTML.h2(baos, "tab", new String(toolTip(name, description)));
 		final String id = toId(tabPaneName);
-		javascript(baos, new String[] { addTabPage(variable, id) });
+		OUTPUTTER_HTML.javascript(baos,
+				new String[] { addTabPage(variable, id) });
 		for (int i = 0; i < list.size(); i++) {
 			baos.write((byte[]) list.get(i));
 		}
 		baos.flush();
 		baos.close();
-		div(os, "tab-page", id, baos.toByteArray());
+		OUTPUTTER_HTML.div(os, "tab-page", id, baos.toByteArray());
 	}
 
 	protected String addTabPage(String tabPane, String id) {
