@@ -1,21 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" 
+                              xmlns:func="http://exslt.org/functions"
+                              xmlns:jw="http://jaywalker.codehaus.org"
+                              extension-element-prefixes="func">
+    <xsl:import href="jaywalker-common.xslt"/>
     <xsl:output method="html"/>
     <xsl:strip-space elements="*"/>
     <xsl:key name="distinct-package" match="container[dependency[@type='resolved']/container[@type='package']]" use="@value"/>
-    
+
     <xsl:template match="report">
         <table id="package-dependencies-metrics-table" class="sort-table">
         	<thead>
             <tr>
             <td>Package</td>
-            <td>Total Classes</td>
-            <td>Abstract Classes</td>
-            <td>Abstractness</td>
-            <td>Afferent</td> 
-            <td>Efferent</td>           
-            <td>Instability</td>
-            <td>Distance</td>
+            <td><xsl:value-of disable-output-escaping="yes" select="jw:tooltip('Total Classes','Total Classes&lt;p&gt;The total number of concrete and abstract classes&lt;br/&gt;and interfaces in a package.&lt;/p&gt;&lt;p&gt;This number represents the extensibility of the&lt;br/&gt;package.&lt;/p&gt;')"/></td>
+            <td><xsl:value-of disable-output-escaping="yes" select="jw:tooltip('Abstract Classes', 'Abstract Classes&lt;p&gt;The total number of abstract classes and interfaces&lt;br/&gt;in a package.&lt;/p&gt;&lt;p&gt;This number also represents the extensibility of&lt;br/&gt;the package.&lt;/p&gt;')"/></td>
+            <td><xsl:value-of disable-output-escaping="yes" select="jw:tooltip('Abstractness', 'Abstractness (A)&lt;p&gt;The ratio of the number of abstract classes and&lt;br/&gt;interfaces to the total number of classes.&lt;/p&gt;')"/></td>
+            <td><xsl:value-of disable-output-escaping="yes" select="jw:tooltip('Afferent', 'Afferent Couplings (Ca)&lt;p&gt;The number of other packages that depend upon&lt;br/&gt;classes within the package.&lt;/p&gt;&lt;p&gt;This metric is an indicator of the packages&lt;br/&gt;responsibility.&lt;/p&gt;')"/></td> 
+            <td><xsl:value-of disable-output-escaping="yes" select="jw:tooltip('Efferent', 'Efferent Couplings (Ce)&lt;p&gt;The number of other packages that the classes&lt;br/&gt;within the package depend upon.&lt;/p&gt;&lt;p&gt;This metric is an indicator of the packages&lt;br/&gt;independence.&lt;/p&gt;')"/></td>           
+            <td><xsl:value-of disable-output-escaping="yes" select="jw:tooltip('Instability', 'Instability (I)&lt;p&gt;The ratio of efferent coupling (Ce) to total coupling&lt;br/&gt;(Ce + Ca) such that I = Ce / (Ce + Ca).&lt;/p&gt;&lt;p&gt;This ratio is an indicator of the packages resilience&lt;br/&gt;to change.&lt;/p&gt;&lt;p&gt;The range for this metric is 0 to 1, with I = 0&lt;br/&gt;indicating a completely stable package and I = 1&lt;br/&gt;indicating a completely instable package&lt;/p&gt;')"/></td>
+            <td><xsl:value-of disable-output-escaping="yes" select="jw:tooltip('Distance', 'Distance from the Main Sequence (D)&lt;p&gt;The perpendicular distance of a package from the&lt;br/&gt;idealized line A + I = 1.&lt;/p&gt;&lt;p&gt;This metric is an indicator of the packages balance&lt;br/&gt;between abstractness and stability.&lt;/p&gt;&lt;p&gt;Ideal packages are either completely abstract and&lt;br/&gt;stable (x=0, y=1) or completely concrete and instable&lt;br/&gt;(x=1, y=0).&lt;/p&gt;&lt;p&gt;The range for this metric  is 0 to 1, with D=0&lt;br/&gt;indicating a package that is coincident with the&lt;br/&gt;main sequence and D=1 indicating a package that is&lt;br/&gt;as far from the main sequence as possible.&lt;/p&gt;')"/></td>
             </tr>
             </thead>
             <tbody>
@@ -36,6 +40,7 @@
             </tbody>
         </table>
     </xsl:template>
+    
     <xsl:template match="container">
     
         <xsl:variable name="package-name" select="@value"/>

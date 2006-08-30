@@ -10,19 +10,19 @@ public class HtmlOutputter {
 		html(os, contents);
 	}
 
-	protected void docType(OutputStream os) throws IOException {
+	public void docType(OutputStream os) throws IOException {
 		final String docType = "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">\n";
 		os.write(docType.getBytes());
 	}
 
-	protected void html(OutputStream os, Content[] contents) throws IOException {
+	public void html(OutputStream os, Content[] contents) throws IOException {
 		os.write("<html>".getBytes());
 		head(os);
 		body(os, contents);
 		os.write("</html>".getBytes());
 	}
 
-	protected void head(OutputStream os) throws IOException {
+	public void head(OutputStream os) throws IOException {
 		os.write("<head>".getBytes());
 		title(os);
 		meta(os, "Content-Type", "text/html; charset=utf-8");
@@ -41,17 +41,17 @@ public class HtmlOutputter {
 		os.write("</head>".getBytes());
 	}
 
-	protected void title(OutputStream os) throws IOException {
+	public void title(OutputStream os) throws IOException {
 		os.write("<title>".getBytes());
 		os.write(titleValue().getBytes());
 		os.write("</title>".getBytes());
 	}
 
-	protected String titleValue() {
+	public String titleValue() {
 		return "JayWalker Report";
 	}
 
-	protected void meta(OutputStream os, String httpEquiv, String content)
+	public void meta(OutputStream os, String httpEquiv, String content)
 			throws IOException {
 		os.write("<meta http-equiv=\"".getBytes());
 		os.write(httpEquiv.getBytes());
@@ -60,21 +60,21 @@ public class HtmlOutputter {
 		os.write("\" />".getBytes());
 	}
 
-	protected void javascript(OutputStream os, String src) throws IOException {
+	public void javascript(OutputStream os, String src) throws IOException {
 		os.write("<script type=\"text/javascript\" ".getBytes());
 		os.write("src=\"".getBytes());
 		os.write(src.getBytes());
 		os.write("\"></script>".getBytes());
 	}
 
-	protected void css(OutputStream os, String href) throws IOException {
+	public void css(OutputStream os, String href) throws IOException {
 		os.write("<link type=\"text/css\" ".getBytes());
 		os.write("rel=\"stylesheet\" href=\"".getBytes());
 		os.write(href.getBytes());
 		os.write("\" />".getBytes());
 	}
 
-	protected void body(OutputStream os, Content[] contents) throws IOException {
+	public void body(OutputStream os, Content[] contents) throws IOException {
 		os.write("<body>".getBytes());
 		h2(os, titleValue());
 		javascript(os, "js/tablesetup.js");
@@ -84,13 +84,13 @@ public class HtmlOutputter {
 		os.write("</body>".getBytes());
 	}
 
-	protected void h2(OutputStream os, String value) throws IOException {
+	public void h2(OutputStream os, String value) throws IOException {
 		os.write("<h2>".getBytes());
 		os.write(value.getBytes());
 		os.write("</h2>".getBytes());
 	}
 
-	protected void h2(OutputStream os, String clazz, String value)
+	public void h2(OutputStream os, String clazz, String value)
 			throws IOException {
 		os.write("<h2 class=\"".getBytes());
 		os.write(clazz.getBytes());
@@ -99,11 +99,11 @@ public class HtmlOutputter {
 		os.write("</h2>".getBytes());
 	}
 
-	protected void toolTip(OutputStream os, String value, String tipTitle, String tipValue)
+	public void toolTip(OutputStream os, String value, String tipTitle, String tipValue)
 			throws IOException {
 		os.write("<a href=\"#\" ".getBytes());
-		os.write("onmouseover=\"this.style.color = '#D17E62'; ".getBytes());
-		os.write("domTT_activate(this, event, 'content','".getBytes());
+		os.write("onmouseover=\"this.style.color = '#000000'; ".getBytes());
+		os.write("domTT_activate(this, event, 'content', '".getBytes());
 		os.write(tipTitle.getBytes());
 		os.write("<p>".getBytes());
 		os.write(tipValue.getBytes());
@@ -114,7 +114,7 @@ public class HtmlOutputter {
 		os.write("</a>".getBytes());
 	}
 
-	protected void div(OutputStream os, String clazz, String id, byte[] value)
+	public void div(OutputStream os, String clazz, String id, byte[] value)
 			throws IOException {
 		os.write("<div class=\"".getBytes());
 		os.write(clazz.getBytes());
@@ -125,7 +125,7 @@ public class HtmlOutputter {
 		os.write("</div>".getBytes());
 	}
 
-	protected void javascript(OutputStream os, String[] values)
+	public void javascript(OutputStream os, String[] values)
 			throws IOException {
 		os.write("<script type=\"text/javascript\">\n".getBytes());
 		for (int i = 0; i < values.length; i++) {

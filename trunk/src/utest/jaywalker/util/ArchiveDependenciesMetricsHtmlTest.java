@@ -1,6 +1,9 @@
 package jaywalker.util;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+
+import jaywalker.ui.HtmlOutputter;
 
 public class ArchiveDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase {
 
@@ -54,10 +57,12 @@ public class ArchiveDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 		return "Archive Dependencies Metrics";
 	}
 
+	public String getHref() {
+		return "xmlns:jw=\"http://jaywalker.codehaus.org\"";
+	}
+
 	public String[] getHeaderValues() {
-		return new String[] { "Archive", "Total Classes", "Abstract Classes",
-				"Abstractness", "Afferent", "Efferent", "Instability",
-				"Distance" };
+		return new MetricsHeaderBuilder("Archive").build();
 	}
 
 	public String getNoDataRowValue() {
@@ -67,7 +72,7 @@ public class ArchiveDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 	public String getXsltFileName() {
 		return "archive-dependencies-metrics-html.xslt";
 	}
-	
+
 	public String getTableId() {
 		return "archive-dependencies-metrics-table";
 	}
@@ -76,7 +81,8 @@ public class ArchiveDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 			throws IOException {
 		String input = "<?xml version=\"1.0\"?><report>" + SIMPLE_ARCHIVE
 				+ "</report>";
-		String expected = tableStart + "\n"
+		String expected = tableStart
+				+ "\n"
 				+ "<tr class=\"odd\"><td>archive</td><td>9</td><td>6</td><td>0.67</td><td>0</td><td>1</td><td>1</td><td>1.67</td>"
 				+ "</tr></tbody>\r\n</table>\r\n";
 		assertOutputEquals("archive-dependencies-metrics-html.xslt", input,
@@ -87,11 +93,11 @@ public class ArchiveDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 			throws IOException {
 		String input = "<?xml version=\"1.0\"?><report>" + SIMPLE_ARCHIVE
 				+ SIMPLE_ARCHIVE + "</report>";
-		String expected = tableStart + "\n"
+		String expected = tableStart
+				+ "\n"
 				+ "<tr class=\"odd\"><td>archive</td><td>9</td><td>6</td><td>0.67</td><td>0</td><td>1</td><td>1</td><td>1.67</td></tr>\n"
 				+ "<tr class=\"even\"><td>archive</td><td>9</td><td>6</td><td>0.67</td><td>0</td><td>1</td><td>1</td><td>1.67</td></tr>"
-				+ "</tbody>\r\n"
-				+ "</table>\r\n";
+				+ "</tbody>\r\n" + "</table>\r\n";
 		assertOutputEquals("archive-dependencies-metrics-html.xslt", input,
 				expected);
 	}
@@ -100,12 +106,12 @@ public class ArchiveDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 			throws IOException {
 		String input = "<?xml version=\"1.0\"?><report>" + NESTED_ARCHIVE
 				+ "</report>";
-		String expected = tableStart + "\n"
+		String expected = tableStart
+				+ "\n"
 				+ "<tr class=\"odd\"><td>archive</td><td>9</td><td>6</td><td>0.67</td><td>0</td><td>5</td><td>1</td><td>1.67</td></tr>\n"
 				+ "<tr class=\"even\"><td>archive2</td><td>2</td><td>2</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>\n"
 				+ "<tr class=\"odd\"><td>archive3</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>"
-				+ "</tbody>\r\n"
-				+ "</table>\r\n";
+				+ "</tbody>\r\n" + "</table>\r\n";
 		assertOutputEquals("archive-dependencies-metrics-html.xslt", input,
 				expected);
 	}

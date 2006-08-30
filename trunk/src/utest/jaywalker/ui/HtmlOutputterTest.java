@@ -20,11 +20,11 @@ public class HtmlOutputterTest extends TestCase {
 
 	public void testShouldCreateIndex() throws IOException {
 		final HtmlOutputter html = new HtmlOutputter() {
-			protected void docType(OutputStream os) throws IOException {
+			public void docType(OutputStream os) throws IOException {
 				os.write("(docType)".getBytes());
 			}
 
-			protected void html(OutputStream os, Content[] contents)
+			public void html(OutputStream os, Content[] contents)
 					throws IOException {
 				for (int i = 0; i < contents.length; i++) {
 					os.write(contents[i].getBytes());
@@ -42,11 +42,11 @@ public class HtmlOutputterTest extends TestCase {
 
 	public void testShouldCreateHtmlTags() throws IOException {
 		final HtmlOutputter html = new HtmlOutputter() {
-			protected void head(OutputStream os) throws IOException {
+			public void head(OutputStream os) throws IOException {
 
 			}
 
-			protected void body(OutputStream os, Content[] contents)
+			public void body(OutputStream os, Content[] contents)
 					throws IOException {
 
 			}
@@ -74,21 +74,21 @@ public class HtmlOutputterTest extends TestCase {
 
 	public void testShouldCreateHeadTags() throws IOException {
 		final HtmlOutputter html = new HtmlOutputter() {
-			protected void title(OutputStream os) throws IOException {
+			public void title(OutputStream os) throws IOException {
 				os.write("(title)".getBytes());
 			}
 
-			protected void meta(OutputStream os, String httpEquiv,
+			public void meta(OutputStream os, String httpEquiv,
 					String content) throws IOException {
 				os.write(("(" + content + ")").getBytes());
 			}
 
-			protected void javascript(OutputStream os, String src)
+			public void javascript(OutputStream os, String src)
 					throws IOException {
 				os.write(("(" + src + ")").getBytes());
 			}
 
-			protected void css(OutputStream os, String href) throws IOException {
+			public void css(OutputStream os, String href) throws IOException {
 				os.write(("(" + href + ")").getBytes());
 			}
 		};
@@ -151,11 +151,11 @@ public class HtmlOutputterTest extends TestCase {
 
 	public void testShouldCreateBodyTag() throws IOException {
 		final HtmlOutputter html = new HtmlOutputter() {
-			protected void h2(OutputStream os, String value) throws IOException {
+			public void h2(OutputStream os, String value) throws IOException {
 				os.write(("(" + value + ")").getBytes());
 			}
 
-			protected void javascript(OutputStream os, String src)
+			public void javascript(OutputStream os, String src)
 					throws IOException {
 				os.write(("(" + src + ")").getBytes());
 			}

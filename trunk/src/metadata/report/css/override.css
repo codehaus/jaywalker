@@ -100,3 +100,13 @@ form {
 
 }
 
+/* Nicetitle Style */
+div.niceTitle
+{
+	background-color: #9999FF;
+}
+
+div.niceTitle p
+{
+	color: #000000;
+}

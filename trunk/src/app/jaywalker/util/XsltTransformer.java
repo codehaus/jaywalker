@@ -9,8 +9,10 @@ import java.io.Reader;
 
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
+import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
@@ -32,6 +34,20 @@ public class XsltTransformer implements Outputter {
 
 	private final Transformer transformer;
 
+	private class CustomURIResolver implements URIResolver {
+
+		public Source resolve(String href, String base)
+				throws TransformerException {
+			try {
+				return new StreamSource(toInputStream(href));
+			} catch (FileNotFoundException e) {
+				throw new TransformerException(
+						"FileNotFoundException thrown while creating Source for href: "
+								+ href, e);
+			}
+		}
+	}
+
 	public XsltTransformer(String filename) {
 		try {
 			TransformerFactory factory = lookupTransformerFactory();
@@ -46,8 +62,9 @@ public class XsltTransformer implements Outputter {
 	private TransformerFactory lookupTransformerFactory()
 			throws TransformerFactoryConfigurationError {
 		if (!locator.contains("TransformerFactory")) {
-			locator.register("TransformerFactory", TransformerFactory
-					.newInstance());
+			TransformerFactory factory = TransformerFactory.newInstance();
+			factory.setURIResolver(new CustomURIResolver());
+			locator.register("TransformerFactory", factory);
 		}
 		return (TransformerFactory) locator.lookup("TransformerFactory");
 	}
