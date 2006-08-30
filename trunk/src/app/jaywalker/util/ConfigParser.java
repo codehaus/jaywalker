@@ -18,7 +18,8 @@ public class ConfigParser {
 
 	public ConfigParser(String filename) throws SAXException, IOException,
 			ParserConfigurationException {
-		this(ConfigParser.class.getResourceAsStream("/META-INF/xml/" + filename));
+		this(ConfigParser.class
+				.getResourceAsStream("/META-INF/xml/" + filename));
 	}
 
 	public ConfigParser(InputStream inputStream) throws SAXException,
@@ -28,9 +29,9 @@ public class ConfigParser {
 		document = factory.newDocumentBuilder().parse(inputStream);
 	}
 
-	public String lookupValue(String scope, String type, String key)
+	public String lookupValue(String scope, String content, String key)
 			throws TransformerException {
-		String xpath = toXPath(scope, type, key);
+		String xpath = toXPath(scope, content, key);
 		return lookupSingleChildNodeValue(xpath);
 	}
 
@@ -40,10 +41,19 @@ public class ConfigParser {
 		return element.getChildNodes().item(0).getNodeValue();
 	}
 
-	private String toXPath(String scope, String type, String key) {
-		String xpath = "/config/content[@scope='" + scope + "'][@type='" + type
+	private String toXPath(String scope, String content, String key) {
+		return "/config/scope[@type='" + scope + "']/content[@type='" + content
 				+ "']/" + key;
-		return xpath;
+	}
+
+	public String lookupValue(String scope, String key)
+			throws TransformerException {
+		String xpath = toXPath(scope, key);
+		return lookupSingleChildNodeValue(xpath);
+	}
+
+	private String toXPath(String scope, String key) {
+		return "/config/scope[@type='" + scope + "']/" + key;
 	}
 
 }

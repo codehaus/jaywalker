@@ -19,27 +19,47 @@ public class ConfigParserTest extends TestCase {
 	public void testShouldRetrieveXsltForGivenScopeAndType()
 			throws TransformerException, SAXException, IOException,
 			ParserConfigurationException {
-		assertEquals("archive-dependencies-metrics-html.xslt", "archive",
+		assertConfigEquals("archive-dependencies-metrics-html.xslt", "archive",
 				"metrics", "xslt");
 	}
 
 	public void testShouldRetrieveShortForGivenScopeAndType()
 			throws TransformerException, SAXException, IOException,
 			ParserConfigurationException {
-		assertEquals("Metrics", "archive", "metrics", "short");
+		assertConfigEquals("Metrics", "archive", "metrics", "short");
+	}
+
+	public void testShouldRetrieveShortForGivenScope()
+			throws TransformerException, SAXException, IOException,
+			ParserConfigurationException {
+		assertConfigEquals("Archive", "archive", "short");
 	}
 
 	public void testShouldRetrieveLongForGivenScopeAndType()
 			throws TransformerException, SAXException, IOException,
 			ParserConfigurationException {
-		assertEquals("Archive Metric Report", "archive", "metrics", "long");
+		assertConfigEquals("Archive Metric Report", "archive", "metrics", "long");
 	}
 
-	public void assertEquals(String expected, String scope, String type,
+	public void testShouldRetrieveLongForGivenScope()
+			throws TransformerException, SAXException, IOException,
+			ParserConfigurationException {
+		assertConfigEquals("Archive Summary Reports", "archive", "long");
+	}
+
+	public void assertConfigEquals(String expected, String scope, String type,
 			String key) throws FileNotFoundException, TransformerException,
 			SAXException, IOException, ParserConfigurationException {
 		assertEquals(expected,
 				new ConfigParser(new FileInputStream(configPath)).lookupValue(
 						scope, type, key));
+	}
+
+	public void assertConfigEquals(String expected, String scope, String key)
+			throws FileNotFoundException, TransformerException, SAXException,
+			IOException, ParserConfigurationException {
+		assertEquals(expected,
+				new ConfigParser(new FileInputStream(configPath)).lookupValue(
+						scope, key));
 	}
 }

@@ -53,18 +53,18 @@ public class SummaryTabPane implements Content {
 				addTabPage(archiveTabPane, "archive", "metrics");
 				addTabPage(archiveTabPane, "archive", "resolved");
 				addTabPage(archiveTabPane, "archive", "cycle");
-				tabCreator.addTabToPane(archiveTabPane, "Archive",
-						"Archive Summary Reports",
-						"Summary Reports specific to Archives");
+				tabCreator.addTabToPane(archiveTabPane, config.lookupValue(
+						"archive", "short"), config.lookupValue("archive",
+						"long"), config.lookupValue("archive", "description"));
 			}
 
 			if (properties.containsKey("package")) {
 				addTabPage(packageTabPane, "package", "metrics");
 				addTabPage(packageTabPane, "package", "resolved");
 				addTabPage(packageTabPane, "package", "cycle");
-				tabCreator.addTabToPane(packageTabPane, "Package",
-						"Package Summary Reports",
-						"Summary Reports specific to Packages");
+				tabCreator.addTabToPane(packageTabPane, config.lookupValue(
+						"package", "short"), config.lookupValue("package",
+						"long"), config.lookupValue("package", "description"));
 			}
 
 			if (properties.containsKey("class")) {
@@ -72,9 +72,9 @@ public class SummaryTabPane implements Content {
 				addTabPage(classTabPane, "class", "conflict");
 				addTabPage(classTabPane, "class", "unresolved");
 				addTabPage(classTabPane, "class", "cycle");
-				tabCreator.addTabToPane(classTabPane, "Class",
-						"Class Summary Reports",
-						"Summary Reports specific to Classes");
+				tabCreator.addTabToPane(classTabPane, config.lookupValue(
+						"class", "short"), config.lookupValue("class", "long"),
+						config.lookupValue("class", "description"));
 			}
 
 			return tabCreator.getBytes();
