@@ -1,3 +1,18 @@
+div.title {
+	color: #000066;
+	padding-left: 1px;
+	font-family: monospace;
+	letter-spacing: 2px;
+	font-size: 12px;
+	line-height: 9px;
+	height: 9px;
+	margin-bottom: 1px;
+}
+
+div.main {
+	border: 1px solid #000066;
+}
+
 /* Default DOM Tooltip Style */
 div.domTT {
 	border: 1px solid #333333;

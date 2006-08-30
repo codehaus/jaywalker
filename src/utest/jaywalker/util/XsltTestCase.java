@@ -24,8 +24,8 @@ public class XsltTestCase extends TestCase {
 		OutputStream outputStream = new WriterOutputStream(stringWriter);
 		transformer.write(outputStream);
 		String actual = stringWriter.getBuffer().toString();
-		outputBytes(expected);
-		outputBytes(actual);
+		//outputBytes(expected);
+		//outputBytes(actual);
 		assertEquals(expected, actual);
 	}
 

@@ -4,14 +4,19 @@ import java.io.IOException;
 
 public abstract class HtmlDetailTableTestCase extends XsltTestCase {
 
-	protected final String tagStartTableDetails = "<table class=\"sort-table\" id=\""
-			+ getTableId() + "\">\r\n";
+	protected final String tagStartTableDetails = "<table "
+			+ ((getHref().length() == 0) ? "" : getHref() + " ")
+			+ "class=\"sort-table\" id=\"" + getTableId() + "\">\r\n";
 
 	protected final String tableStart = tagStartTableDetails
 			+ toTableHeader(getHeaderValues());
 
 	private final String rowNoData = toTableDataRow(getNoDataRowValue(),
 			getHeaderValues().length);
+
+	public String getHref() {
+		return "";
+	}
 
 	public abstract String getXsltFileName();
 

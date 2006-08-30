@@ -29,10 +29,12 @@ public class PackageDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 		return "Package Dependencies Metrics";
 	}
 
+	public String getHref() {
+		return "xmlns:jw=\"http://jaywalker.codehaus.org\"";
+	}
+
 	public String[] getHeaderValues() {
-		return new String[] { "Package", "Total Classes", "Abstract Classes",
-				"Abstractness", "Afferent", "Efferent", "Instability",
-				"Distance" };
+		return new MetricsHeaderBuilder("Package").build();
 	}
 
 	public String getNoDataRowValue() {
@@ -42,7 +44,7 @@ public class PackageDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 	public String getXsltFileName() {
 		return "package-dependencies-metrics-html.xslt";
 	}
-	
+
 	public String getTableId() {
 		return "package-dependencies-metrics-table";
 	}
@@ -51,11 +53,10 @@ public class PackageDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 			throws IOException {
 		String input = "<?xml version=\"1.0\"?><report>" + SIMPLE_ARCHIVE
 				+ "</report>";
-		String expected = tableStart + "\n"
+		String expected = tableStart
+				+ "\n"
 				+ "<tr class=\"odd\"><td></td><td>7</td><td>4</td><td>0.57</td><td>0</td><td>1</td><td>1</td><td>1.57</td>"
-				+ "</tr>\n"
-				+ "</tbody>\r\n"
-				+ "</table>\r\n";
+				+ "</tr>\n" + "</tbody>\r\n" + "</table>\r\n";
 		assertOutputEquals("package-dependencies-metrics-html.xslt", input,
 				expected);
 	}
