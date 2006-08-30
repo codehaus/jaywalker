@@ -15,12 +15,11 @@
  */
 package jaywalker.testutil;
 
+import java.io.File;
+import java.util.StringTokenizer;
+
 import jaywalker.classlist.ClasslistElementFactory;
 import jaywalker.classlist.ClasslistElementVisitor;
-
-import java.io.File;
-import java.io.InputStream;
-import java.util.StringTokenizer;
 
 public class Path {
 	public final static File DIR_TEMP = new File("build" + File.separator
@@ -72,6 +71,10 @@ public class Path {
 			+ File.separator + "dist" + File.separator + "report.zip");
 
 	public static final File DIR_REPORT_ZIP = new File(DIR_TEMP, "report.zip");
+
+	public static final File FILE_REPORT_CONFIG_XML = new File("src"
+			+ File.separator + "metadata" + File.separator + "xml"
+			+ File.separator + "jaywalker-config.xml");
 
 	static {
 		DIR_TEMP.mkdirs();

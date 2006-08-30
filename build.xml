@@ -213,7 +213,8 @@
 			</fileset>
 			<zipfileset dir="src/metadata/xslt" prefix="META-INF/xslt" />
 			<zipfileset dir="src/metadata/css" prefix="META-INF/css" />
-			<zipfileset file="build/dist/report.zip" prefix="META-INF" />
+			<zipfileset dir="src/metadata/xml" prefix="META-INF/xml" />
+			<zipfileset file="build/dist/report.zip" prefix="META-INF" />	
 		</jar>
 		<mkdir dir="build/one-jar-boot" />
 		<unjar src="tools/one-jar/one-jar-boot-0.95.jar" dest="build/one-jar-boot" />

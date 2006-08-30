@@ -24,10 +24,6 @@ public class ClasslistElementStatistic implements ClasslistElementListener {
 			value++;
 		}
 
-		public long get() {
-			return value;
-		}
-		
 		public String toString() {
 			return String.valueOf(value);
 		}

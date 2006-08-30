@@ -3,11 +3,11 @@ package jaywalker.ui;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class TabCreator implements Content {
+public class TabPageCreator implements Content {
 
 	private TabPane mainTabPane;
 
-	public TabCreator(TabPane mainTabPane) {
+	public TabPageCreator(TabPane mainTabPane) {
 		this.mainTabPane = mainTabPane;
 	}
 

@@ -7,7 +7,7 @@ public class ClasslistTabPane implements Content {
 
 	private TabPane mainTabPane = new TabPane("Classlist");
 
-	private TabCreator tabCreator = new TabCreator(mainTabPane);
+	private TabPageCreator tabCreator = new TabPageCreator(mainTabPane);
 
 	private final String deepValue;
 

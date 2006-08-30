@@ -3,32 +3,42 @@ package jaywalker.ui;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.xml.transform.TransformerException;
+
+import jaywalker.util.ConfigParser;
+
 public class ContentMap {
 
 	private Map map = new HashMap();
 
+	private final ConfigParser config;
+
 	public ContentMap() {
-		put("archive", "metrics", "archive-dependencies-metrics-html.xslt"
-				.getBytes());
-		put("archive", "resolved", "archive-dependencies-resolve-html.xslt"
-				.getBytes());
-		put("archive", "cycle", "archive-dependencies-cycle-html.xslt"
-				.getBytes());
 
-		put("package", "metrics", "package-dependencies-metrics-html.xslt"
-				.getBytes());
-		put("package", "resolved", "package-dependencies-resolved-html.xslt"
-				.getBytes());
-		put("package", "cycle", "package-dependencies-cycle-html.xslt"
-				.getBytes());
+		try {
+			config = new ConfigParser("jaywalker-config.xml");
+			put("archive", "metrics");
+			put("archive", "resolved");
+			put("archive", "cycle");
 
-		put("class", "collision", "class-collisions-resolved-html.xslt"
-				.getBytes());
-		put("class", "conflict", "class-conflicts-resolved-html.xslt"
-				.getBytes());
-		put("class", "unresolved", "class-dependencies-unresolved-html.xslt"
-				.getBytes());
-		put("class", "cycle", "class-dependencies-cycle-html.xslt".getBytes());
+			put("package", "metrics");
+			put("package", "resolved");
+			put("package", "cycle");
+
+			put("class", "collision");
+			put("class", "conflict");
+			put("class", "unresolved");
+			put("class", "cycle");
+		} catch (Exception e) {
+			throw new RuntimeException(
+					"Exception thrown while trying to parse jaywalker-config.xml",
+					e);
+		}
+
+	}
+
+	public void put(String scope, String type) throws TransformerException {
+		put(scope, type, config.lookupValue(scope, type, "xslt").getBytes());
 	}
 
 	public void put(String scope, String type, byte[] content) {

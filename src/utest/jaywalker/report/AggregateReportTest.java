@@ -27,8 +27,6 @@ import jaywalker.classlist.ClasslistElement;
 import jaywalker.classlist.ClasslistElementEvent;
 import jaywalker.classlist.ClasslistElementFactory;
 import jaywalker.classlist.ClasslistElementListener;
-import jaywalker.classlist.ClasslistElementStatistic;
-import jaywalker.classlist.ClasslistElementVisitor;
 import jaywalker.classlist.JayWalkerTestCase;
 import jaywalker.testutil.Path;
 import jaywalker.util.Outputter;
