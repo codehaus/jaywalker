@@ -1,9 +1,6 @@
 package jaywalker.util;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import jaywalker.ui.HtmlOutputter;
 
 public class ArchiveDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase {
 

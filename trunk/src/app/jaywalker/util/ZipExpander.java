@@ -37,7 +37,6 @@ public class ZipExpander {
 					throws IOException {
 				String filename = zipEntry.getName();
 
-				final long size = zipEntry.getSize();
 				File file = new File(dest, filename);
 				if (zipEntry.isDirectory()) {
 					file.mkdirs();

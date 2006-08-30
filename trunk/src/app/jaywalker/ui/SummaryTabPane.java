@@ -4,6 +4,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Properties;
 
+import javax.xml.transform.TransformerException;
+
+import jaywalker.util.ConfigParser;
 import jaywalker.util.XsltTransformer;
 import jaywalker.util.XsltTransformerMap;
 
@@ -21,7 +24,9 @@ public class SummaryTabPane implements Content {
 
 	private XsltTransformerMap transformerMap;
 
-	private TabCreator tabCreator = new TabCreator(mainTabPane);
+	private TabPageCreator tabCreator = new TabPageCreator(mainTabPane);
+
+	private final ConfigParser config;
 
 	public SummaryTabPane(XsltTransformerMap transformerMap) {
 		this.transformerMap = transformerMap;
@@ -29,70 +34,65 @@ public class SummaryTabPane implements Content {
 		properties.setProperty("archive", "metrics,resolved,cycle");
 		properties.setProperty("package", "metrics,resolved,cycle");
 		properties.setProperty("class", "collision,conflict,unresolved,cycle");
+
+		try {
+			config = new ConfigParser("jaywalker-config.xml");
+		} catch (Exception e) {
+			throw new RuntimeException(
+					"Exception thrown while trying to parse jaywalker-config.xml",
+					e);
+		}
+
 	}
 
 	public byte[] getBytes() throws IOException {
 
-		if (properties.containsKey("archive")) {
-			addArchiveTabPage("Metrics", "Archive Metric Report",
-					"Summary metrics report on Archive elements");
-			addArchiveTabPage("Resolved",
-					"Resolved Archive Dependencies Report",
-					"Dependencies report on resolved Archive elements");
-			addArchiveTabPage("Cycle", "Archive Cycles Report",
-					"Cyclic dependencies report on resolved Archive elements");
-			tabCreator.addTabToPane(archiveTabPane, "Archive",
-					"Archive Summary Reports",
-					"Summary Reports specific to Archives");
+		try {
+
+			if (properties.containsKey("archive")) {
+				addTabPage(archiveTabPane, "archive", "metrics");
+				addTabPage(archiveTabPane, "archive", "resolved");
+				addTabPage(archiveTabPane, "archive", "cycle");
+				tabCreator.addTabToPane(archiveTabPane, "Archive",
+						"Archive Summary Reports",
+						"Summary Reports specific to Archives");
+			}
+
+			if (properties.containsKey("package")) {
+				addTabPage(packageTabPane, "package", "metrics");
+				addTabPage(packageTabPane, "package", "resolved");
+				addTabPage(packageTabPane, "package", "cycle");
+				tabCreator.addTabToPane(packageTabPane, "Package",
+						"Package Summary Reports",
+						"Summary Reports specific to Packages");
+			}
+
+			if (properties.containsKey("class")) {
+				addTabPage(classTabPane, "class", "collision");
+				addTabPage(classTabPane, "class", "conflict");
+				addTabPage(classTabPane, "class", "unresolved");
+				addTabPage(classTabPane, "class", "cycle");
+				tabCreator.addTabToPane(classTabPane, "Class",
+						"Class Summary Reports",
+						"Summary Reports specific to Classes");
+			}
+
+			return tabCreator.getBytes();
+
+		} catch (Exception e) {
+			throw new RuntimeException(
+					"Exception thrown while trying to parse jaywalker-config.xml",
+					e);
 		}
 
-		if (properties.containsKey("package")) {
-			addPackageTabPage("Metrics", "Package Metric Report",
-					"Summary metrics report on Package elements");
-			addPackageTabPage("Resolved",
-					"Resolved Archive Dependencies Report",
-					"Dependencies report on resolved Package elements");
-			addPackageTabPage("Cycle", "Archive Cycles Report",
-					"Cyclic dependencies report on resolved Archive elements");
-			tabCreator.addTabToPane(packageTabPane, "Package",
-					"Package Summary Reports",
-					"Summary Reports specific to Packages");
-		}
-
-		if (properties.containsKey("class")) {
-			addClassTabPage(
-					"Collision",
-					"Class Collision Report",
-					"Report identifying those classes that have name collisions with other classes found during the walk");
-			addClassTabPage(
-					"Conflict",
-					"Class Conflict Report",
-					"Report identifying those Serializable classes whose serialVersionUid is conflicting with similar Serializable classes found during the walk");
-			addClassTabPage("Unresolved", "Unresolved Classes Report",
-					"Dependencies report on unresolved Class elements");
-			addClassTabPage("Cycle", "Class Cycles Report",
-					"Cyclic dependencies report on Class elements");
-			tabCreator.addTabToPane(classTabPane, "Class",
-					"Class Summary Reports",
-					"Summary Reports specific to Classes");
-		}
-
-		return tabCreator.getBytes();
 	}
 
-	private void addArchiveTabPage(String name, String title, String description)
-			throws IOException {
-		addTabPage(archiveTabPane, "archive", name, title, description);
-	}
-
-	private void addPackageTabPage(String name, String title, String description)
-			throws IOException {
-		addTabPage(packageTabPane, "package", name, title, description);
-	}
-
-	private void addClassTabPage(String name, String title, String description)
-			throws IOException {
-		addTabPage(classTabPane, "class", name, title, description);
+	private void addTabPage(TabPane tabPane, String scope, String type)
+			throws TransformerException, IOException {
+		String name = config.lookupValue(scope, type, "short");
+		String title = config.lookupValue(scope, type, "long");
+		String description = config.lookupValue(scope, type, "description");
+		addTabPage(tabPane, scope, name, title, description);
 	}
 
 	private void addTabPage(TabPane tabPane, String scope, String name,
