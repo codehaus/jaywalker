@@ -3,7 +3,7 @@ package jaywalker.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import jaywalker.ui.HtmlOutputter;
+import jaywalker.html.HtmlOutputter;
 
 public class MetricsHeaderBuilder {
 

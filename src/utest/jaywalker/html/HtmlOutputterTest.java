@@ -1,18 +1,16 @@
-package jaywalker.ui;
+package jaywalker.html;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import jaywalker.html.HtmlOutputter;
+
 import junit.framework.TestCase;
 
 public class HtmlOutputterTest extends TestCase {
 
-	private static final Content DEFAULT_CONTENT = new Content() {
-		public byte[] getBytes() throws IOException {
-			return "(content)".getBytes();
-		}
-	};
+	private static final byte[] DEFAULT_CONTENT = "(content)".getBytes();
 
 	public interface Executor {
 		void execute(OutputStream os) throws IOException;
@@ -24,16 +22,14 @@ public class HtmlOutputterTest extends TestCase {
 				os.write("(docType)".getBytes());
 			}
 
-			public void html(OutputStream os, Content[] contents)
+			public void html(OutputStream os, byte[] content)
 					throws IOException {
-				for (int i = 0; i < contents.length; i++) {
-					os.write(contents[i].getBytes());
-				}
+				os.write(content);
 			}
 		};
 		Executor executor = new Executor() {
 			public void execute(OutputStream os) throws IOException {
-				html.index(os, new Content[] { DEFAULT_CONTENT });
+				html.index(os, DEFAULT_CONTENT);
 			}
 		};
 		String expected = "(docType)(content)";
@@ -46,7 +42,7 @@ public class HtmlOutputterTest extends TestCase {
 
 			}
 
-			public void body(OutputStream os, Content[] contents)
+			public void body(OutputStream os, byte[] content)
 					throws IOException {
 
 			}
@@ -78,8 +74,8 @@ public class HtmlOutputterTest extends TestCase {
 				os.write("(title)".getBytes());
 			}
 
-			public void meta(OutputStream os, String httpEquiv,
-					String content) throws IOException {
+			public void meta(OutputStream os, String httpEquiv, String content)
+					throws IOException {
 				os.write(("(" + content + ")").getBytes());
 			}
 
@@ -162,7 +158,7 @@ public class HtmlOutputterTest extends TestCase {
 		};
 		Executor executor = new Executor() {
 			public void execute(OutputStream os) throws IOException {
-				html.body(os, new Content[] { DEFAULT_CONTENT });
+				html.body(os, DEFAULT_CONTENT);
 			}
 		};
 		String expected = "<body>(JayWalker Report)(js/tablesetup.js)(content)</body>";
@@ -237,7 +233,8 @@ public class HtmlOutputterTest extends TestCase {
 
 	public void testShouldCreateTableHead() throws IOException {
 		final HtmlOutputter html = new HtmlOutputter() {
-			public void tr(OutputStream os, String clazz, String[] values) throws IOException {
+			public void tr(OutputStream os, String clazz, String[] values)
+					throws IOException {
 				for (int i = 0; i < values.length; i++) {
 					os.write(values[i].getBytes());
 				}
@@ -260,7 +257,7 @@ public class HtmlOutputterTest extends TestCase {
 		};
 		Executor executor = new Executor() {
 			public void execute(OutputStream os) throws IOException {
-				html.tr(os, "na",  new String[] { "(value1)", "(value2)" });
+				html.tr(os, "na", new String[] { "(value1)", "(value2)" });
 			}
 		};
 		String expected = "<tr class=\"na\">(value1)(value2)</tr>";
@@ -280,7 +277,8 @@ public class HtmlOutputterTest extends TestCase {
 
 	public void testShouldCreateTableBody() throws IOException {
 		final HtmlOutputter html = new HtmlOutputter() {
-			public void tr(OutputStream os, String clazz, String[] values) throws IOException {
+			public void tr(OutputStream os, String clazz, String[] values)
+					throws IOException {
 				for (int i = 0; i < values.length; i++) {
 					os.write(values[i].getBytes());
 				}
