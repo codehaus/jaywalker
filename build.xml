@@ -10,6 +10,18 @@
 		<pathelement location="build/classes" />
 	</path>
 
+	<path id="path.compile.jaxb">
+		<pathelement path="tools/jaxb/jaxb-xjc.jar" />
+		<pathelement path="tools/jaxb/jaxb-libs.jar" />
+		<pathelement path="tools/jaxb/jaxb-impl.jar" />
+		<pathelement path="tools/jaxb/xsdlib.jar" />
+		<pathelement path="tools/jaxb/xercesImpl.jar" />
+		<pathelement path="tools/jaxb/relaxngDatatype.jar" />
+		<pathelement path="tools/jaxb/jax-qname.jar" />
+		<pathelement path="tools/jaxb/jaxb-api.jar" />
+		<pathelement path="tools/jaxb/namespace.jar" />
+	</path>
+
 	<path id="path.compile.app">
 		<pathelement path="tools/ant/ant-1.6.3.jar" />
 		<pathelement path="tools/ant/ant-apache-bcel.jar" />
@@ -21,11 +33,15 @@
 	<path id="path.compile.test">
 		<pathelement location="build/classes" />
 		<pathelement location="build/classes-test" />
-		<path refid="path.compile.app" />
 		<pathelement path="tools/junit/junit-3.8.1.jar" />
 		<pathelement path="tools/ant/ant-testutil-1.6.3.jar" />
 		<pathelement path="tools/xmlunit/xmlunit1.0.jar" />
+		<path refid="path.compile.app" />
 	</path>
+
+	<taskdef name="xjc" classname="com.sun.tools.xjc.XJCTask">
+		<classpath refid="path.compile.jaxb" />
+	</taskdef>
 
 	<target name="all" depends="clean, test" description="build all" />
 
@@ -34,11 +50,31 @@
 			<fileset dir="." includes="junit*.properties" />
 		</delete>
 		<delete dir="build" />
+		<delete dir="src-gen" />
 	</target>
 
-	<target name="compile-app" description="compiles the application">
+	<target name="generate-app" description="generate application source">
+		<echo message="Compiling the schema..." />
+		<mkdir dir="src-gen/app" />
+		<xjc schema="src/metadata/xsd/jaywalker-config.xsd" package="jaywalker.xml.bind" target="src-gen/app">
+			<produces dir="src-gen/app" includes="**/*.java" />
+		</xjc>
+	</target>
+
+	<target name="compile-app" depends="generate-app" description="compiles the application">
 		<mkdir dir="build/classes" />
-		<javac debug="on" srcdir="src/app" destdir="build/classes" classpathref="path.compile.app" />
+		<javac debug="on" destdir="build/classes">
+			<classpath refid="path.compile.app" />
+			<classpath refid="path.compile.jaxb" />
+			<src path="src/app" />
+			<src path="src-gen/app" />
+		</javac>
+		<copy todir="build/classes">
+			<fileset dir="src-gen/app">
+				<include name="**/*.properties" />
+				<include name="**/bgm.ser" />
+			</fileset>
+		</copy>
 	</target>
 
 	<target name="compile-test" description="compiles the tests">
@@ -199,7 +235,7 @@
 		<mkdir dir="build/dist" />
 		<zip destfile="build/dist/report.zip">
 			<zipfileset dir="src/metadata/report" prefix="">
-				<exclude name="index.html"/>
+				<exclude name="index.html" />
 			</zipfileset>
 		</zip>
 		<jar destfile="build/dist/${ant.project.name}-bin-${project.version}.jar" manifest="build/meta-inf/main-manifest.mf">
@@ -214,7 +250,7 @@
 			<zipfileset dir="src/metadata/xslt" prefix="META-INF/xslt" />
 			<zipfileset dir="src/metadata/css" prefix="META-INF/css" />
 			<zipfileset dir="src/metadata/xml" prefix="META-INF/xml" />
-			<zipfileset file="build/dist/report.zip" prefix="META-INF" />	
+			<zipfileset file="build/dist/report.zip" prefix="META-INF" />
 		</jar>
 		<mkdir dir="build/one-jar-boot" />
 		<unjar src="tools/one-jar/one-jar-boot-0.95.jar" dest="build/one-jar-boot" />
@@ -223,6 +259,13 @@
 				<include name="${ant.project.name}-bin-${project.version}.jar" />
 			</zipfileset>
 			<zipfileset dir="tools/bcel" includes="bcel-5.1.jar" prefix="lib" />
+			<zipfileset dir="tools/jaxb" prefix="lib">
+				<include name="jaxb-api.jar"/>
+				<include name="jaxb-impl.jar"/>
+				<include name="jaxb-libs.jar"/>
+				<include name="jax-qname.jar"/>
+				<include name="namespace.jar"/>
+			</zipfileset>
 			<zipfileset dir="build/one-jar-boot">
 				<include name="com/simontuffs/onejar/*.class" />
 			</zipfileset>
