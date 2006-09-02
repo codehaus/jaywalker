@@ -1,78 +1,106 @@
 <?xml version="1.0"?>
-<config>
-    <scope type="archive">
-        <short>Archive</short>
-        <long>Archive Summary Reports</long>
-        <description>Summary Reports specific to Archives</description>
-        <content type="metrics">
-            <short>Metrics</short>
-            <long>Archive Metric Report</long>
-            <description>Summary metrics report on Archive elements</description>
-            <xslt>archive-dependencies-metrics-html.xslt</xslt>
-        </content>
-        <content type="resolved">
-            <short>Resolved</short>
-            <long>Resolved Archive Dependencies Report</long>
-            <description>Dependencies report on resolved Archive elements</description>
-            <xslt>archive-dependencies-resolve-html.xslt</xslt>
-        </content>
-        <content type="cycle">
-            <short>Cycle</short>
-            <long>Archive Cycles Report</long>
-            <description>Cyclic dependencies report on resolved Archive elements</description>
-            <xslt>archive-dependencies-cycle-html.xslt</xslt>
-        </content>
-    </scope>
-    <scope type="package">
-        <short>Package</short>
-        <long>Package Summary Reports</long>
-        <description>Summary Reports specific to Packages</description>
-        <content type="metrics">
-            <short>Metrics</short>
-            <long>Package Metric Report</long>
-            <description>Summary metrics report on Package elements</description>
-            <xslt>package-dependencies-metrics-html.xslt</xslt>
-        </content>
-        <content type="resolved">
-            <short>Resolved</short>
-            <long>Resolved Package Dependencies Report</long>
-            <description>Dependencies report on resolved Package elements</description>
-            <xslt>package-dependencies-resolve-html.xslt</xslt>
-        </content>
-        <content type="cycle">
-            <short>Cycle</short>
-            <long>Package Cycles Report</long>
-            <description>Cyclic dependencies report on resolved Package elements</description>
-            <xslt>package-dependencies-cycle-html.xslt</xslt>
-        </content>
-    </scope>
-    <scope type="class">
-        <short>Class</short>
-        <long>Class Summary Reports</long>
-        <description>Summary Reports specific to Classes</description>
-        <content type="collision">
-            <short>Collision</short>
-            <long>Class Collision Report</long>
-            <description>Report identifying those classes that have name collisions with other classes found during the walk</description>
-            <xslt>class-collisions-resolved-html.xslt</xslt>
-        </content>    
-        <content type="conflict">
-            <short>Conflict</short>
-            <long>Class Conflict Report</long>
-            <description>Report identifying those Serializable classes whose serialVersionUid is conflicting with similar Serializable classes found during the walk</description>
-            <xslt>class-conflicts-resolved-html.xslt</xslt>
-        </content>    
-        <content type="unresolved">
-            <short>Unresolved</short>
-            <long>Unresolved Classes Report</long>
-            <description>Dependencies report on unresolved Class elements</description>
-            <xslt>class-dependencies-unresolved-html.xslt</xslt>
-        </content>        
-        <content type="cycle">
-            <short>Cycle</short>
-            <long>Class Cycles Report</long>
-            <description>Cyclic dependencies report on Class elements</description>
-            <xslt>class-dependencies-cycle-html.xslt</xslt>
-        </content>
-    </scope>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/jaywalker-config.xsd">
+    <tabPane type="classlist">
+        <tabPage type="deep">
+            <short>Deep</short>
+            <long>Deep Classlist</long>
+            <description>Elements whose dependencies are walked</description>
+            <content>jaywalker.html.ClasslistContent</content>
+        </tabPage>
+        <tabPage type="shallow">
+            <short>Shallow</short>
+            <long>Shallow Classlist</long>
+            <description>Elements whose dependencies are not walked</description>
+            <content>jaywalker.html.ClasslistContent</content>
+        </tabPage>
+        <tabPage type="system">
+            <short>System</short>
+            <long>System Classlist</long>
+            <description>Elements which are not walked</description>
+            <content>jaywalker.html.ClasslistContent</content>
+        </tabPage>
+    </tabPane>
+    <tabPane type="summary">
+        <tabPage type="archive">
+            <short>Archive</short>
+            <long>Archive Summary Reports</long>
+            <description>Summary Reports specific to Archives</description>
+            <tabPane type="summary-archive">
+                <tabPage type="metrics">
+                    <short>Metrics</short>
+                    <long>Archive Metric Report</long>
+                    <description>Summary metrics report on Archive elements</description>
+                    <xslt>archive-dependencies-metrics-html.xslt</xslt>
+                </tabPage>
+                <tabPage type="resolved">
+                    <short>Resolved</short>
+                    <long>Resolved Archive Dependencies Report</long>
+                    <description>Dependencies report on resolved Archive elements</description>
+                    <xslt>archive-dependencies-resolved-html.xslt</xslt>
+                </tabPage>
+                <tabPage type="cycle">
+                    <short>Cycle</short>
+                    <long>Archive Cycles Report</long>
+                    <description>Cyclic dependencies report on resolved Archive elements</description>
+                    <xslt>archive-dependencies-cycle-html.xslt</xslt>
+                </tabPage>
+            </tabPane>
+        </tabPage>
+        <tabPage type="package">
+            <short>Package</short>
+            <long>Package Summary Reports</long>
+            <description>Summary Reports specific to Packages</description>
+            <tabPane type="summary-package">
+                <tabPage type="metrics">
+                    <short>Metrics</short>
+                    <long>Package Metric Report</long>
+                    <description>Summary metrics report on Package elements</description>
+                    <xslt>package-dependencies-metrics-html.xslt</xslt>
+                </tabPage>
+                <tabPage type="resolved">
+                    <short>Resolved</short>
+                    <long>Resolved Package Dependencies Report</long>
+                    <description>Dependencies report on resolved Package elements</description>
+                    <xslt>package-dependencies-resolved-html.xslt</xslt>
+                </tabPage>
+                <tabPage type="cycle">
+                    <short>Cycle</short>
+                    <long>Package Cycles Report</long>
+                    <description>Cyclic dependencies report on resolved Package elements</description>
+                    <xslt>package-dependencies-cycle-html.xslt</xslt>
+                </tabPage>
+            </tabPane>
+        </tabPage>
+        <tabPage type="class">
+            <short>Class</short>
+            <long>Class Summary Reports</long>
+            <description>Summary Reports specific to Classes</description>
+            <tabPane type="summary-class">
+                <tabPage type="collision">
+                    <short>Collision</short>
+                    <long>Class Collision Report</long>
+                    <description>Report identifying those classes that have name collisions with other classes found during the walk</description>
+                    <xslt>class-collisions-resolved-html.xslt</xslt>
+                </tabPage>    
+                <tabPage type="conflict">
+                    <short>Conflict</short>
+                    <long>Class Conflict Report</long>
+                    <description>Report identifying those Serializable classes whose serialVersionUid is conflicting with similar Serializable classes found during the walk</description>
+                    <xslt>class-conflicts-resolved-html.xslt</xslt>
+                </tabPage>    
+                <tabPage type="unresolved">
+                    <short>Unresolved</short>
+                    <long>Unresolved Classes Report</long>
+                    <description>Dependencies report on unresolved Class elements</description>
+                    <xslt>class-dependencies-unresolved-html.xslt</xslt>
+                </tabPage>        
+                <tabPage type="cycle">
+                    <short>Cycle</short>
+                    <long>Class Cycles Report</long>
+                    <description>Cyclic dependencies report on Class elements</description>
+                    <xslt>class-dependencies-cycle-html.xslt</xslt>
+                </tabPage>
+            </tabPane>
+        </tabPage>
+    </tabPane>
 </config>
