@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src/app"/>
+	<classpathentry kind="src" path="src-gen/app"/>
 	<classpathentry kind="src" path="src/utest"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="src" path="src/metadata"/>
@@ -16,5 +17,14 @@
 	<classpathentry sourcepath="ECLIPSE_HOME/plugins/org.eclipse.jdt.source_3.1.1/src/org.junit_3.8.1/junitsrc.zip" kind="var" path="JUNIT_HOME/junit.jar"/>
 	<classpathentry kind="lib" path="tools/one-jar/one-jar-boot-0.95.jar"/>
 	<classpathentry kind="src" path="src/itest"/>
+	<classpathentry kind="lib" path="tools/jaxb/jaxb-xjc.jar"/>
+	<classpathentry kind="lib" path="tools/jaxb/jaxb-api.jar"/>
+	<classpathentry kind="lib" path="tools/jaxb/jaxb-impl.jar"/>
+	<classpathentry kind="lib" path="tools/jaxb/jaxb-libs.jar"/>
+	<classpathentry kind="lib" path="tools/jaxb/jax-qname.jar"/>
+	<classpathentry kind="lib" path="tools/jaxb/namespace.jar"/>
+	<classpathentry kind="lib" path="tools/jaxb/relaxngDatatype.jar"/>
+	<classpathentry kind="lib" path="tools/jaxb/xercesImpl.jar"/>
+	<classpathentry kind="lib" path="tools/jaxb/xsdlib.jar"/>
 	<classpathentry kind="output" path="classes-ide"/>
 </classpath>
