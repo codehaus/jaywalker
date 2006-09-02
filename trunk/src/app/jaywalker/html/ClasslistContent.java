@@ -1,46 +1,24 @@
-package jaywalker.ui;
+package jaywalker.html;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-public class ClasslistTabPane implements Content {
+import jaywalker.util.ResourceLocator;
+import jaywalker.xml.bind.TabPage;
 
-	private TabPane mainTabPane = new TabPane("Classlist");
-
-	private TabPageCreator tabCreator = new TabPageCreator(mainTabPane);
-
-	private final String deepValue;
-
-	private final String shallowValue;
-
-	private final String systemValue;
+public class ClasslistContent implements Content {
 
 	private static final HtmlOutputter OUTPUTTER_HTML = new HtmlOutputter();
 
-	public ClasslistTabPane(String deepValue, String shallowValue,
-			String systemValue) {
-		this.deepValue = deepValue;
-		this.shallowValue = shallowValue;
-		this.systemValue = systemValue;
-	}
-
-	public byte[] getBytes() throws IOException {
-		addPageToMainPane("Deep", deepValue, "Deep Classlist",
-				"Elements whose dependencies are walked");
-		addPageToMainPane("Shallow", shallowValue, "Shallow Classlist",
-				"Elements whose dependencies are not walked");
-		addPageToMainPane("System", systemValue, "System Classlist",
-				"Elements which are not walked");
-		return tabCreator.getBytes();
-	}
-
-	private void addPageToMainPane(String classlistType, String classlist,
-			String title, String description) throws IOException {
+	public byte[] create(TabPage tabPage) throws IOException {
+		String classlistType = tabPage.getType();
+		String classlist = (String) ResourceLocator.instance().lookup(
+				"classlist-" + classlistType + "-value");
 		String[][] toStringArrayArray = toStringArrayArray(classlistType,
 				classlist);
-		mainTabPane.add(new TabPage(classlistType, title, description,
-				createTable("classlist-" + classlistType.toLowerCase()
-						+ "-table", "sort-table", toStringArrayArray)));
+
+		return createTable("classlist-" + classlistType.toLowerCase()
+				+ "-table", "sort-table", toStringArrayArray);
 	}
 
 	private byte[] createTable(String id, String clazz, String[][] values)

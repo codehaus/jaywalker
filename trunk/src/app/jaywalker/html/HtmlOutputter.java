@@ -1,13 +1,13 @@
-package jaywalker.ui;
+package jaywalker.html;
 
 import java.io.IOException;
 import java.io.OutputStream;
 
 public class HtmlOutputter {
 
-	public void index(OutputStream os, Content[] contents) throws IOException {
+	public void index(OutputStream os, byte[] content) throws IOException {
 		docType(os);
-		html(os, contents);
+		html(os, content);
 	}
 
 	public void docType(OutputStream os) throws IOException {
@@ -15,10 +15,10 @@ public class HtmlOutputter {
 		os.write(docType.getBytes());
 	}
 
-	public void html(OutputStream os, Content[] contents) throws IOException {
+	public void html(OutputStream os, byte[] content) throws IOException {
 		os.write("<html>".getBytes());
 		head(os);
-		body(os, contents);
+		body(os, content);
 		os.write("</html>".getBytes());
 	}
 
@@ -74,13 +74,11 @@ public class HtmlOutputter {
 		os.write("\" />".getBytes());
 	}
 
-	public void body(OutputStream os, Content[] contents) throws IOException {
+	public void body(OutputStream os, byte[] content) throws IOException {
 		os.write("<body>".getBytes());
 		h2(os, titleValue());
 		javascript(os, "js/tablesetup.js");
-		for (int i = 0; i < contents.length; i++) {
-			os.write(contents[i].getBytes());
-		}
+		os.write(content);
 		os.write("</body>".getBytes());
 	}
 
