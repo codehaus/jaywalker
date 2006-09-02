@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="config">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="tabPane"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="tabPane">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element maxOccurs="unbounded" ref="tabPage"/>
+      </xs:sequence>
+      <xs:attribute name="type" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="tabPage">
+    <xs:complexType>
+	   <xs:sequence>
+           <xs:element ref="short"/>
+           <xs:element ref="long"/>
+           <xs:element ref="description"/>
+		   <xs:element minOccurs="0" ref="content"/>
+           <xs:element minOccurs="0" ref="xslt"/>
+		   <xs:element minOccurs="0" maxOccurs="unbounded" ref="tabPane"/>
+	   </xs:sequence>
+       <xs:attribute name="type" use="required" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+  <xs:element name="description" type="xs:string"/>
+  <xs:element name="long" type="xs:string"/>
+  <xs:element name="short" type="xs:string"/>
+  <xs:element name="content" type="xs:string"/>
+  <xs:element name="xslt" type="xs:string"/>
+</xs:schema>
