@@ -31,17 +31,13 @@ import jaywalker.classlist.ClasslistElement;
 import jaywalker.classlist.ClasslistElementFactory;
 import jaywalker.classlist.ClasslistElementStatistic;
 import jaywalker.classlist.ClasslistElementVisitor;
-import jaywalker.ui.ClasslistTabPane;
-import jaywalker.ui.Content;
-import jaywalker.ui.HtmlOutputter;
-import jaywalker.ui.SummaryTabPane;
+import jaywalker.html.ConfigVisitor;
 import jaywalker.util.Clock;
 import jaywalker.util.FileSystem;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.Shell;
 import jaywalker.util.StringHelper;
 import jaywalker.util.WriterOutputStream;
-import jaywalker.util.XsltTransformerMap;
 import jaywalker.util.ZipExpander;
 
 public class ReportExecutor {
@@ -78,6 +74,7 @@ public class ReportExecutor {
 	public void execute(String classlist, Properties properties, File outDir,
 			String tempPath) throws IOException {
 		registerWorkingDir(tempPath);
+		ResourceLocator.instance().register("classlist-deep", classlist);
 		registerClasslist(properties, "classlist-shallow");
 		registerClasslist(properties, "classlist-system");
 		registerIncludeJayWalkerJarFile(properties);
@@ -142,25 +139,19 @@ public class ReportExecutor {
 		final String clockType = "    Time to create HTML report";
 		clock.start(clockType);
 		try {
+			ResourceLocator.instance().register("classlist-deep-value", classlist);
+			ResourceLocator.instance().register("classlist-shallow-value", lookupClasslist("classlist-shallow"));
+			ResourceLocator.instance().register("classlist-system-value", lookupClasslist("classlist-system"));
 			ReportFile reportFile = new ReportFileFactory()
 					.create("report.html");
 			OutputStream os = new WriterOutputStream(reportFile.getWriter());
-			new HtmlOutputter().index(os, new Content[] {
-					new ClasslistTabPane(classlist,
-							lookupClasslist("classlist-shallow"),
-							lookupClasslist("classlist-system")),
-					new SummaryTabPane(new XsltTransformerMap()) });
-			// os.write(createTitle("JayWalker Report"));
-			// os.write(createStylesheetLink("stylesheet.css"));
-			// os.write(createClasslistTable(classlist,
-			// lookupClasslist("classlist-shallow"),
-			// lookupClasslist("classlist-system")));
-			// report.transform(os);
-
+			
+			ConfigVisitor visitor = new ConfigVisitor(os);
+			visitor.visit("jaywalker-config.xml");
+			
 			os.flush();
 			os.close();
 
-			;
 			ZipInputStream zis = new ZipInputStream(ReportFile.class
 					.getResourceAsStream("/META-INF/report.zip"));
 			new ZipExpander(zis).expand(outDir);

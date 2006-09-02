@@ -55,7 +55,8 @@ public class XsltTransformer implements Outputter {
 			transformer = factory.newTransformer(xsltSource);
 		} catch (Throwable t) {
 			throw new OutputterException(
-					"Exception thrown while creating XML transformer", t);
+					"Exception thrown while creating XML transformer: "
+							+ filename, t);
 		}
 	}
 

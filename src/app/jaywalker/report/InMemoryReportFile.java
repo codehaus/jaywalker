@@ -9,7 +9,7 @@ import jaywalker.util.ResourceLocator;
 
 public class InMemoryReportFile implements ReportFile {
 
-	private StringBuffer sb;
+	private StringBuffer sb = new StringBuffer();
 
 	public InMemoryReportFile() {
 	}
