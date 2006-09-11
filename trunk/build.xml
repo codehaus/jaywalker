@@ -11,15 +11,15 @@
 	</path>
 
 	<path id="path.compile.jaxb">
-		<pathelement path="tools/jaxb/jaxb-xjc.jar" />
-		<pathelement path="tools/jaxb/jaxb-libs.jar" />
-		<pathelement path="tools/jaxb/jaxb-impl.jar" />
-		<pathelement path="tools/jaxb/xsdlib.jar" />
-		<pathelement path="tools/jaxb/xercesImpl.jar" />
-		<pathelement path="tools/jaxb/relaxngDatatype.jar" />
-		<pathelement path="tools/jaxb/jax-qname.jar" />
-		<pathelement path="tools/jaxb/jaxb-api.jar" />
-		<pathelement path="tools/jaxb/namespace.jar" />
+		<pathelement path="tools/jaxb/jaxb-xjc-1.0.6.jar" />
+		<pathelement path="tools/jaxb/jaxb-libs-1.0.6.jar" />
+		<pathelement path="tools/jaxb/jaxb-impl-1.0.6.jar" />
+		<pathelement path="tools/jaxb/xsdlib-1.2.2.jar" />
+		<pathelement path="tools/jaxb/xercesImpl-2.6.2.jar" />
+		<pathelement path="tools/jaxb/relaxngDatatype-1.0.jar" />
+		<pathelement path="tools/jaxb/jax-qname-1.1.jar" />
+		<pathelement path="tools/jaxb/jaxb-api-1.0.6.jar" />
+		<pathelement path="tools/jaxb/namespace-1.0.jar" />
 	</path>
 	
 	<path id="path.compile.aspectj">
@@ -270,11 +270,11 @@
 			</zipfileset>
 			<zipfileset dir="tools/bcel" includes="bcel-5.1.jar" prefix="lib" />
 			<zipfileset dir="tools/jaxb" prefix="lib">
-				<include name="jaxb-api.jar" />
-				<include name="jaxb-impl.jar" />
-				<include name="jaxb-libs.jar" />
-				<include name="jax-qname.jar" />
-				<include name="namespace.jar" />
+				<include name="jaxb-api-1.0.6.jar" />
+				<include name="jaxb-impl-1.0.6.jar" />
+				<include name="jaxb-libs-1.0.6.jar" />
+				<include name="jax-qname-1.1.jar" />
+				<include name="namespace-1.0.jar" />
 			</zipfileset>
 			<zipfileset dir="tools/aspectj" prefix="lib">
 				<include name="aspectjrt-1.5.2a.jar" />
