@@ -25,7 +25,12 @@ import jaywalker.util.FileSystem;
 import jaywalker.util.URLHelper;
 
 public class ClassElementFileTest extends JayWalkerTestCase {
-    public void testShouldReturnValidPropertiesFromClsFile() throws IOException, URISyntaxException {
+
+	public ClassElementFileTest(String name) {
+		super(name);
+	}
+
+	public void testShouldReturnValidPropertiesFromClsFile() throws IOException, URISyntaxException {
 
         URLHelper helper = new URLHelper();
 

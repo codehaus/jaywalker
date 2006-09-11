@@ -3,6 +3,11 @@ package jaywalker.util;
 import jaywalker.classlist.JayWalkerTestCase;
 
 public class XsltTransformerTest extends JayWalkerTestCase {
+
+	public XsltTransformerTest(String name) {
+		super(name);
+	}
+
 	public void testCreateEmptyXsltTransformersFromNullAndEmptyStrings() {
 		Outputter[] transformers = XsltTransformer.valueOf((String[])null);
 		assertEquals(0, transformers.length);

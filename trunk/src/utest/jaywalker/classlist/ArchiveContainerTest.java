@@ -15,17 +15,34 @@
  */
 package jaywalker.classlist;
 
-import jaywalker.testutil.Path;
-import jaywalker.util.FileSystem;
-import jaywalker.util.URLHelper;
-
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
 
+import jaywalker.testutil.Path;
+import jaywalker.util.FileSystem;
+import jaywalker.util.URLHelper;
+
 public class ArchiveContainerTest extends JayWalkerTestCase {
-    public void testOneLevelArchiveContainerCreation() throws IOException, URISyntaxException {
+
+	private final File file = new File(Path.DIR_TEMP.getAbsolutePath()
+			+ File.separator 
+			+ "cmdline"
+			+ File.separator
+			+ "JayWalkerTaskTest.testUnifiedReportForTest1Test2Archive"
+			+ File.separator + "report.xml");
+	
+	public ArchiveContainerTest(String name) {
+		super(name);
+	}
+
+	public void testOneLevelArchiveContainerCreation() throws IOException, URISyntaxException {
+
+		if (!file.exists()) {
+			executeTarget("testUnifiedReportForTest1Test2Archive");
+		}
+		assertTrue(file.exists());
 
         // Clean up any temporary files
         final File expandedURL = new URLHelper().toEncodedFile(new URL("jar:" + Path.FILE_TEST1_JAR.toURL().toString() + "!/"));

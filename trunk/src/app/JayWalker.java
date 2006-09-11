@@ -18,15 +18,10 @@ import java.io.IOException;
 import java.util.Properties;
 
 import jaywalker.report.ReportExecutor;
-import jaywalker.util.ResourceLocator;
 
 public class JayWalker {
 
 	private static ReportExecutor executor = new ReportExecutor();
-
-	public JayWalker() {
-		ResourceLocator.instance().register("client", "cmdline");
-	}
 
 	protected Properties toProperties(String[] args) {
 		final Properties properties = new Properties();

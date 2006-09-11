@@ -34,8 +34,8 @@ public class ClasslistContent implements Content {
 	private String[][] toStringArrayArray(String classlistType, String value) {
 		String[][] toStringArrayArray = toStringArrayArray(value);
 		if (toStringArrayArray.length == 0) {
-			toStringArrayArray = new String[][] { { "<i>No " + classlistType
-					+ " Classlist Given</i>" } };
+			toStringArrayArray = new String[][] { { "<i>No "
+					+ cap(classlistType) + " Classlist Given</i>" } };
 		}
 		return toStringArrayArray;
 	}
@@ -59,6 +59,10 @@ public class ClasslistContent implements Content {
 
 	private String format(String value) {
 		return (value == null) ? null : value.trim();
+	}
+
+	private String cap(String value) {
+		return value.charAt(0) + value.substring(1);
 	}
 
 }

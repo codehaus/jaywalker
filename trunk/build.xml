@@ -163,7 +163,7 @@
 		<mkdir dir="build/doc/junit" />
 		<delete file="build/doc/emma/coverage.emma" />
 
-		<junit printsummary="on" dir="${basedir}" failureproperty="junit-failure">
+		<junit forkMode="once" fork="true" printsummary="on" dir="${basedir}" failureproperty="junit-failure">
 			<classpath>
 				<pathelement location="build/classes-instr" />
 				<pathelement location="build/classes-test" />
@@ -172,7 +172,7 @@
 				<path location="build/dist/${ant.project.name}-bin-${project.version}.jar" />
 			</classpath>
 
-			<batchtest fork="true" todir="build/doc/junit">
+			<batchtest todir="build/doc/junit">
 				<formatter type="xml" />
 				<fileset dir="src/utest">
 					<include name="**/*Test.java" />
@@ -185,16 +185,16 @@
 
 		</junit>
 
-		<junit printsummary="on" dir="${basedir}" failureproperty="junit-failure">
+		<junit forkMode="once" fork="true" printsummary="on" dir="${basedir}" failureproperty="junit-failure">
 			<classpath>
 				<path refid="emma.lib" />
 				<pathelement path="tools/ant/ant-testutil-1.6.3.jar" />
 				<path location="build/classes-test" />
-				<path location="build/dist/${ant.project.name}-${project.version}.jar" />
+				<path location="build/dist/${ant.project.name}-bin-${project.version}.jar" />
 				<pathelement path="tools/xmlunit/xmlunit1.0.jar" />
 			</classpath>
 
-			<batchtest fork="true" todir="build/doc/junit">
+			<batchtest todir="build/doc/junit">
 				<formatter type="xml" />
 				<fileset dir="src/itest">
 					<include name="**/*Test.java" />
