@@ -21,6 +21,11 @@
 		<pathelement path="tools/jaxb/jaxb-api.jar" />
 		<pathelement path="tools/jaxb/namespace.jar" />
 	</path>
+	
+	<path id="path.compile.aspectj">
+		<pathelement path="tools/aspectj/aspectjtools-1.5.2a.jar"/>
+		<pathelement path="tools/aspectj/aspectjrt-1.5.2a.jar"/>
+	</path>
 
 	<path id="path.compile.app">
 		<pathelement path="tools/ant/ant-1.6.3.jar" />
@@ -43,6 +48,10 @@
 		<classpath refid="path.compile.jaxb" />
 	</taskdef>
 
+	<taskdef resource="org/aspectj/antlib.xml">
+		<classpath refid="path.compile.aspectj" />
+	</taskdef>
+
 	<target name="all" depends="clean, test" description="build all" />
 
 	<target name="clean" description="cleanup all">
@@ -63,12 +72,13 @@
 
 	<target name="compile-app" depends="generate-app" description="compiles the application">
 		<mkdir dir="build/classes" />
-		<javac debug="on" destdir="build/classes">
+		<iajc debug="on" destdir="build/classes">
 			<classpath refid="path.compile.app" />
 			<classpath refid="path.compile.jaxb" />
+			<classpath refid="path.compile.aspectj" />
 			<src path="src/app" />
 			<src path="src-gen/app" />
-		</javac>
+		</iajc>
 		<copy todir="build/classes">
 			<fileset dir="src-gen/app">
 				<include name="**/*.properties" />
@@ -260,11 +270,14 @@
 			</zipfileset>
 			<zipfileset dir="tools/bcel" includes="bcel-5.1.jar" prefix="lib" />
 			<zipfileset dir="tools/jaxb" prefix="lib">
-				<include name="jaxb-api.jar"/>
-				<include name="jaxb-impl.jar"/>
-				<include name="jaxb-libs.jar"/>
-				<include name="jax-qname.jar"/>
-				<include name="namespace.jar"/>
+				<include name="jaxb-api.jar" />
+				<include name="jaxb-impl.jar" />
+				<include name="jaxb-libs.jar" />
+				<include name="jax-qname.jar" />
+				<include name="namespace.jar" />
+			</zipfileset>
+			<zipfileset dir="tools/aspectj" prefix="lib">
+				<include name="aspectjrt-1.5.2a.jar" />
 			</zipfileset>
 			<zipfileset dir="build/one-jar-boot">
 				<include name="com/simontuffs/onejar/*.class" />

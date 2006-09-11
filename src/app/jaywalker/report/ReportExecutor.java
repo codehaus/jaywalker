@@ -16,10 +16,7 @@
 package jaywalker.report;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Writer;
 import java.net.MalformedURLException;
@@ -32,10 +29,8 @@ import jaywalker.classlist.ClasslistElementFactory;
 import jaywalker.classlist.ClasslistElementStatistic;
 import jaywalker.classlist.ClasslistElementVisitor;
 import jaywalker.html.ConfigVisitor;
-import jaywalker.util.Clock;
 import jaywalker.util.FileSystem;
 import jaywalker.util.ResourceLocator;
-import jaywalker.util.Shell;
 import jaywalker.util.StringHelper;
 import jaywalker.util.WriterOutputStream;
 import jaywalker.util.ZipExpander;
@@ -46,69 +41,23 @@ public class ReportExecutor {
 
 	private ClasslistElementFactory factory = new ClasslistElementFactory();
 
-	public ReportExecutor() {
-		ResourceLocator.instance().register("clock", new Clock());
-	}
-
-	private void setReportXmlResource(final ReportFile reportFile) {
-		ResourceLocator.instance().register("report.xml", reportFile);
-	}
-
-	private void registerWorkingDir(String tempPath) throws IOException {
-		File workingDir = Shell.toWorkingDir(tempPath);
-		ResourceLocator.instance().register("tempDir", workingDir);
-	}
-
-	private void registerClasslist(Properties properties, String classlistType) {
-		if (properties.containsKey(classlistType)) {
-			String classpath = properties.getProperty(classlistType);
-			String[] classpaths = classpath.split(File.pathSeparator);
-			File[] files = new File[classpaths.length];
-			for (int i = 0; i < classpaths.length; i++) {
-				files[i] = new File(classpaths[i]);
-			}
-			ResourceLocator.instance().register(classlistType, files);
-		}
-	}
+	private ResourceLocatorSetup locatorSetup = new ResourceLocatorSetup();
 
 	public void execute(String classlist, Properties properties, File outDir,
 			String tempPath) throws IOException {
-		registerWorkingDir(tempPath);
-		ResourceLocator.instance().register("classlist-deep", classlist);
-		registerClasslist(properties, "classlist-shallow");
-		registerClasslist(properties, "classlist-system");
-		registerIncludeJayWalkerJarFile(properties);
+		locatorSetup.registerWorkingDir(tempPath);
+		locatorSetup.registerDeepClasslist(classlist);
+		locatorSetup.register(properties);
 		initializeDefaults(properties);
 		printClasslist(classlist);
-		System.out.println("Creating the JayWalker report . . .");
-		Clock clock = getClockResource();
-		final String clockType = "Total time to create the JayWalker report";
-		clock.start(clockType);
-		try {
-			initOutDir(outDir);
-			final Report[] reports = configurationSetup.toReports(properties);
-			ReportFile reportFile = new ReportFileFactory()
-					.create("report.xml");
-			setReportXmlResource(reportFile);
-			System.out.println("  Outputting report to "
-					+ reportFile.getParentAbsolutePath());
-			AggregateReport report = execute(classlist, reports, reportFile);
-			outputHtml(outDir, report, classlist);
-			outputStyleSheet(outDir);
-		} finally {
-			clock.stop(clockType);
-			System.out.println(clock.toString(clockType));
-		}
-
-	}
-
-	private void registerIncludeJayWalkerJarFile(Properties properties) {
-		if (properties.containsKey("includeJayWalkerJarFile")) {
-			Boolean includeJayWalkerJarFile = Boolean.valueOf(properties
-					.getProperty("includeJayWalkerJarFile"));
-			ResourceLocator.instance().register("includeJayWalkerJarFile",
-					includeJayWalkerJarFile);
-		}
+		initOutDir(outDir);
+		final Report[] reports = configurationSetup.toReports(properties);
+		ReportFile reportFile = new ReportFileFactory().create("report.xml");
+		locatorSetup.register(reportFile);
+		System.out.println("  Outputting report to "
+				+ reportFile.getParentAbsolutePath());
+		AggregateReport report = execute(classlist, reports, reportFile);
+		outputHtml(outDir, report, classlist);
 	}
 
 	private void initializeDefaults(Properties properties) {
@@ -131,71 +80,17 @@ public class ReportExecutor {
 		System.out.println();
 	}
 
-	// TODO: smells like an aspect
 	private void outputHtml(File outDir, AggregateReport report,
 			String classlist) throws IOException {
-		System.out.println("  Creating HTML report . . .");
-		Clock clock = getClockResource();
-		final String clockType = "    Time to create HTML report";
-		clock.start(clockType);
-		try {
-			ResourceLocator.instance().register("classlist-deep-value", classlist);
-			ResourceLocator.instance().register("classlist-shallow-value", lookupClasslist("classlist-shallow"));
-			ResourceLocator.instance().register("classlist-system-value", lookupClasslist("classlist-system"));
-			ReportFile reportFile = new ReportFileFactory()
-					.create("report.html");
-			OutputStream os = new WriterOutputStream(reportFile.getWriter());
-			
-			ConfigVisitor visitor = new ConfigVisitor(os);
-			visitor.visit("jaywalker-config.xml");
-			
-			os.flush();
-			os.close();
+		ReportFile reportFile = new ReportFileFactory().create("report.html");
+		OutputStream os = new WriterOutputStream(reportFile.getWriter());
 
-			ZipInputStream zis = new ZipInputStream(ReportFile.class
-					.getResourceAsStream("/META-INF/report.zip"));
-			new ZipExpander(zis).expand(outDir);
+		ConfigVisitor visitor = new ConfigVisitor(os);
+		visitor.visit("jaywalker-config.xml");
 
-		} finally {
-			clock.stop(clockType);
-			System.out.println(clock.toString(clockType));
-		}
-	}
-
-	private void outputStyleSheet(File outDir) {
-		File file = new File(outDir, "stylesheet.css");
-		InputStream is = ReportExecutor.class
-				.getResourceAsStream("/META-INF/css/stylesheet.css");
-		try {
-			FileOutputStream fos = new FileOutputStream(file);
-
-			int i = is.read();
-			while (i != -1) {
-				fos.write(i);
-				i = is.read();
-			}
-			fos.flush();
-			fos.close();
-		} catch (FileNotFoundException e) {
-			throw new RuntimeException(e);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
-	}
-
-	private String lookupClasslist(String classlistType) {
-		StringBuffer sb = new StringBuffer();
-		if (ResourceLocator.instance().contains(classlistType)) {
-			File[] files = (File[]) ResourceLocator.instance().lookup(
-					classlistType);
-			for (int i = 0; i < files.length; i++) {
-				sb.append(files[i].getAbsoluteFile());
-				if (i + 1 < files.length) {
-					sb.append(File.pathSeparator);
-				}
-			}
-		}
-		return sb.toString();
+		ZipInputStream zis = new ZipInputStream(ReportFile.class
+				.getResourceAsStream("/META-INF/report.zip"));
+		new ZipExpander(zis).expand(outDir);
 	}
 
 	private void initOutDir(File outDir) {
@@ -203,79 +98,44 @@ public class ReportExecutor {
 			FileSystem.delete(outDir);
 		}
 		outDir.mkdir();
-		ResourceLocator.instance().register("outDir", outDir);
+		locatorSetup.registerOutDir(outDir);
 	}
 
-	// TODO: smells like an aspect
 	private AggregateReport execute(String classlist, Report[] reports,
 			ReportFile reportFile) throws IOException {
-		System.out.println("  Creating XML report . . .");
-		Clock clock = getClockResource();
-		final String clockType = "    Total time to create XML report";
-		clock.start(clockType);
-		try {
-			final ClasslistElement[] elements = factory.create(classlist);
-			initReportModels(reports, elements);
-			return createAggregateReport(reports, elements, reportFile);
-		} finally {
-			clock.stop(clockType);
-			System.out.println(clock.toString(clockType));
-		}
+		final ClasslistElement[] elements = factory.create(classlist);
+		initReportModels(reports, elements);
+		return createAggregateReport(reports, elements, reportFile);
 	}
 
 	private AggregateReport createAggregateReport(Report[] reports,
 			final ClasslistElement[] elements, final ReportFile reportFile)
 			throws IOException {
-		System.out.println("    Aggregating report elements . . .");
-		Clock clock = getClockResource();
-		final String clockType = "      Time to aggregate report elements";
-		clock.start(clockType);
-		try {
-			ClasslistElementVisitor visitor = new ClasslistElementVisitor(
-					elements);
-			Writer writer = reportFile.getWriter();
+		ClasslistElementVisitor visitor = new ClasslistElementVisitor(elements);
+		Writer writer = reportFile.getWriter();
 
-			AggregateReport report = new AggregateReport(reports, writer,
-					lookupClasslistUrlsToIgnore());
-			visitor.addListener(report);
-			visitor.accept();
+		AggregateReport report = new AggregateReport(reports, writer,
+				lookupClasslistUrlsToIgnore());
+		visitor.addListener(report);
+		visitor.accept();
 
-			writer.close();
-			return report;
-		} finally {
-			clock.stop(clockType);
-			System.out.println(clock.toString(clockType));
-		}
+		writer.close();
+		return report;
 	}
 
-	private Clock getClockResource() {
-		return (Clock) ResourceLocator.instance().lookup("clock");
-	}
-
-	// TODO: smells like an aspect
 	private void initReportModels(Report[] reports,
 			final ClasslistElement[] elements) throws IOException {
-		System.out.println("    Initializing the report . . .");
-		Clock clock = getClockResource();
-		final String clockType = "      Time to initialize the report";
-		clock.start(clockType);
-		try {
-			ClasslistElementVisitor visitor = new ClasslistElementVisitor(
-					elements);
-			final ClasslistElementStatistic statisticListener = new ClasslistElementStatistic();
-			visitor.addListener(statisticListener);
+		ClasslistElementVisitor visitor = new ClasslistElementVisitor(elements);
+		final ClasslistElementStatistic statisticListener = new ClasslistElementStatistic();
+		visitor.addListener(statisticListener);
 
-			AggregateModel model = new AggregateModel(configurationSetup
-					.getClasslistElementListeners());
-			visitor.addListener(model);
-			visitor.accept();
+		AggregateModel model = new AggregateModel(configurationSetup
+				.getClasslistElementListeners());
+		visitor.addListener(model);
+		visitor.accept();
 
-			System.out.println("      " + statisticListener + " encountered.");
-			visitor.removeAllListeners();
-		} finally {
-			clock.stop(clockType);
-			System.out.println(clock.toString(clockType));
-		}
+		System.out.println("      " + statisticListener + " encountered.");
+		visitor.removeAllListeners();
 	}
 
 	private URL[] lookupClasslistUrlsToIgnore() throws MalformedURLException {
