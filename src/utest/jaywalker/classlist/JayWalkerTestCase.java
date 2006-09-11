@@ -21,15 +21,22 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 
+import org.apache.tools.ant.BuildFileTest;
+
 import jaywalker.testutil.Path;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.Shell;
 import jaywalker.util.URLHelper;
 import junit.framework.TestCase;
 
-public class JayWalkerTestCase extends TestCase {
+public class JayWalkerTestCase extends BuildFileTest {
 
-    public void setUp() throws IOException {
+    public JayWalkerTestCase(String name) {
+		super(name);
+	}
+
+	public void setUp() throws IOException {
+		configureProject("build-ant-test.xml");
         ResourceLocator.instance().register("tempDir", Shell.toWorkingDir(Path.DIR_TEMP.getAbsolutePath()));
     }
 

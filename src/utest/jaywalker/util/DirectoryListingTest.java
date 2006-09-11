@@ -25,6 +25,10 @@ import jaywalker.classlist.JayWalkerTestCase;
 import jaywalker.testutil.Path;
 
 public class DirectoryListingTest extends JayWalkerTestCase {
+	public DirectoryListingTest(String name) {
+		super(name);
+	}
+
 	public void testShouldReturnTopLevelElementUrls() throws IOException,
 			URISyntaxException {
 

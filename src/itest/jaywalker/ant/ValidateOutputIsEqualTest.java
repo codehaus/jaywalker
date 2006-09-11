@@ -6,18 +6,15 @@ import java.io.IOException;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import jaywalker.classlist.JayWalkerTestCase;
+
 import org.apache.tools.ant.BuildException;
-import org.apache.tools.ant.BuildFileTest;
 import org.custommonkey.xmlunit.XMLTestCase;
 import org.xml.sax.SAXException;
 
-public class ValidateOutputIsEqualTest extends BuildFileTest {
+public class ValidateOutputIsEqualTest extends JayWalkerTestCase {
 	public ValidateOutputIsEqualTest(String name) {
 		super(name);
-	}
-
-	public void setUp() {
-		configureProject("build-ant-test.xml");
 	}
 
 	public void testTaskOutputNotPresent() {

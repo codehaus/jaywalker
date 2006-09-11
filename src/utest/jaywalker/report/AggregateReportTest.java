@@ -33,6 +33,10 @@ import jaywalker.util.Outputter;
 
 public class AggregateReportTest extends JayWalkerTestCase {
 
+	public AggregateReportTest(String name) {
+		super(name);
+	}
+
 	private final Configuration[] CONFIGURATIONS = new Configuration[] {
 			new DependencyReportConfiguration(new DependencyModel()),
 			new CollisionReportConfiguration(new CollisionModel()) };

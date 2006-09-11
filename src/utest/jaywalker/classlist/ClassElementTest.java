@@ -26,7 +26,11 @@ import java.net.URL;
 
 public class ClassElementTest extends JayWalkerTestCase {
 
-    public void testShouldCreateValidInstanceFromAClassFile() throws IOException, URISyntaxException {
+    public ClassElementTest(String name) {
+		super(name);
+	}
+
+	public void testShouldCreateValidInstanceFromAClassFile() throws IOException, URISyntaxException {
         URL url = Path.FILE_CLASSLIST_ELEMENT_FACTORY_CLASS.toURL();
         final ClassElement classElement = new ClassElement(url);
         assertNotNull(classElement);

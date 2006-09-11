@@ -22,6 +22,11 @@ import jaywalker.testutil.Path;
 import jaywalker.util.URLHelper;
 
 public class ClasslistElementVisitorTest extends JayWalkerTestCase {
+
+	public ClasslistElementVisitorTest(String name) {
+		super(name);
+	}
+
 	protected void assertLegalUrl(URL url) {
 		assertNotNull(url);
 		String urlString = url.toString();

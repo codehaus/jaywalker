@@ -26,7 +26,12 @@ import java.net.URISyntaxException;
 import java.net.URL;
 
 public class ArchiveExpanderTest extends JayWalkerTestCase {
-    public void testExpandOneLevelJar() throws IOException, URISyntaxException {
+
+	public ArchiveExpanderTest(String name) {
+		super(name);
+	}
+
+	public void testExpandOneLevelJar() throws IOException, URISyntaxException {
 
         // Clean up any temporary files
         final File expandedArchiveFile = new URLHelper().toEncodedFile(new URL("jar:" + Path.FILE_TEST1_JAR.toURL().toString() + "!/"));

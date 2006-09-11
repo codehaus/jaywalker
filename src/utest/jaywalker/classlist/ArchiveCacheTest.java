@@ -14,6 +14,10 @@ import org.apache.bcel.classfile.JavaClass;
 
 public class ArchiveCacheTest extends JayWalkerTestCase {
 
+	public ArchiveCacheTest(String name) {
+		super(name);
+	}
+
 	public void testShouldRetrieveJavaClassFromClassFile()
 			throws MalformedURLException, FileNotFoundException {
 		final File file = Path.FILE_CLASSLIST_ELEMENT_FACTORY_CLASS;
