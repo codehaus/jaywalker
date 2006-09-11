@@ -26,5 +26,6 @@
 	<classpathentry kind="lib" path="tools/jaxb/relaxngDatatype.jar"/>
 	<classpathentry kind="lib" path="tools/jaxb/xercesImpl.jar"/>
 	<classpathentry kind="lib" path="tools/jaxb/xsdlib.jar"/>
+	<classpathentry kind="var" path="ASPECTJRT_LIB"/>
 	<classpathentry kind="output" path="classes-ide"/>
 </classpath>

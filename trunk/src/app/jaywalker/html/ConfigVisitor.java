@@ -54,6 +54,8 @@ public class ConfigVisitor {
 				visit(tabPaneDecorator);
 			}
 			configDecorator.html(os);
+			os.flush();
+			os.close();
 		} catch (IOException e) {
 			throw new RuntimeException(
 					"Error while processing configuration file", e);
