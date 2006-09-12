@@ -18,14 +18,12 @@ package jaywalker.report;
 import java.net.URL;
 import java.util.Stack;
 
-import jaywalker.util.StringHelper;
+import jaywalker.util.StringDecorator;
 
 public class PackageDependencyTag implements Tag {
 	private final DependencyModel model;
 
 	private final TagHelper reportHelper = new TagHelper();
-
-	private final StringHelper stringHelper = new StringHelper();
 
 	public PackageDependencyTag(DependencyModel model) {
 		this.model = model;
@@ -43,7 +41,7 @@ public class PackageDependencyTag implements Tag {
 		for (int i = 0; i < packageNames.length; i++) {
 			sb.append(reportHelper.toSpaces(parentUrlStack.size() + 1));
 			sb.append("<container type=\"package\" value=\"");
-			sb.append(stringHelper.isEmpty(packageNames[i]) ? ""
+			sb.append(new StringDecorator(packageNames[i]).isEmpty() ? ""
 					: packageNames[i]);
 			sb.append("\"/>\n");
 		}

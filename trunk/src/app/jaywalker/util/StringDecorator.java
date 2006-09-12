@@ -15,67 +15,85 @@
  */
 package jaywalker.util;
 
-public class StringHelper {
+public class StringDecorator {
+
 	public final static String EMPTY = "";
+	private final String value;
 
-	public String appendIfMissing(String suffix, String target) {
-		if (target == null)
+	public StringDecorator(String value) {
+		this.value = value;
+	}
+
+	public String appendIfMissing(String suffix) {
+		if (value == null)
 			return suffix;
-		if (target.endsWith(suffix))
-			return target;
-		return target + suffix;
+		if (value.endsWith(suffix))
+			return value;
+		return value + suffix;
 	}
 
-	public String prependIfMissing(String prefix, String target) {
-		if (target == null)
+	public String prependIfMissing(String prefix) {
+		if (value == null)
 			return prefix;
-		if (target.startsWith(prefix))
-			return target;
-		return prefix + target;
+		if (value.startsWith(prefix))
+			return value;
+		return prefix + value;
 	}
-
-	public boolean isEmpty(String str) {
+	
+	private boolean isEmpty(String str) {
 		return str == null || str.length() == 0;
 	}
 
-	public String substringBeforeLast(String str, String delimiter) {
-		return substringBeforeLast(str, delimiter, str);
+	public boolean isEmpty() {
+		return isEmpty(value);
 	}
 
-	public String substringAfterLast(String str, String delimiter) {
-		if (isEmpty(str)) {
-			return str;
+	public String trim() {
+		return (value == null) ? null : value.trim();
+	}
+
+	public String cap() {
+		return value.charAt(0) + value.substring(1);
+	}
+
+	public String substringBeforeLast(String delimiter) {
+		return substringBeforeLast(delimiter, value);
+	}
+
+	public String substringAfterLast(String delimiter) {
+		if (isEmpty()) {
+			return value;
 		}
 		if (isEmpty(delimiter)) {
 			return EMPTY;
 		}
-		int idx = str.lastIndexOf(delimiter);
-		if (idx == -1 || idx == (str.length() - delimiter.length())) {
+		int idx = value.lastIndexOf(delimiter);
+		if (idx == -1 || idx == (value.length() - delimiter.length())) {
 			return EMPTY;
 		}
-		return str.substring(idx + delimiter.length());
+		return value.substring(idx + delimiter.length());
 	}
 
-	public boolean isBlank(String str) {
+	public boolean isBlank() {
 		int length;
-		if (str == null || (length = str.length()) == 0) {
+		if (value == null || (length = value.length()) == 0) {
 			return true;
 		}
 		for (int i = 0; i < length; i++) {
-			if ((!Character.isWhitespace(str.charAt(i)))) {
+			if ((!Character.isWhitespace(value.charAt(i)))) {
 				return false;
 			}
 		}
 		return true;
 	}
 
-	public String extractCommonPrefix(String string1, String string2) {
+	public String extractCommonPrefix(String other) {
 		StringBuffer sb = new StringBuffer();
-		int length = (string1.length() < string2.length()) ? string1.length()
-				: string2.length();
+		int length = (value.length() < other.length()) ? value.length()
+				: other.length();
 		for (int i = 0; i < length; i++) {
-			final char ch = string1.charAt(i);
-			if (ch == string2.charAt(i)) {
+			final char ch = value.charAt(i);
+			if (ch == other.charAt(i)) {
 				sb.append(ch);
 			} else {
 				return sb.toString();
@@ -84,19 +102,19 @@ public class StringHelper {
 		return sb.toString();
 	}
 
-	public String substringBeforeLast(String str, String delimiter,
+	public String substringBeforeLast(String delimiter,
 			String defaultString) {
-		if (isEmpty(str) || isEmpty(delimiter)) {
+		if (isEmpty() || isEmpty(delimiter)) {
 			return defaultString;
 		}
-		int idx = str.lastIndexOf(delimiter);
+		int idx = value.lastIndexOf(delimiter);
 		if (idx == -1) {
 			return defaultString;
 		}
-		return str.substring(0, idx);
+		return value.substring(0, idx);
 	}
 
-	public String spaceAndReplace(String value, int spaceCnt, String delimiter,
+	public String spaceAndReplace(int spaceCnt, String delimiter,
 			String newDelimiter) {
 		StringBuffer sb = new StringBuffer();
 		String[] values = value.split(delimiter);

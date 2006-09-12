@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import jaywalker.util.ResourceLocator;
+import jaywalker.util.StringDecorator;
 import jaywalker.xml.bind.TabPage;
 
 public class ClasslistContent implements Content {
@@ -35,14 +36,14 @@ public class ClasslistContent implements Content {
 		String[][] toStringArrayArray = toStringArrayArray(value);
 		if (toStringArrayArray.length == 0) {
 			toStringArrayArray = new String[][] { { "<i>No "
-					+ cap(classlistType) + " Classlist Given</i>" } };
+					+ new StringDecorator(classlistType).cap() + " Classlist Given</i>" } };
 		}
 		return toStringArrayArray;
 	}
 
 	protected String[][] toStringArrayArray(String classlist) {
-		String input = format(classlist);
-		if (isEmpty(input)) {
+		String input = new StringDecorator(classlist).trim();
+		if (new StringDecorator(input).isEmpty()) {
 			return new String[0][0];
 		}
 		String[] values = input.split(";");
@@ -51,18 +52,6 @@ public class ClasslistContent implements Content {
 			output[i][0] = values[i];
 		}
 		return output;
-	}
-
-	private boolean isEmpty(String input) {
-		return input == null || input.length() == 0;
-	}
-
-	private String format(String value) {
-		return (value == null) ? null : value.trim();
-	}
-
-	private String cap(String value) {
-		return value.charAt(0) + value.substring(1);
 	}
 
 }

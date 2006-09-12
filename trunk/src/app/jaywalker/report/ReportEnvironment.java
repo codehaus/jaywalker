@@ -7,12 +7,12 @@ import java.util.Properties;
 import jaywalker.util.FileSystem;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.Shell;
-import jaywalker.util.StringHelper;
+import jaywalker.util.StringDecorator;
 
 public class ReportEnvironment {
-	
+
 	private static final ResourceLocator LOCATOR = ResourceLocator.instance();
-	
+
 	public void initialize(String classlist, Properties properties,
 			File outDir, String tempPath) throws IOException {
 		registerWorkingDir(tempPath);
@@ -22,7 +22,7 @@ public class ReportEnvironment {
 		printClasslist(classlist);
 		initOutDir(outDir);
 	}
-	
+
 	private void registerWorkingDir(String tempPath) throws IOException {
 		File workingDir = Shell.toWorkingDir(tempPath);
 		LOCATOR.register("tempDir", workingDir);
@@ -43,11 +43,11 @@ public class ReportEnvironment {
 
 	private void printClasslist(final String classlist) {
 		System.out.print("Walking the classlist:\n");
-		System.out.println(new StringHelper().spaceAndReplace(classlist, 2,
+		System.out.println(new StringDecorator(classlist).spaceAndReplace(2,
 				File.pathSeparator, "\n"));
 		System.out.println();
 	}
-	
+
 	private void initOutDir(File outDir) {
 		if (outDir.exists()) {
 			FileSystem.delete(outDir);
@@ -55,7 +55,7 @@ public class ReportEnvironment {
 		outDir.mkdir();
 		registerOutDir(outDir);
 	}
-	
+
 	private void registerDeepClasslist(String classlist) {
 		LOCATOR.register("classlist-deep", classlist);
 		LOCATOR.register("classlist-deep-value", classlist);
@@ -95,7 +95,7 @@ public class ReportEnvironment {
 					includeJayWalkerJarFile);
 		}
 	}
-	
+
 	private String lookupClasslist(String classlistType) {
 		StringBuffer sb = new StringBuffer();
 		if (ResourceLocator.instance().contains(classlistType)) {

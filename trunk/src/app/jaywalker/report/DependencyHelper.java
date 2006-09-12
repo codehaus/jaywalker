@@ -14,14 +14,12 @@ import java.util.Set;
 
 import jaywalker.util.JayWalkerRuntime;
 import jaywalker.util.ResourceLocator;
-import jaywalker.util.StringHelper;
+import jaywalker.util.StringDecorator;
 import jaywalker.util.URLHelper;
 
 public class DependencyHelper {
 
 	private final static URLHelper HELPER_URL = new URLHelper();
-
-	private final static StringHelper HELPER_STRING = new StringHelper();
 
 	private Map containerDependencyMap;
 
@@ -151,7 +149,7 @@ public class DependencyHelper {
 	}
 
 	private String toPackageName(String className) {
-		return HELPER_STRING.substringBeforeLast(className, ".", "");
+		return new StringDecorator(className).substringBeforeLast(".", "");
 	}
 
 	private void removeFromDependencyMap(Object key, Object setItem, Map map) {
