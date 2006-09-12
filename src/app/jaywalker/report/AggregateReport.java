@@ -1,7 +1,6 @@
 package jaywalker.report;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.Writer;
 import java.net.URL;
 import java.util.Stack;

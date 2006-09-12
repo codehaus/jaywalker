@@ -29,7 +29,6 @@ import jaywalker.classlist.ClasslistElementFactory;
 import jaywalker.classlist.ClasslistElementListener;
 import jaywalker.classlist.JayWalkerTestCase;
 import jaywalker.testutil.Path;
-import jaywalker.util.Outputter;
 
 public class AggregateReportTest extends JayWalkerTestCase {
 

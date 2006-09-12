@@ -1,58 +1,29 @@
 package jaywalker.html;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
-
 import jaywalker.util.XsltTransformer;
+import jaywalker.xml.ConfigVisitor;
 import jaywalker.xml.bind.Config;
 import jaywalker.xml.bind.TabPage;
 import jaywalker.xml.bind.TabPane;
 
-public class ConfigVisitor {
+public class HtmlConfigVisitor extends ConfigVisitor {
 
-	private final OutputStream os;
-	private Config config;
-
-	public ConfigVisitor(OutputStream os) {
-		this.os = os;
-	}
-
-	public void setConfig(String filename) {
-		setConfig(ConfigVisitor.class.getResourceAsStream("/META-INF/xml/"
-				+ filename));
-	}
-
-	public void setConfig(InputStream is) {
-		try {
-			JAXBContext jc = JAXBContext.newInstance("jaywalker.xml.bind",
-					ConfigVisitor.class.getClassLoader());
-			Unmarshaller u = jc.createUnmarshaller();
-			setConfig((Config) u.unmarshal(is));
-		} catch (JAXBException e) {
-			throw new RuntimeException(
-					"Exception thrown while processing XML binding for the configuration file.",
-					e);
-		}
-	}
-	
-	public void setConfig(Config config) {
-		this.config = config;
+	public HtmlConfigVisitor(OutputStream os) {
+		super(os);
 	}
 	
 	public void accept() {
 		accept(this);
 	}
-
-	public void accept(ConfigVisitor visitor) {
+	
+	public void accept(HtmlConfigVisitor visitor) {
 		visitor.visit(new ConfigDecorator(config));
 	}
-
+	
 	public void visit(ConfigDecorator configDecorator) {
 		try {
 			Config config = configDecorator.getConfig();
@@ -119,5 +90,6 @@ public class ConfigVisitor {
 			}
 		}
 	}
+
 
 }
