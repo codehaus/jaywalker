@@ -13,23 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package jaywalker.report;
+package jaywalker.util;
 
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import jaywalker.util.ResourceLocator;
 
-public class InMemoryReportFile implements ReportFile {
+public class InMemoryFileDecorator implements FileDecorator {
 
 	private StringBuffer sb = new StringBuffer();
 
-	public InMemoryReportFile() {
+	public InMemoryFileDecorator() {
 	}
 
-	public InMemoryReportFile(String filename) {
+	public InMemoryFileDecorator(String filename) {
 	}
 
 	public Writer getWriter() {

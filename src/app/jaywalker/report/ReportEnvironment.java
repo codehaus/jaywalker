@@ -1,33 +1,68 @@
-/**
- * Copyright 2005 ThoughtWorks, Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
 package jaywalker.report;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
+import jaywalker.util.FileSystem;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.Shell;
+import jaywalker.util.StringHelper;
 
-public class ResourceLocatorSetup {
-
+public class ReportEnvironment {
+	
 	private static final ResourceLocator LOCATOR = ResourceLocator.instance();
+	
+	public void initialize(String classlist, Properties properties,
+			File outDir, String tempPath) throws IOException {
+		registerWorkingDir(tempPath);
+		registerDeepClasslist(classlist);
+		register(properties);
+		initializeDefaults(properties);
+		printClasslist(classlist);
+		initOutDir(outDir);
+	}
+	
+	private void registerWorkingDir(String tempPath) throws IOException {
+		File workingDir = Shell.toWorkingDir(tempPath);
+		LOCATOR.register("tempDir", workingDir);
+	}
 
-	public void register(ReportFile reportFile) {
-		LOCATOR.register("report.xml", reportFile);
+	private void initializeDefaults(Properties properties) {
+		setDefaultProperty(properties, "dependency", "archive,package,class");
+		setDefaultProperty(properties, "collision", "class");
+		setDefaultProperty(properties, "conflict", "class");
+	}
+
+	private void setDefaultProperty(Properties properties, String reportType,
+			String defaultValue) {
+		if (properties.getProperty(reportType) == null) {
+			properties.setProperty(reportType, defaultValue);
+		}
+	}
+
+	private void printClasslist(final String classlist) {
+		System.out.print("Walking the classlist:\n");
+		System.out.println(new StringHelper().spaceAndReplace(classlist, 2,
+				File.pathSeparator, "\n"));
+		System.out.println();
+	}
+	
+	private void initOutDir(File outDir) {
+		if (outDir.exists()) {
+			FileSystem.delete(outDir);
+		}
+		outDir.mkdir();
+		registerOutDir(outDir);
+	}
+	
+	private void registerDeepClasslist(String classlist) {
+		LOCATOR.register("classlist-deep", classlist);
+		LOCATOR.register("classlist-deep-value", classlist);
+	}
+
+	private void registerOutDir(File outDir) {
+		LOCATOR.register("outDir", outDir);
 	}
 
 	public void register(Properties properties) {
@@ -61,11 +96,6 @@ public class ResourceLocatorSetup {
 		}
 	}
 	
-	public void registerWorkingDir(String tempPath) throws IOException {
-		File workingDir = Shell.toWorkingDir(tempPath);
-		ResourceLocator.instance().register("tempDir", workingDir);
-	}
-
 	private String lookupClasslist(String classlistType) {
 		StringBuffer sb = new StringBuffer();
 		if (ResourceLocator.instance().contains(classlistType)) {
@@ -79,15 +109,6 @@ public class ResourceLocatorSetup {
 			}
 		}
 		return sb.toString();
-	}
-
-	public void registerDeepClasslist(String classlist) {
-		ResourceLocator.instance().register("classlist-deep", classlist);
-		ResourceLocator.instance().register("classlist-deep-value", classlist);
-	}
-
-	public void registerOutDir(File outDir) {
-		ResourceLocator.instance().register("outDir", outDir);
 	}
 
 }

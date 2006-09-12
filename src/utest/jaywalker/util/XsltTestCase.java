@@ -5,15 +5,13 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 
-import jaywalker.report.InMemoryReportFile;
-import jaywalker.report.ReportFile;
 import junit.framework.TestCase;
 
 public class XsltTestCase extends TestCase {
 
 	protected void assertOutputEquals(String xsltFilename, String input,
 			String expected) throws IOException {
-		ReportFile reportFile = new InMemoryReportFile();
+		FileDecorator reportFile = new InMemoryFileDecorator();
 		Writer writer = reportFile.getWriter();
 		writer.write(input);
 		writer.flush();

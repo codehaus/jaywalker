@@ -3,7 +3,6 @@ package jaywalker.util;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-import jaywalker.report.DefaultReportFile;
 import jaywalker.testutil.Path;
 
 import org.apache.tools.ant.BuildFileTest;
@@ -36,7 +35,7 @@ public class ChainedOutputterTest extends BuildFileTest {
 		}
 		assertTrue(file.exists());
 		ResourceLocator.instance().register("outDir", file.getParentFile());
-		ResourceLocator.instance().register("report.xml", new DefaultReportFile(file));
+		ResourceLocator.instance().register("report.xml", new DefaultFileDecorator(file));
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ChainedOutputter outputter = new ChainedOutputter(outputters);

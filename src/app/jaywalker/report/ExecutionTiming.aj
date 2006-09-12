@@ -6,6 +6,7 @@ import java.util.Properties;
 
 import jaywalker.classlist.ClasslistElement;
 import jaywalker.util.Clock;
+import jaywalker.util.FileDecorator;
 import jaywalker.util.ResourceLocator;
 
 public aspect ExecutionTiming {
@@ -30,25 +31,25 @@ public aspect ExecutionTiming {
 
 
 	before(): call(AggregateReport execute(String, Report[],
-			ReportFile) throws IOException) {
+			FileDecorator) throws IOException) {
 		System.out.println("  Creating XML report . . .");
 		clock.start(MSG_XML_REPORT_TOTAL);
 	}
 
 	after(): call(AggregateReport execute(String, Report[],
-			ReportFile) throws IOException) {
+			FileDecorator) throws IOException) {
 		stopClock(MSG_XML_REPORT_TOTAL);
 	}
 
 	before(): call(AggregateReport createAggregateReport(Report[],
-		 ClasslistElement[], ReportFile)
+		 ClasslistElement[], FileDecorator)
 			throws IOException) {
 		System.out.println("    Aggregating report elements . . .");
 		clock.start(MSG_AGGREGATE_TOTAL);
 	}
 
 	after(): call(AggregateReport createAggregateReport(Report[],
-			 ClasslistElement[], ReportFile)
+			 ClasslistElement[], FileDecorator)
 				throws IOException) {
 		stopClock(MSG_AGGREGATE_TOTAL);
 	}

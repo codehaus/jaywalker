@@ -17,29 +17,40 @@ import jaywalker.xml.bind.TabPane;
 public class ConfigVisitor {
 
 	private final OutputStream os;
+	private Config config;
 
 	public ConfigVisitor(OutputStream os) {
 		this.os = os;
 	}
 
-	public void visit(String filename) {
-		visit(ConfigVisitor.class.getResourceAsStream("/META-INF/xml/"
+	public void setConfig(String filename) {
+		setConfig(ConfigVisitor.class.getResourceAsStream("/META-INF/xml/"
 				+ filename));
 	}
 
-	public void visit(InputStream is) {
+	public void setConfig(InputStream is) {
 		try {
 			JAXBContext jc = JAXBContext.newInstance("jaywalker.xml.bind",
 					ConfigVisitor.class.getClassLoader());
 			Unmarshaller u = jc.createUnmarshaller();
-			Config config = (Config) u.unmarshal(is);
-			ConfigDecorator decorator = new ConfigDecorator(config);
-			visit(decorator);
+			setConfig((Config) u.unmarshal(is));
 		} catch (JAXBException e) {
 			throw new RuntimeException(
 					"Exception thrown while processing XML binding for the configuration file.",
 					e);
 		}
+	}
+	
+	public void setConfig(Config config) {
+		this.config = config;
+	}
+	
+	public void accept() {
+		accept(this);
+	}
+
+	public void accept(ConfigVisitor visitor) {
+		visitor.visit(new ConfigDecorator(config));
 	}
 
 	public void visit(ConfigDecorator configDecorator) {

@@ -13,20 +13,19 @@ import java.util.Set;
 
 import jaywalker.classlist.ClasslistElementListener;
 import jaywalker.util.CollectionHelper;
-import jaywalker.util.Outputter;
 
-public class ConfigurationSetup {
+public class ReportModelSetup {
 
 	private final static CollectionHelper HELPER_COLLECTION = new CollectionHelper();
 
-	private final Configuration[] configurations = new Configuration[] {
-			new DependencyReportConfiguration(new DependencyModel()),
-			new CollisionReportConfiguration(new CollisionModel()) };
+	private final ReportModel[] models = new ReportModel[] {
+			new DependencyReportModel(new DependencyModel()),
+			new CollisionReportModel(new CollisionModel()) };
 
 	public String[] getReportTypes() {
 		List reportTypeList = new ArrayList();
-		for (int i = 0; i < configurations.length; i++) {
-			reportTypeList.addAll(Arrays.asList(configurations[i]
+		for (int i = 0; i < models.length; i++) {
+			reportTypeList.addAll(Arrays.asList(models[i]
 					.getReportTypes()));
 		}
 		return HELPER_COLLECTION.toStrings(reportTypeList);
@@ -34,21 +33,19 @@ public class ConfigurationSetup {
 
 	public Report[] toReports(Properties properties) {
 		List reportList = new LinkedList();
-		for (int i = 0; i < configurations.length; i++) {
-			Tag[] reportTags = configurations[i].toReportTags(properties);
+		for (int i = 0; i < models.length; i++) {
+			Tag[] reportTags = models[i].toReportTags(properties);
 			if (reportTags.length > 0) {
-				Outputter[] transformers = configurations[i]
-						.toXsltTransformers(properties);
-				reportList.add(new Report(reportTags, transformers));
+				reportList.add(new Report(reportTags));
 			}
 		}
 		return (Report[]) reportList.toArray(new Report[reportList.size()]);
 	}
 
 	public ClasslistElementListener[] getClasslistElementListeners() {
-		ClasslistElementListener[] listeners = new ClasslistElementListener[configurations.length];
-		for (int i = 0; i < configurations.length; i++) {
-			listeners[i] = configurations[i].getClasslistElementListener();
+		ClasslistElementListener[] listeners = new ClasslistElementListener[models.length];
+		for (int i = 0; i < models.length; i++) {
+			listeners[i] = models[i].getClasslistElementListener();
 		}
 		return listeners;
 	}

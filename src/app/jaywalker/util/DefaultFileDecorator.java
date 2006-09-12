@@ -1,4 +1,4 @@
-package jaywalker.report;
+package jaywalker.util;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -8,11 +8,12 @@ import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
-public class DefaultReportFile implements ReportFile {
+
+public class DefaultFileDecorator implements FileDecorator {
 
 	private File file;
 
-	public DefaultReportFile(File file) {
+	public DefaultFileDecorator(File file) {
 		this.file = file;
 	}
 

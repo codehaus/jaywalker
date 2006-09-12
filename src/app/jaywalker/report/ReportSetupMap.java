@@ -23,7 +23,6 @@ import java.util.Properties;
 import java.util.Set;
 
 import jaywalker.util.CollectionHelper;
-import jaywalker.util.Outputter;
 
 public class ReportSetupMap {
 
@@ -31,44 +30,20 @@ public class ReportSetupMap {
 
 	private Map map = new HashMap();
 
-	private static class Entry {
-		private final Tag xmlTag;
-
-		private final Outputter[] htmlTransformers;
-
-		public Entry(Tag xmlTag, Outputter[] htmlTransformer) {
-			this.xmlTag = xmlTag;
-			this.htmlTransformers = htmlTransformer;
-		}
-
-		public Outputter[] getHtmlTransformers() {
-			return htmlTransformers;
-		}
-
-		public Tag getXmlTag() {
-			return xmlTag;
-		}
-	}
-
 	private interface Visitor {
-		public void visit(Entry entry);
+		public void visit(Tag tag);
 	}
 
 	public Tag getXmlTag(String type, String value) {
-		return lookupEntry(type, value).getXmlTag();
+		return lookupTag(type, value);
 	}
 
-	private Entry lookupEntry(String type, String value) {
-		return (Entry) map.get(toKey(type, value));
+	private Tag lookupTag(String type, String value) {
+		return (Tag) map.get(toKey(type, value));
 	}
 
-	public void put(String type, String value, Tag xmlTag, Outputter htmlTag) {
-		map.put(toKey(type, value), new Entry(xmlTag,
-				new Outputter[] { htmlTag }));
-	}
-
-	public void put(String type, String value, Tag xmlTag, Outputter[] htmlTags) {
-		map.put(toKey(type, value), new Entry(xmlTag, htmlTags));
+	public void put(String type, String value, Tag xmlTag) {
+		map.put(toKey(type, value), xmlTag);
 	}
 
 	public String toKey(String type, String value) {
@@ -78,27 +53,12 @@ public class ReportSetupMap {
 	public Tag[] getXmlTags(Properties properties) {
 		final List xmlTagList = new LinkedList();
 		final Visitor visitor = new Visitor() {
-			public void visit(Entry entry) {
-				xmlTagList.add(entry.getXmlTag());
+			public void visit(Tag tag) {
+				xmlTagList.add(tag);
 			}
 		};
 		accept(properties, visitor);
 		return (Tag[]) xmlTagList.toArray(new Tag[xmlTagList.size()]);
-	}
-
-	public Outputter[] getHtmlTransformers(Properties properties) {
-		final List htmlTransformerList = new LinkedList();
-		final Visitor visitor = new Visitor() {
-			public void visit(Entry entry) {
-				Outputter[] transformers = entry.getHtmlTransformers();
-				for (int i = 0; i < transformers.length; i++) {
-					htmlTransformerList.add(transformers[i]);
-				}
-			}
-		};
-		accept(properties, visitor);
-		return (Outputter[]) htmlTransformerList
-				.toArray(new Outputter[htmlTransformerList.size()]);
 	}
 
 	private void accept(Properties properties, Visitor visitor) {
@@ -107,9 +67,9 @@ public class ReportSetupMap {
 		for (int i = 0; i < keys.length; i++) {
 			String[] values = properties.getProperty(keys[i]).split(",");
 			for (int j = 0; j < values.length; j++) {
-				final Entry entry = lookupEntry(keys[i], values[j]);
-				if (entry != null)
-					visitor.visit(entry);
+				final Tag tag = lookupTag(keys[i], values[j]);
+				if (tag != null)
+					visitor.visit(tag);
 			}
 		}
 	}

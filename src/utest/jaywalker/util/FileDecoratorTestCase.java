@@ -1,14 +1,16 @@
-package jaywalker.report;
+package jaywalker.util;
 
 import java.io.IOException;
 import java.io.Reader;
 import java.io.Writer;
 
+import jaywalker.util.FileDecorator;
+
 import junit.framework.TestCase;
 
-public abstract class ReportFileTestCase extends TestCase {
+public abstract class FileDecoratorTestCase extends TestCase {
 
-	protected ReportFile reportFile;
+	protected FileDecorator reportFile;
 
 	public void testShouldWriteAndReadUsingReportFile() throws IOException {
 		String expected = "This is an interesting string";

@@ -16,7 +16,6 @@ import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import jaywalker.report.ReportFile;
 
 public class XsltTransformer implements Outputter {
 
@@ -82,7 +81,7 @@ public class XsltTransformer implements Outputter {
 	}
 
 	public void write(OutputStream outputStream) {
-		ReportFile reportFile = (ReportFile) locator.lookup("report.xml");
+		FileDecorator reportFile = (FileDecorator) locator.lookup("report.xml");
 		Reader reader = reportFile.getReader();
 		InputStream inputStream = new ReaderInputStream(reader);
 		transform(inputStream, outputStream);

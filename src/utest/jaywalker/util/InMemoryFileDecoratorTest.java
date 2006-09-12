@@ -1,13 +1,14 @@
-package jaywalker.report;
+package jaywalker.util;
 
+import jaywalker.util.InMemoryFileDecorator;
 import jaywalker.util.ResourceLocator;
 
-public class InMemoryReportFileTest extends ReportFileTestCase {
+public class InMemoryFileDecoratorTest extends FileDecoratorTestCase {
 
 	public void setUp() throws Exception {
 		super.setUp();
 		ResourceLocator.instance().register("client", "ant");
-		reportFile = new InMemoryReportFile("report.xml");
+		reportFile = new InMemoryFileDecorator("report.xml");
 	}
 
 	public void tearDown() throws Exception {

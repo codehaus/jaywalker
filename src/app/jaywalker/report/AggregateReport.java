@@ -104,12 +104,6 @@ public class AggregateReport implements ClasslistElementListener {
 				&& !element.getContainer().getURL().equals(stack.peek());
 	}
 
-	public void transform(OutputStream fos) {
-		for (int i = 0; i < reports.length; i++) {
-			reports[i].transform(fos);
-		}
-	}
-
 	private boolean shouldVisit(ClasslistElement element) {
 		if (ignoreClasslistElements.length == 0) {
 			return true;
