@@ -1,30 +1,24 @@
-package jaywalker.report;
+package jaywalker.util;
 
 import java.io.File;
 
+import jaywalker.classlist.JayWalkerTestCase;
 import jaywalker.testutil.Path;
-import jaywalker.util.ResourceLocator;
-import jaywalker.util.ResourceNotFoundException;
-import junit.framework.TestCase;
 
-public class ReportFileFactoryTest extends TestCase {
+public class FileDecoratorFactoryTest extends JayWalkerTestCase {
 
-	public void setUp() throws Exception {
-		super.setUp();
-		ResourceLocator.instance().register("client", "ant");
-	}
-
-	public void tearDown() {
-		ResourceLocator.instance().clear();
+	public FileDecoratorFactoryTest(String name) {
+		super(name);
 	}
 
 	public void testShouldCreateInMemoryReportFile() {
 		try {
 			System.setProperty("ReportFile",
-					"jaywalker.report.InMemoryReportFile");
-			ReportFile reportFile = new ReportFileFactory()
+					"jaywalker.util.InMemoryFileDecorator");
+			ResourceLocator.instance().register("outDir", Path.DIR_TEMP);
+			FileDecorator reportFile = new FileDecoratorFactory()
 					.create("report.xml");
-			assertEquals(InMemoryReportFile.class, reportFile.getClass());
+			assertEquals(InMemoryFileDecorator.class, reportFile.getClass());
 		} finally {
 			System.setProperty("ReportFile", "");
 		}
@@ -33,12 +27,12 @@ public class ReportFileFactoryTest extends TestCase {
 	public void testShouldCreateDefaultReportFile() {
 		try {
 			System.setProperty("ReportFile",
-					"jaywalker.report.DefaultReportFile");
+					"jaywalker.report.DefaultFileDecorator");
 			ResourceLocator.instance().register("outDir", Path.DIR_TEMP);
 			assertFileDoesNotExist(Path.DIR_TEMP, "report.xml");
-			ReportFile reportFile = new ReportFileFactory()
+			FileDecorator reportFile = new FileDecoratorFactory()
 					.create("report.xml");
-			assertEquals(DefaultReportFile.class, reportFile.getClass());
+			assertEquals(DefaultFileDecorator.class, reportFile.getClass());
 		} finally {
 			System.setProperty("ReportFile", "");
 		}
@@ -47,14 +41,15 @@ public class ReportFileFactoryTest extends TestCase {
 	public void testShouldCreateDefaultReportFileOnMissingSystemProperty() {
 		ResourceLocator.instance().register("outDir", Path.DIR_TEMP);
 		assertFileDoesNotExist(Path.DIR_TEMP, "report.xml");
-		ReportFile reportFile = new ReportFileFactory().create("report.xml");
-		assertEquals(DefaultReportFile.class, reportFile.getClass());
+		FileDecorator reportFile = new FileDecoratorFactory()
+				.create("report.xml");
+		assertEquals(DefaultFileDecorator.class, reportFile.getClass());
 	}
 
 	public void testShouldThrowExceptionWhenOutDirIsMissing() {
 		try {
 			assertFileDoesNotExist(Path.DIR_TEMP, "report.xml");
-			new ReportFileFactory().create("report.xml");
+			new FileDecoratorFactory().create("report.xml");
 			fail("ResourceNotFoundException should have been thrown");
 		} catch (ResourceNotFoundException e) {
 		}

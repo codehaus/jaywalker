@@ -16,13 +16,10 @@
 package jaywalker.classlist;
 
 import java.io.IOException;
-import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 
 import jaywalker.testutil.Path;
-import jaywalker.util.FileSystem;
-import jaywalker.util.URLHelper;
 
 public class ClassElementFileTest extends JayWalkerTestCase {
 
@@ -32,14 +29,8 @@ public class ClassElementFileTest extends JayWalkerTestCase {
 
 	public void testShouldReturnValidPropertiesFromClsFile() throws IOException, URISyntaxException {
 
-        URLHelper helper = new URLHelper();
-
-        // Clean up any temporary files
         final URL parentUrl = Path.FILE_TEST1_JAR.toURL();
         URL url = new URL("jar:" + Path.FILE_TEST1_JAR.toURL() + "!/SerializableImpl.class");
-
-        final File expandedURL = helper.toEncodedFile(new URL("jar:" + parentUrl.toString() + "!/"));
-        FileSystem.delete(expandedURL);
 
         // Expand the archive into the temporary directory
         // Show that the classlist element's file representation exists

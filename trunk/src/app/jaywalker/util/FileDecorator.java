@@ -1,9 +1,9 @@
-package jaywalker.report;
+package jaywalker.util;
 
 import java.io.Reader;
 import java.io.Writer;
 
-public interface ReportFile {
+public interface FileDecorator {
 	
 	public Writer getWriter();
 	

@@ -3,8 +3,10 @@ package jaywalker.report;
 import java.io.File;
 
 import jaywalker.testutil.Path;
+import jaywalker.util.DefaultFileDecorator;
+import jaywalker.util.FileDecoratorTestCase;
 
-public class DefaultReportFileTest extends ReportFileTestCase {
+public class DefaultReportFileTest extends FileDecoratorTestCase {
 
 	private File file;
 
@@ -14,7 +16,7 @@ public class DefaultReportFileTest extends ReportFileTestCase {
 		if (file.exists()) {
 			file.delete();
 		}
-		reportFile = new DefaultReportFile(file);
+		reportFile = new DefaultFileDecorator(file);
 	}
 
 	public void testShouldReturnReportLocation() {

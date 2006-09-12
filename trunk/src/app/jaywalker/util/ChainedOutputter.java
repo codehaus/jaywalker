@@ -6,7 +6,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 
-import jaywalker.report.ReportFile;
 
 public class ChainedOutputter implements Outputter {
 
@@ -23,7 +22,7 @@ public class ChainedOutputter implements Outputter {
 	}
 
 	public void write(OutputStream outputStream) {
-		ReportFile reportFile = (ReportFile) locator.lookup("report.xml");
+		FileDecorator reportFile = (FileDecorator) locator.lookup("report.xml");
 		Reader reader = reportFile.getReader();
 		InputStream is = new ReaderInputStream(reader);
 		for (int i = 0; i < outputters.length; i++) {

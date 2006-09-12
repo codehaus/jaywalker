@@ -37,9 +37,9 @@ public class AggregateReportTest extends JayWalkerTestCase {
 		super(name);
 	}
 
-	private final Configuration[] CONFIGURATIONS = new Configuration[] {
-			new DependencyReportConfiguration(new DependencyModel()),
-			new CollisionReportConfiguration(new CollisionModel()) };
+	private final ReportModel[] CONFIGURATIONS = new ReportModel[] {
+			new DependencyReportModel(new DependencyModel()),
+			new CollisionReportModel(new CollisionModel()) };
 
 	protected ClasslistElementListener[] getClasslistElementListeners() {
 		ClasslistElementListener[] listeners = new ClasslistElementListener[CONFIGURATIONS.length];
@@ -96,17 +96,13 @@ public class AggregateReportTest extends JayWalkerTestCase {
 	private Report createDependencyReport() {
 		Properties properties = new Properties();
 		Tag[] reportTags = CONFIGURATIONS[0].toReportTags(properties);
-		Outputter[] transformers = CONFIGURATIONS[0]
-				.toXsltTransformers(properties);
-		return new Report(reportTags, transformers);
+		return new Report(reportTags);
 	}
 
 	private Report createCollisionReport() {
 		Properties properties = new Properties();
 		Tag[] reportTags = CONFIGURATIONS[1].toReportTags(properties);
-		Outputter[] transformers = CONFIGURATIONS[1]
-				.toXsltTransformers(properties);
-		return new Report(reportTags, transformers);
+		return new Report(reportTags);
 	}
 
 	public void testShouldCreateReportForAFile() throws IOException {
