@@ -3,11 +3,11 @@ package jaywalker.util;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import jaywalker.html.HtmlOutputter;
+import jaywalker.html.HtmlBuilder;
 
 public class MetricsHeaderBuilder {
 
-	private static final HtmlOutputter OUTPUTTER_HTML = new HtmlOutputter();
+	private static final HtmlBuilder OUTPUTTER_HTML = new HtmlBuilder();
 
 	private final String scope;
 

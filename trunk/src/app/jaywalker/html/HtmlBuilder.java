@@ -3,7 +3,7 @@ package jaywalker.html;
 import java.io.IOException;
 import java.io.OutputStream;
 
-public class HtmlOutputter {
+public class HtmlBuilder {
 
 	public void index(OutputStream os, byte[] content) throws IOException {
 		docType(os);

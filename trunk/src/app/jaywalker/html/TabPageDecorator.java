@@ -11,7 +11,7 @@ import jaywalker.xml.bind.TabPage;
 
 public class TabPageDecorator {
 
-	private static final HtmlOutputter OUTPUTTER_HTML = new HtmlOutputter();
+	private static final HtmlBuilder OUTPUTTER_HTML = new HtmlBuilder();
 
 	private final List contentList = new ArrayList();
 

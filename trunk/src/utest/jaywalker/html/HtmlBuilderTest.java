@@ -4,11 +4,11 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import jaywalker.html.HtmlOutputter;
+import jaywalker.html.HtmlBuilder;
 
 import junit.framework.TestCase;
 
-public class HtmlOutputterTest extends TestCase {
+public class HtmlBuilderTest extends TestCase {
 
 	private static final byte[] DEFAULT_CONTENT = "(content)".getBytes();
 
@@ -17,7 +17,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateIndex() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter() {
+		final HtmlBuilder html = new HtmlBuilder() {
 			public void docType(OutputStream os) throws IOException {
 				os.write("(docType)".getBytes());
 			}
@@ -37,7 +37,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateHtmlTags() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter() {
+		final HtmlBuilder html = new HtmlBuilder() {
 			public void head(OutputStream os) throws IOException {
 
 			}
@@ -57,7 +57,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateDocTypeTags() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter();
+		final HtmlBuilder html = new HtmlBuilder();
 		Executor executor = new Executor() {
 			public void execute(OutputStream os) throws IOException {
 				html.docType(os);
@@ -69,7 +69,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateHeadTags() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter() {
+		final HtmlBuilder html = new HtmlBuilder() {
 			public void title(OutputStream os) throws IOException {
 				os.write("(title)".getBytes());
 			}
@@ -102,7 +102,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateTitleTags() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter();
+		final HtmlBuilder html = new HtmlBuilder();
 		Executor executor = new Executor() {
 			public void execute(OutputStream os) throws IOException {
 				html.title(os);
@@ -113,7 +113,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateMetaTags() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter();
+		final HtmlBuilder html = new HtmlBuilder();
 		Executor executor = new Executor() {
 			public void execute(OutputStream os) throws IOException {
 				html.meta(os, "httpEquiv", "content");
@@ -124,7 +124,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateJavaScriptTag() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter();
+		final HtmlBuilder html = new HtmlBuilder();
 		Executor executor = new Executor() {
 			public void execute(OutputStream os) throws IOException {
 				html.javascript(os, "src");
@@ -135,7 +135,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateCssTag() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter();
+		final HtmlBuilder html = new HtmlBuilder();
 		Executor executor = new Executor() {
 			public void execute(OutputStream os) throws IOException {
 				html.css(os, "href");
@@ -146,7 +146,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateBodyTag() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter() {
+		final HtmlBuilder html = new HtmlBuilder() {
 			public void h2(OutputStream os, String value) throws IOException {
 				os.write(("(" + value + ")").getBytes());
 			}
@@ -166,7 +166,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateH2Tag() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter();
+		final HtmlBuilder html = new HtmlBuilder();
 		Executor executor = new Executor() {
 			public void execute(OutputStream os) throws IOException {
 				html.h2(os, "(value)");
@@ -177,7 +177,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateH2TagWithClass() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter();
+		final HtmlBuilder html = new HtmlBuilder();
 		Executor executor = new Executor() {
 			public void execute(OutputStream os) throws IOException {
 				html.h2(os, "(class)", "(value)");
@@ -188,7 +188,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateDivTag() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter();
+		final HtmlBuilder html = new HtmlBuilder();
 		Executor executor = new Executor() {
 			public void execute(OutputStream os) throws IOException {
 				html.div(os, "(class)", "(id)", "(value)".getBytes());
@@ -199,7 +199,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateJavaScriptTagWithValues() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter();
+		final HtmlBuilder html = new HtmlBuilder();
 		Executor executor = new Executor() {
 			public void execute(OutputStream os) throws IOException {
 				html.javascript(os, new String[] { "(value1)", "(value2)" });
@@ -210,7 +210,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateTableTag() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter() {
+		final HtmlBuilder html = new HtmlBuilder() {
 			public void thead(OutputStream os, String[] headers)
 					throws IOException {
 				os.write("(thead)".getBytes());
@@ -232,7 +232,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateTableHead() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter() {
+		final HtmlBuilder html = new HtmlBuilder() {
 			public void tr(OutputStream os, String clazz, String[] values)
 					throws IOException {
 				for (int i = 0; i < values.length; i++) {
@@ -250,7 +250,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateTableRow() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter() {
+		final HtmlBuilder html = new HtmlBuilder() {
 			public void td(OutputStream os, String value) throws IOException {
 				os.write(value.getBytes());
 			}
@@ -265,7 +265,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateTableCell() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter();
+		final HtmlBuilder html = new HtmlBuilder();
 		Executor executor = new Executor() {
 			public void execute(OutputStream os) throws IOException {
 				html.td(os, "(value1)");
@@ -276,7 +276,7 @@ public class HtmlOutputterTest extends TestCase {
 	}
 
 	public void testShouldCreateTableBody() throws IOException {
-		final HtmlOutputter html = new HtmlOutputter() {
+		final HtmlBuilder html = new HtmlBuilder() {
 			public void tr(OutputStream os, String clazz, String[] values)
 					throws IOException {
 				for (int i = 0; i < values.length; i++) {

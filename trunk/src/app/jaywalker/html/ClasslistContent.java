@@ -9,7 +9,7 @@ import jaywalker.xml.bind.TabPage;
 
 public class ClasslistContent implements Content {
 
-	private static final HtmlOutputter OUTPUTTER_HTML = new HtmlOutputter();
+	private static final HtmlBuilder OUTPUTTER_HTML = new HtmlBuilder();
 
 	public byte[] create(TabPage tabPage) throws IOException {
 		String classlistType = tabPage.getType();
