@@ -10,7 +10,7 @@ import jaywalker.xml.bind.Config;
 
 public class ConfigDecorator {
 
-	private static final HtmlOutputter OUTPUTTER_HTML = new HtmlOutputter();
+	private static final HtmlBuilder OUTPUTTER_HTML = new HtmlBuilder();
 
 	private final List tabPaneDecoratorList = new ArrayList();
 

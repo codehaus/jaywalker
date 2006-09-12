@@ -10,7 +10,7 @@ import jaywalker.xml.bind.TabPane;
 
 public class TabPaneDecorator {
 
-	private static final HtmlOutputter OUTPUTTER_HTML = new HtmlOutputter();
+	private static final HtmlBuilder OUTPUTTER_HTML = new HtmlBuilder();
 
 	private final List tabPageDecoratorList = new ArrayList();
 
