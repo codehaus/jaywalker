@@ -22,7 +22,6 @@ import java.io.InputStreamReader;
 import java.util.Properties;
 
 public class Shell {
-	private final static StringHelper stringHelper = new StringHelper();
 
 	private final static Runtime runtime = Runtime.getRuntime();
 
@@ -53,15 +52,16 @@ public class Shell {
 				.getInputStream()));
 		String line;
 		while ((line = br.readLine()) != null) {
-			envVars.setProperty(stringHelper.substringBeforeLast(line, "="),
-					stringHelper.substringAfterLast(line, "="));
+			StringDecorator decorator = new StringDecorator(line);
+			envVars.setProperty(decorator.substringBeforeLast("="), decorator
+					.substringAfterLast("="));
 		}
 		return envVars;
 	}
 
 	public static File toWorkingDir(String tempPath) throws IOException {
 		File tempDir = new File(
-				(stringHelper.isBlank(tempPath)) ? getEnvironment("TEMP")
+				(new StringDecorator(tempPath).isBlank()) ? getEnvironment("TEMP")
 						: tempPath);
 		File workingDir = new File(tempDir, "jaywalker");
 		workingDir.mkdir();

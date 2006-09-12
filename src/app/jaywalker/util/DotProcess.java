@@ -20,17 +20,17 @@ public class DotProcess {
 		} else {
 			p = r.exec(command);
 		}
-//		try {
-//			p.waitFor();
-//		} catch (InterruptedException e) {
-//			throw new RuntimeException(FileSystem.readInputStreamIntoString(p
-//					.getErrorStream()), e);
-//		}
+		// try {
+		// p.waitFor();
+		// } catch (InterruptedException e) {
+		// throw new RuntimeException(FileSystem.readInputStreamIntoString(p
+		// .getErrorStream()), e);
+		// }
 	}
 
 	public static File toPngFilename(File file) {
-		return new File(new StringHelper().substringBeforeLast(file
-				.getAbsolutePath(), ".")
+		return new File(new StringDecorator(file.getAbsolutePath())
+				.substringBeforeLast(".")
 				+ ".png");
 	}
 

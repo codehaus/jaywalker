@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Properties;
 
 public class DirectoryListing {
-	private final static StringHelper stringHelper = new StringHelper();
 
 	private Map directoryMap = new HashMap();
 
@@ -113,11 +112,12 @@ public class DirectoryListing {
 	private URL[] createUrlsFromDirectory(String urlString, File[] files)
 			throws MalformedURLException {
 		URL[] urls = new URL[files.length];
-		urlString = stringHelper.appendIfMissing("/", urlString);
+		urlString = new StringDecorator(urlString).appendIfMissing("/");
 		for (int i = 0; i < files.length; i++) {
 			String newUrlString = urlString + files[i].getName();
 			if (files[i].isDirectory()) {
-				newUrlString = stringHelper.appendIfMissing("/", newUrlString);
+				newUrlString = new StringDecorator(newUrlString)
+						.appendIfMissing("/");
 			}
 			urls[i] = new URL(newUrlString);
 		}
