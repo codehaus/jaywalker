@@ -28,12 +28,13 @@ import jaywalker.classlist.ClasslistElement;
 import jaywalker.classlist.ClasslistElementFactory;
 import jaywalker.classlist.ClasslistElementStatistic;
 import jaywalker.classlist.ClasslistElementVisitor;
-import jaywalker.html.ConfigVisitor;
+import jaywalker.html.HtmlConfigVisitor;
 import jaywalker.util.FileDecorator;
 import jaywalker.util.FileDecoratorFactory;
 import jaywalker.util.ResourceLocator;
 import jaywalker.util.WriterOutputStream;
 import jaywalker.util.ZipExpander;
+import jaywalker.xml.ConfigVisitor;
 
 public class ReportExecutor {
 
@@ -66,7 +67,7 @@ public class ReportExecutor {
 		FileDecorator reportFile = new FileDecoratorFactory().create(filename);
 		OutputStream os = new WriterOutputStream(reportFile.getWriter());
 
-		ConfigVisitor visitor = new ConfigVisitor(os);
+		ConfigVisitor visitor = new HtmlConfigVisitor(os);
 		visitor.setConfig("jaywalker-config.xml");
 		visitor.accept();
 

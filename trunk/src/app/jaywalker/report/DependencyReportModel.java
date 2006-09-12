@@ -18,9 +18,6 @@ package jaywalker.report;
 import java.util.Properties;
 
 import jaywalker.classlist.ClasslistElementListener;
-import jaywalker.util.ChainedOutputter;
-import jaywalker.util.DotOutputterFactory;
-import jaywalker.util.Outputter;
 
 public class DependencyReportModel implements ReportModel {
 	private final ReportSetupMap dependencyReportTagMap;

@@ -3,7 +3,6 @@ package jaywalker.report;
 import java.util.Properties;
 
 import jaywalker.classlist.ClasslistElementListener;
-import jaywalker.util.Outputter;
 
 public interface ReportModel {
 	public Tag[] toReportTags(Properties properties);
