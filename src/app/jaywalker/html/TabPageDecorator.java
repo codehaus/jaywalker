@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import jaywalker.util.FileDecorator;
 import jaywalker.util.XsltTransformer;
 import jaywalker.xml.bind.TabPage;
 
@@ -20,9 +21,12 @@ public class TabPageDecorator {
 	private final List tabPaneDecoratorList = new ArrayList();
 
 	private final TabPage tabPage;
+	
+	private final FileDecorator reportFile;
 
-	public TabPageDecorator(TabPage tabPage) {
+	public TabPageDecorator(TabPage tabPage, FileDecorator reportFile) {
 		this.tabPage = tabPage;
+		this.reportFile = reportFile;
 	}
 
 	public TabPage getTabPage() {
@@ -77,7 +81,7 @@ public class TabPageDecorator {
 		for (int i = 0; i < xsltTransformerList.size(); i++) {
 			XsltTransformer transformer = (XsltTransformer) xsltTransformerList
 					.get(i);
-			transformer.write(baos);
+			transformer.transform(reportFile, baos);
 		}
 	}
 

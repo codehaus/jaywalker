@@ -53,16 +53,11 @@ public class ReportEnvironment {
 			FileSystem.delete(outDir);
 		}
 		outDir.mkdir();
-		registerOutDir(outDir);
 	}
 
 	private void registerDeepClasslist(String classlist) {
 		LOCATOR.register("classlist-deep", classlist);
 		LOCATOR.register("classlist-deep-value", classlist);
-	}
-
-	private void registerOutDir(File outDir) {
-		LOCATOR.register("outDir", outDir);
 	}
 
 	public void register(Properties properties) {

@@ -15,9 +15,8 @@ public class FileDecoratorFactoryTest extends JayWalkerTestCase {
 		try {
 			System.setProperty("ReportFile",
 					"jaywalker.util.InMemoryFileDecorator");
-			ResourceLocator.instance().register("outDir", Path.DIR_TEMP);
-			FileDecorator reportFile = new FileDecoratorFactory()
-					.create("report.xml");
+			FileDecorator reportFile = new FileDecoratorFactory().create(
+					Path.DIR_TEMP, "report.xml");
 			assertEquals(InMemoryFileDecorator.class, reportFile.getClass());
 		} finally {
 			System.setProperty("ReportFile", "");
@@ -28,10 +27,9 @@ public class FileDecoratorFactoryTest extends JayWalkerTestCase {
 		try {
 			System.setProperty("ReportFile",
 					"jaywalker.report.DefaultFileDecorator");
-			ResourceLocator.instance().register("outDir", Path.DIR_TEMP);
 			assertFileDoesNotExist(Path.DIR_TEMP, "report.xml");
-			FileDecorator reportFile = new FileDecoratorFactory()
-					.create("report.xml");
+			FileDecorator reportFile = new FileDecoratorFactory().create(
+					Path.DIR_TEMP, "report.xml");
 			assertEquals(DefaultFileDecorator.class, reportFile.getClass());
 		} finally {
 			System.setProperty("ReportFile", "");
@@ -39,20 +37,10 @@ public class FileDecoratorFactoryTest extends JayWalkerTestCase {
 	}
 
 	public void testShouldCreateDefaultReportFileOnMissingSystemProperty() {
-		ResourceLocator.instance().register("outDir", Path.DIR_TEMP);
 		assertFileDoesNotExist(Path.DIR_TEMP, "report.xml");
-		FileDecorator reportFile = new FileDecoratorFactory()
-				.create("report.xml");
+		FileDecorator reportFile = new FileDecoratorFactory().create(Path.DIR_TEMP,
+				"report.xml");
 		assertEquals(DefaultFileDecorator.class, reportFile.getClass());
-	}
-
-	public void testShouldThrowExceptionWhenOutDirIsMissing() {
-		try {
-			assertFileDoesNotExist(Path.DIR_TEMP, "report.xml");
-			new FileDecoratorFactory().create("report.xml");
-			fail("ResourceNotFoundException should have been thrown");
-		} catch (ResourceNotFoundException e) {
-		}
 	}
 
 	private void assertFileDoesNotExist(File dir, String filename) {

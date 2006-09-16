@@ -20,7 +20,7 @@ public class XsltTestCase extends TestCase {
 		XsltTransformer transformer = new XsltTransformer(xsltFilename);
 		StringWriter stringWriter = new StringWriter();
 		OutputStream outputStream = new WriterOutputStream(stringWriter);
-		transformer.write(outputStream);
+		transformer.transform(reportFile, outputStream);
 		String actual = stringWriter.getBuffer().toString();
 		//outputBytes(expected);
 		//outputBytes(actual);

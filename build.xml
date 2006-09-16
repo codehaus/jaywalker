@@ -22,6 +22,14 @@
 		<pathelement path="tools/jaxb/namespace-1.0.jar" />
 	</path>
 	
+	<path id="path.runtime.jaxb">
+		<pathelement path="tools/jaxb/jaxb-api-1.0.6.jar" />
+		<pathelement path="tools/jaxb/jaxb-impl-1.0.6.jar" />
+		<pathelement path="tools/jaxb/jaxb-libs-1.0.6.jar" />
+		<pathelement path="tools/jaxb/jax-qname-1.1.jar" />
+		<pathelement path="tools/jaxb/namespace-1.0.jar" />
+	</path>
+	
 	<path id="path.compile.aspectj">
 		<pathelement path="tools/aspectj/aspectjtools-1.5.2a.jar"/>
 		<pathelement path="tools/aspectj/aspectjrt-1.5.2a.jar"/>
@@ -168,8 +176,8 @@
 				<pathelement location="build/classes-instr" />
 				<pathelement location="build/classes-test" />
 				<path refid="path.compile.test" />
+				<path refid="path.runtime.jaxb" />
 				<path refid="emma.lib" />
-				<path location="build/dist/${ant.project.name}-bin-${project.version}.jar" />
 			</classpath>
 
 			<batchtest todir="build/doc/junit">

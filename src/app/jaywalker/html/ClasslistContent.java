@@ -36,7 +36,7 @@ public class ClasslistContent implements Content {
 		String[][] toStringArrayArray = toStringArrayArray(value);
 		if (toStringArrayArray.length == 0) {
 			toStringArrayArray = new String[][] { { "<i>No "
-					+ new StringDecorator(classlistType).cap() + " Classlist Given</i>" } };
+					+ new StringDecorator(classlistType).capitalize() + " Classlist Given</i>" } };
 		}
 		return toStringArrayArray;
 	}

@@ -56,7 +56,6 @@ public class AggregateReport implements ClasslistElementListener {
 				sb.append(TAG_MEDIATOR.create(element, reports, stack));
 
 				writer.write(sb.toString());
-				writer.flush();
 
 			}
 
@@ -70,7 +69,6 @@ public class AggregateReport implements ClasslistElementListener {
 		try {
 			if (isEmpty) {
 				writer.write("/>");
-				writer.flush();
 				return;
 			}
 
@@ -82,7 +80,6 @@ public class AggregateReport implements ClasslistElementListener {
 			sb.append("</report>");
 
 			writer.write(sb.toString());
-			writer.flush();
 
 		} catch (IOException e) {
 			throw new RuntimeException(e);

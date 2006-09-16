@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import jaywalker.util.FileDecorator;
 import jaywalker.util.XsltTransformer;
 import jaywalker.xml.ConfigVisitor;
 import jaywalker.xml.bind.Config;
@@ -12,18 +13,23 @@ import jaywalker.xml.bind.TabPane;
 
 public class HtmlConfigVisitor extends ConfigVisitor {
 
-	public HtmlConfigVisitor(OutputStream os) {
-		super(os);
+	private final FileDecorator reportFile;
+
+	protected final OutputStream os;
+
+	public HtmlConfigVisitor(OutputStream os, FileDecorator reportFile) {
+		this.os = os;
+		this.reportFile = reportFile;
 	}
-	
+
 	public void accept() {
 		accept(this);
 	}
-	
+
 	public void accept(HtmlConfigVisitor visitor) {
 		visitor.visit(new ConfigDecorator(config));
 	}
-	
+
 	public void visit(ConfigDecorator configDecorator) {
 		try {
 			Config config = configDecorator.getConfig();
@@ -36,8 +42,6 @@ public class HtmlConfigVisitor extends ConfigVisitor {
 				visit(tabPaneDecorator);
 			}
 			configDecorator.html(os);
-			os.flush();
-			os.close();
 		} catch (IOException e) {
 			throw new RuntimeException(
 					"Error while processing configuration file", e);
@@ -49,7 +53,8 @@ public class HtmlConfigVisitor extends ConfigVisitor {
 		List tabPageList = tabPane.getTabPage();
 		for (int i = 0; i < tabPageList.size(); i++) {
 			TabPage tabPage = (TabPage) tabPageList.get(i);
-			TabPageDecorator tabPageDecorator = new TabPageDecorator(tabPage);
+			TabPageDecorator tabPageDecorator = new TabPageDecorator(tabPage,
+					reportFile);
 			tabPaneDecorator.add(tabPageDecorator);
 			visit(tabPageDecorator);
 		}
@@ -77,7 +82,7 @@ public class HtmlConfigVisitor extends ConfigVisitor {
 		}
 	}
 
-	private void addContent(TabPageDecorator tabPageDecorator, String className) {
+	protected void addContent(TabPageDecorator tabPageDecorator, String className) {
 		if (className != null) {
 			try {
 				Class clazz = Class.forName(className);
@@ -90,6 +95,5 @@ public class HtmlConfigVisitor extends ConfigVisitor {
 			}
 		}
 	}
-
 
 }
