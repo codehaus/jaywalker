@@ -26,13 +26,11 @@ import java.util.zip.ZipInputStream;
 
 import jaywalker.classlist.ClasslistElement;
 import jaywalker.classlist.ClasslistElementFactory;
-import jaywalker.classlist.ClasslistElementStatistic;
 import jaywalker.classlist.ClasslistElementVisitor;
 import jaywalker.html.HtmlConfigVisitor;
 import jaywalker.util.FileDecorator;
 import jaywalker.util.FileDecoratorFactory;
 import jaywalker.util.ResourceLocator;
-import jaywalker.util.WriterOutputStream;
 import jaywalker.util.ZipExpander;
 import jaywalker.xml.ConfigVisitor;
 
@@ -42,50 +40,50 @@ public class ReportExecutor {
 
 	private ClasslistElementFactory factory = new ClasslistElementFactory();
 
-	private static final ResourceLocator LOCATOR = ResourceLocator.instance();
-
 	private ReportEnvironment environment = new ReportEnvironment();
 
 	public void execute(String classlist, Properties properties, File outDir,
 			String tempPath) throws IOException {
 		environment.initialize(classlist, properties, outDir, tempPath);
 		final Report[] reports = reportModelSetup.toReports(properties);
-		FileDecorator reportFile = createReportFile("report.xml");
-		AggregateReport report = execute(classlist, reports, reportFile);
-		outputHtml(outDir, "report.html");
+		FileDecorator xmlFile = toFileDecorator(outDir, "report.xml");
+		FileDecorator htmlFile = toFileDecorator(outDir, "report.html");
+		outputXml(xmlFile, reports, classlist);
+		outputHtml(htmlFile, xmlFile, "jaywalker-config.xml");
+		extract("/META-INF/report.zip", outDir);
 	}
 
-	private FileDecorator createReportFile(String filename) {
-		FileDecorator reportFile = new FileDecoratorFactory().create(filename);
-		LOCATOR.register(filename, reportFile);
-		System.out.println("  Outputting report to "
-				+ reportFile.getParentAbsolutePath());
-		return reportFile;
-	}
+	private void outputHtml(FileDecorator htmlFile, FileDecorator xmlFile,
+			String configFilename) throws IOException {
+		OutputStream os = htmlFile.getOutputStream();
 
-	private void outputHtml(File outDir, String filename) throws IOException {
-		FileDecorator reportFile = new FileDecoratorFactory().create(filename);
-		OutputStream os = new WriterOutputStream(reportFile.getWriter());
-
-		ConfigVisitor visitor = new HtmlConfigVisitor(os);
-		visitor.setConfig("jaywalker-config.xml");
+		ConfigVisitor visitor = new HtmlConfigVisitor(os, xmlFile);
+		visitor.setConfig("/META-INF/xml/" + configFilename);
 		visitor.accept();
 
+		os.flush();
+		os.close();
+	}
+
+	private FileDecorator toFileDecorator(File outDir, String filename) {
+		return new FileDecoratorFactory().create(outDir, filename);
+	}
+
+	private void extract(String filename, File outDir) {
 		ZipInputStream zis = new ZipInputStream(FileDecorator.class
-				.getResourceAsStream("/META-INF/report.zip"));
+				.getResourceAsStream(filename));
 		new ZipExpander(zis).expand(outDir);
 	}
 
-	private AggregateReport execute(String classlist, Report[] reports,
-			FileDecorator reportFile) throws IOException {
+	private void outputXml(FileDecorator xmlFile, Report[] reports,
+			String classlist) throws IOException {
 		final ClasslistElement[] elements = factory.create(classlist);
-		initReportModels(reports, elements);
-		return createAggregateReport(reports, elements, reportFile);
+		initialize(elements);
+		outputXml(xmlFile, reports, elements);
 	}
 
-	private AggregateReport createAggregateReport(Report[] reports,
-			final ClasslistElement[] elements, final FileDecorator reportFile)
-			throws IOException {
+	private void outputXml(final FileDecorator reportFile, Report[] reports,
+			final ClasslistElement[] elements) throws IOException {
 		ClasslistElementVisitor visitor = new ClasslistElementVisitor(elements);
 		Writer writer = reportFile.getWriter();
 
@@ -94,23 +92,22 @@ public class ReportExecutor {
 		visitor.addListener(report);
 		visitor.accept();
 
+		writer.flush();
 		writer.close();
-		return report;
 	}
 
-	private void initReportModels(Report[] reports,
-			final ClasslistElement[] elements) throws IOException {
+	private void initialize(final ClasslistElement[] elements)
+			throws IOException {
 		ClasslistElementVisitor visitor = new ClasslistElementVisitor(elements);
-		final ClasslistElementStatistic statisticListener = new ClasslistElementStatistic();
-		visitor.addListener(statisticListener);
+		initialize(visitor);
+		visitor.removeAllListeners();
+	}
 
+	private void initialize(ClasslistElementVisitor visitor) throws IOException {
 		AggregateModel model = new AggregateModel(reportModelSetup
 				.getClasslistElementListeners());
 		visitor.addListener(model);
 		visitor.accept();
-
-		System.out.println("      " + statisticListener + " encountered.");
-		visitor.removeAllListeners();
 	}
 
 	private URL[] lookupClasslistUrlsToIgnore() throws MalformedURLException {

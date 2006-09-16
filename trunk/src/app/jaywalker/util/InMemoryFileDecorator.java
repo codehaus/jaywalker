@@ -15,6 +15,8 @@
  */
 package jaywalker.util;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -43,6 +45,14 @@ public class InMemoryFileDecorator implements FileDecorator {
 
 	public String getParentAbsolutePath() {
 		return "IN MEMORY";
+	}
+	
+	public InputStream getInputStream() {
+		return new ReaderInputStream(getReader());
+	}
+
+	public OutputStream getOutputStream() {
+		return new WriterOutputStream(getWriter());
 	}
 
 }

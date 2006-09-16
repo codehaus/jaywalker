@@ -5,9 +5,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
-
 
 public class DefaultFileDecorator implements FileDecorator {
 
@@ -38,6 +39,14 @@ public class DefaultFileDecorator implements FileDecorator {
 
 	public String getParentAbsolutePath() {
 		return file.getParentFile().getAbsolutePath();
+	}
+
+	public InputStream getInputStream() {
+		return new ReaderInputStream(getReader());
+	}
+
+	public OutputStream getOutputStream() {
+		return new WriterOutputStream(getWriter());
 	}
 
 }

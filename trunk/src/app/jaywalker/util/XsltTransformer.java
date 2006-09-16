@@ -16,7 +16,6 @@ import javax.xml.transform.URIResolver;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-
 public class XsltTransformer implements Outputter {
 
 	private final ResourceLocator locator = ResourceLocator.instance();
@@ -80,10 +79,8 @@ public class XsltTransformer implements Outputter {
 		}
 	}
 
-	public void write(OutputStream outputStream) {
-		FileDecorator reportFile = (FileDecorator) locator.lookup("report.xml");
-		Reader reader = reportFile.getReader();
-		InputStream inputStream = new ReaderInputStream(reader);
+	public void transform(FileDecorator file, OutputStream outputStream) {
+		InputStream inputStream = file.getInputStream();
 		transform(inputStream, outputStream);
 	}
 

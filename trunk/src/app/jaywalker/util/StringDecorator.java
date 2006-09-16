@@ -18,6 +18,7 @@ package jaywalker.util;
 public class StringDecorator {
 
 	public final static String EMPTY = "";
+
 	private final String value;
 
 	public StringDecorator(String value) {
@@ -39,7 +40,7 @@ public class StringDecorator {
 			return value;
 		return prefix + value;
 	}
-	
+
 	private boolean isEmpty(String str) {
 		return str == null || str.length() == 0;
 	}
@@ -52,8 +53,8 @@ public class StringDecorator {
 		return (value == null) ? null : value.trim();
 	}
 
-	public String cap() {
-		return value.charAt(0) + value.substring(1);
+	public String capitalize() {
+		return Character.toUpperCase(value.charAt(0)) + value.substring(1);
 	}
 
 	public String substringBeforeLast(String delimiter) {
@@ -89,8 +90,8 @@ public class StringDecorator {
 
 	public String extractCommonPrefix(String other) {
 		StringBuffer sb = new StringBuffer();
-		int length = (value.length() < other.length()) ? value.length()
-				: other.length();
+		int length = (value.length() < other.length()) ? value.length() : other
+				.length();
 		for (int i = 0; i < length; i++) {
 			final char ch = value.charAt(i);
 			if (ch == other.charAt(i)) {
@@ -102,8 +103,7 @@ public class StringDecorator {
 		return sb.toString();
 	}
 
-	public String substringBeforeLast(String delimiter,
-			String defaultString) {
+	public String substringBeforeLast(String delimiter, String defaultString) {
 		if (isEmpty() || isEmpty(delimiter)) {
 			return defaultString;
 		}
