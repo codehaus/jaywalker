@@ -41,6 +41,8 @@
 		<pathelement path="tools/bcel/bcel-5.1.jar" />
 		<pathelement path="tools/log4j/log4j-1.2.9.jar" />
 		<pathelement path="tools/one-jar/one-jar-boot-0.95.jar" />
+		<pathelement path="tools/xalan/xalan.jar" />
+    	<pathelement path="tools/xalan/serializer.jar" />
 	</path>
 
 	<path id="path.compile.test">
