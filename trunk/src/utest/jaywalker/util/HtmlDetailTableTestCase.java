@@ -4,9 +4,11 @@ import java.io.IOException;
 
 public abstract class HtmlDetailTableTestCase extends XsltTestCase {
 
+	protected static final String EOL = System.getProperty("line.separator");
+
 	protected final String tagStartTableDetails = "<table "
 			+ ((getHref().length() == 0) ? "" : getHref() + " ")
-			+ "class=\"sort-table\" id=\"" + getTableId() + "\">\r\n";
+			+ "class=\"sort-table\" id=\"" + getTableId() + "\">" + EOL;
 
 	protected final String tableStart = tagStartTableDetails
 			+ toTableHeader(getHeaderValues());
@@ -29,15 +31,15 @@ public abstract class HtmlDetailTableTestCase extends XsltTestCase {
 	public abstract String getTableId();
 
 	public String toTitle(String value) {
-		return "<h3>" + value + "</h3>\r\n";
+		return "<h3>" + value + "</h3>" + EOL;
 	}
 
 	public String toTableHeader(String[] values) {
-		StringBuffer sb = new StringBuffer("<thead>\r\n<tr>\r\n");
+		StringBuffer sb = new StringBuffer("<thead>" + EOL + "<tr>" + EOL);
 		for (int i = 0; i < values.length; i++) {
 			sb.append("<td>").append(values[i]).append("</td>");
 		}
-		sb.append("\r\n</tr>\r\n</thead>\r\n<tbody>");
+		sb.append(EOL + "</tr>" + EOL + "</thead>" + EOL + "<tbody>");
 		return sb.toString();
 	}
 
@@ -51,7 +53,8 @@ public abstract class HtmlDetailTableTestCase extends XsltTestCase {
 
 	public void testShouldCreateTableHeaderForNoData() throws IOException {
 		String input = "<?xml version=\"1.0\"?>\n<report>\n</report>";
-		String expected = tableStart + rowNoData + "</tbody>\r\n</table>\r\n";
+		String expected = tableStart + rowNoData + "</tbody>" + EOL
+				+ "</table>" + EOL;
 		assertOutputEquals(getXsltFileName(), input, expected);
 	}
 
