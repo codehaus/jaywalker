@@ -81,7 +81,7 @@ public class ArchiveDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 		String expected = tableStart
 				+ "\n"
 				+ "<tr class=\"odd\"><td>archive</td><td>9</td><td>6</td><td>0.67</td><td>0</td><td>1</td><td>1</td><td>1.67</td>"
-				+ "</tr></tbody>\r\n</table>\r\n";
+				+ "</tr></tbody>" + EOL + "</table>" + EOL;
 		assertOutputEquals("archive-dependencies-metrics-html.xslt", input,
 				expected);
 	}
@@ -94,7 +94,7 @@ public class ArchiveDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 				+ "\n"
 				+ "<tr class=\"odd\"><td>archive</td><td>9</td><td>6</td><td>0.67</td><td>0</td><td>1</td><td>1</td><td>1.67</td></tr>\n"
 				+ "<tr class=\"even\"><td>archive</td><td>9</td><td>6</td><td>0.67</td><td>0</td><td>1</td><td>1</td><td>1.67</td></tr>"
-				+ "</tbody>\r\n" + "</table>\r\n";
+				+ "</tbody>" + EOL + "" + "</table>" + EOL;
 		assertOutputEquals("archive-dependencies-metrics-html.xslt", input,
 				expected);
 	}
@@ -108,7 +108,7 @@ public class ArchiveDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 				+ "<tr class=\"odd\"><td>archive</td><td>9</td><td>6</td><td>0.67</td><td>0</td><td>5</td><td>1</td><td>1.67</td></tr>\n"
 				+ "<tr class=\"even\"><td>archive2</td><td>2</td><td>2</td><td>1</td><td>1</td><td>0</td><td>0</td><td>1</td></tr>\n"
 				+ "<tr class=\"odd\"><td>archive3</td><td>1</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td></tr>"
-				+ "</tbody>\r\n" + "</table>\r\n";
+				+ "</tbody>" + EOL + "" + "</table>" + EOL;
 		assertOutputEquals("archive-dependencies-metrics-html.xslt", input,
 				expected);
 	}

@@ -9,6 +9,8 @@ import junit.framework.TestCase;
 
 public class XsltTestCase extends TestCase {
 
+	protected static final String EOL = System.getProperty("line.separator");
+
 	protected void assertOutputEquals(String xsltFilename, String input,
 			String expected) throws IOException {
 		FileDecorator reportFile = new InMemoryFileDecorator();
@@ -22,8 +24,8 @@ public class XsltTestCase extends TestCase {
 		OutputStream outputStream = new WriterOutputStream(stringWriter);
 		transformer.transform(reportFile, outputStream);
 		String actual = stringWriter.getBuffer().toString();
-		//outputBytes(expected);
-		//outputBytes(actual);
+		// outputBytes(expected);
+		// outputBytes(actual);
 		assertEquals(expected, actual);
 	}
 
