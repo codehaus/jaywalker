@@ -6,7 +6,7 @@ public class ArchiveDependenciesResolvedDotTest extends XsltTestCase {
 
 	public void testShouldCreateEmptyDigraph() throws IOException {
 		String input = "<?xml version=\"1.0\"?>\n<report>\n</report>";
-		String expected = "digraph G {\n}\r\n";
+		String expected = "digraph G {\n}" + EOL + "";
 		assertOutputEquals("archive-dependencies-resolved-dot.xslt", input,
 				expected);
 	}

@@ -56,7 +56,7 @@ public class PackageDependenciesMetricsHtmlTest extends HtmlDetailTableTestCase 
 		String expected = tableStart
 				+ "\n"
 				+ "<tr class=\"odd\"><td></td><td>7</td><td>4</td><td>0.57</td><td>0</td><td>1</td><td>1</td><td>1.57</td>"
-				+ "</tr>\n" + "</tbody>\r\n" + "</table>\r\n";
+				+ "</tr>\n" + "</tbody>" + EOL + "</table>" + EOL;
 		assertOutputEquals("package-dependencies-metrics-html.xslt", input,
 				expected);
 	}
