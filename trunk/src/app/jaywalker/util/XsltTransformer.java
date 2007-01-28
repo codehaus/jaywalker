@@ -60,6 +60,8 @@ public class XsltTransformer implements Outputter {
 	private TransformerFactory lookupTransformerFactory()
 			throws TransformerFactoryConfigurationError {
 		if (!locator.contains("TransformerFactory")) {
+			System.setProperty("javax.xml.transform.TransformerFactory",
+					"org.apache.xalan.processor.TransformerFactoryImpl");
 			TransformerFactory factory = TransformerFactory.newInstance();
 			factory.setURIResolver(new CustomURIResolver());
 			locator.register("TransformerFactory", factory);
