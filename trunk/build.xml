@@ -21,7 +21,7 @@
 		<pathelement path="tools/jaxb/jaxb-api-1.0.6.jar" />
 		<pathelement path="tools/jaxb/namespace-1.0.jar" />
 	</path>
-	
+
 	<path id="path.runtime.jaxb">
 		<pathelement path="tools/jaxb/jaxb-api-1.0.6.jar" />
 		<pathelement path="tools/jaxb/jaxb-impl-1.0.6.jar" />
@@ -29,10 +29,10 @@
 		<pathelement path="tools/jaxb/jax-qname-1.1.jar" />
 		<pathelement path="tools/jaxb/namespace-1.0.jar" />
 	</path>
-	
+
 	<path id="path.compile.aspectj">
-		<pathelement path="tools/aspectj/aspectjtools-1.5.2a.jar"/>
-		<pathelement path="tools/aspectj/aspectjrt-1.5.2a.jar"/>
+		<pathelement path="tools/aspectj/aspectjtools-1.5.2a.jar" />
+		<pathelement path="tools/aspectj/aspectjrt-1.5.2a.jar" />
 	</path>
 
 	<path id="path.compile.app">
@@ -42,7 +42,7 @@
 		<pathelement path="tools/log4j/log4j-1.2.9.jar" />
 		<pathelement path="tools/one-jar/one-jar-boot-0.95.jar" />
 		<pathelement path="tools/xalan/xalan.jar" />
-    	<pathelement path="tools/xalan/serializer.jar" />
+		<pathelement path="tools/xalan/serializer.jar" />
 	</path>
 
 	<path id="path.compile.test">
@@ -195,28 +195,6 @@
 
 		</junit>
 
-		<junit forkMode="once" fork="true" printsummary="on" dir="${basedir}" failureproperty="junit-failure">
-			<classpath>
-				<path refid="emma.lib" />
-				<pathelement path="tools/ant/ant-testutil-1.6.3.jar" />
-				<path location="build/classes-test" />
-				<path location="build/dist/${ant.project.name}-bin-${project.version}.jar" />
-				<pathelement path="tools/xmlunit/xmlunit1.0.jar" />
-			</classpath>
-
-			<batchtest todir="build/doc/junit">
-				<formatter type="xml" />
-				<fileset dir="src/itest">
-					<include name="**/*Test.java" />
-					<exclude name="**/Abstract*Test.java" />
-				</fileset>
-			</batchtest>
-
-			<jvmarg value="-Demma.coverage.out.file=${basedir}/build/doc/emma/coverage.emma" />
-			<jvmarg value="-Demma.coverage.out.merge=true" />
-
-		</junit>
-
 		<emma>
 			<report sourcepath="src/app" sort="+block,+name,+method,+class" metrics="method:70,block:80,line:80,class:100">
 				<fileset dir="build/doc/emma">
@@ -239,6 +217,32 @@
 		</junitreport>
 
 		<fail message="JUnit test(s) failed" if="junit-failure" />
+
+	</target>
+
+	<target name="-itest">
+
+		<junit forkMode="once" fork="true" printsummary="on" dir="${basedir}" failureproperty="junit-failure">
+			<classpath>
+				<path refid="emma.lib" />
+				<pathelement path="tools/ant/ant-testutil-1.6.3.jar" />
+				<path location="build/classes-test" />
+				<path location="build/dist/${ant.project.name}-bin-${project.version}.jar" />
+				<pathelement path="tools/xmlunit/xmlunit1.0.jar" />
+			</classpath>
+
+			<batchtest todir="build/doc/junit">
+				<formatter type="xml" />
+				<fileset dir="src/itest">
+					<include name="**/*Test.java" />
+					<exclude name="**/Abstract*Test.java" />
+				</fileset>
+			</batchtest>
+
+			<jvmarg value="-Demma.coverage.out.file=${basedir}/build/doc/emma/coverage.emma" />
+			<jvmarg value="-Demma.coverage.out.merge=true" />
+
+		</junit>
 
 	</target>
 
